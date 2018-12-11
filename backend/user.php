@@ -1,5 +1,5 @@
 <?php
-    include_once 'backend/dataBase.php';
+    include_once 'dataBase.php';
 
     class userQuerys {
         private $data;
