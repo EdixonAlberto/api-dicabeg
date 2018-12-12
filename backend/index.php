@@ -3,7 +3,9 @@
     include_once 'user.php';
     
     // MODO DE USO
-    // $usuario = new userQuerys();
-    // $mostrarUsuarios = $usuario->get();
-    // print_r($mostrarUsuarios);
+    $usuario = new userQuerys();
+    $verUsuarios = $usuario->get();
+    print_r($verUsuarios);
+
+    $valor = _GE
 ?>
