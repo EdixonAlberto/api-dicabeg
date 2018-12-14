@@ -1,11 +1,13 @@
 <?php
-    require('../vendor/autoload.php');
-    include_once 'user.php';
-    
-    // MODO DE USO
-    $usuario = new userQuerys();
-    $verUsuarios = $usuario->get();
-    print_r($verUsuarios);
+    include '../backend/user.php';
 
-    $valor = _GE
+    $comando = $_GET['user'];
+    $usuarios = new userQuerys();
+    
+    if  ($comando == 'getAlls') {
+        echo $usuarios->get();
+    }
+    else {
+        echo 'command not valid';
+    }
 ?>
