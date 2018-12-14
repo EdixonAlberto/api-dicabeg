@@ -5,7 +5,7 @@
         private $data;
 
         public function __construct() {
-            $this->data = new dataBase('mysql');
+            $this->data = new dataBase('pgsql');
         }
 
         function get() {
