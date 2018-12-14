@@ -18,9 +18,9 @@
                 $item = array(
                     'name'      => $row['name'],
                     'age'       => $row['age'],
-                    'user'      => $row['user'],
+                    'username'  => $row['username'],
                     'password'  => $row['password'],
-                    'NIR'       => $row['NIR'],
+                    'nir'       => $row['nir'],
                     'phone'     => $row['phone']
                 );
                 array_push($list["users"], $item);

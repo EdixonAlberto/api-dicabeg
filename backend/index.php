@@ -5,7 +5,8 @@
     $usuarios = new userQuerys();
     
     if  ($comando == 'getAlls') {
-        echo $usuarios->get();
+        $listajs = $usuarios->get();
+        echo $listajs;
     }
     else {
         echo 'command not valid';
