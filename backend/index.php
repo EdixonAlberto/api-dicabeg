@@ -11,5 +11,5 @@
     //     echo 'command not valid';
     // }
     $usuarios = new userQuerys();
-    echo $usuarios->get();
+    return $usuarios->get();
 ?>
