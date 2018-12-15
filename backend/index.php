@@ -9,6 +9,7 @@
         echo $listajs;
     }
     else {
+        prinf_r(parse_url('DATABASE_URL')); echo "<br />";
         echo 'command not valid';
     }
 ?>

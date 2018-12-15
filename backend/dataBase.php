@@ -16,10 +16,11 @@
                     $this->password = '';
                 break;
                 case 'pgsql':
-                    $this->name     = 'd4r8bbusqmajl7';
-                    $this->host     = 'ec2-54-227-249-201.compute-1.amazonaws.com';
-                    $this->user     = 'xwbsioiegvytgz';
-                    $this->password = '0eaa6d4b347bac85367e3623092bc6c68e81c4abb6a7303971f90f2c88ffb059';
+                    $url = parse_url('DATABASE_URL');
+                    $this->name     = trim($url['path'], '/');
+                    $this->host     = $url['host'];
+                    $this->user     = $url['user'];
+                    $this->password = $url['pass'];
                 break;
                 case 'nodejs':
                     # code...
