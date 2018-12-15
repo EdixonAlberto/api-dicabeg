@@ -10,5 +10,7 @@
     }
     else {
         echo 'command not valid';
+        echo "<br />";
+        prinf_r(parse_url(getenv('DATABASE_URL')));
     }
 ?>
