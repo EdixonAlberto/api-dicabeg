@@ -1,7 +1,8 @@
-vendor/
-.env
 .vscode
-other
-test
-txt
-img
+/vendor
+/other
+/test
+/txt
+/img
+/frontend
+conf.code-workspace
