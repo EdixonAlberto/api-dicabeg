@@ -1,11 +1,11 @@
 <?php
-    include 'database.php';
+    include 'dataBase.php';
 
     class querys extends dataBase {
         private $data;
 
         public function __construct() {
-            $this->data = new dataBase();
+            $this->data = new dataBase('pgsql', 'DATABASE_URL');
         }
 
         function getAll() {
