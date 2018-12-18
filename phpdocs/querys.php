@@ -19,7 +19,7 @@
 
         function getBy($varEmail) {
             $sql = "SELECT * FROM users
-                    WHERE ?";
+                    WHERE email = ?";
 
             $query = $this->data->connect()->prepare($sql);
             $query->execute([

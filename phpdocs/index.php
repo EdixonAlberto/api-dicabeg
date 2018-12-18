@@ -3,7 +3,7 @@
 
     $user = new apiUser();
 
-    if ($_SERVER['RESQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = filter_var($_POST['email'], FILTER_SANITIZE_STRING);
         $pass = filter_var($_POST['pass'],  FILTER_SANITIZE_STRING);
         
@@ -18,6 +18,6 @@
         else {
             $result = $user->getUserAlls();
         }
-        return $result;  
+        echo $result;  
     }
 ?>

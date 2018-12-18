@@ -11,12 +11,12 @@
             else {
                 $query = new querys();
                 $result = $query->insert($email, $pass);
-
-                //var_dump($result); // DEBUG
-
+                
+                // var_dump($result); // DEBUG
+                
                 $errorExist = !is_null($result[1]);
                 if ($errorExist) {
-                    return $this->message($errorExist);
+                    return $this->message('(error) could not register');
                 }
                 else {
                     return $this->message('user signuped');
@@ -34,8 +34,8 @@
         function getUserAlls() {
             $list["users"] = array();
             $query = new querys();
-            $users = $query->getAll();
-            $existRow = $users->rowCount();
+            $userData = $query->getAll();
+            $existRow = $userData->rowCount();
 
            if ($existRow) {
                 $arrayIndexedByColumns = $userData->fetch(PDO::FETCH_ASSOC);
@@ -63,6 +63,10 @@
             else {
                 return $this->message("don't exist elements");
             }
+        }
+
+        function message($message) {
+            echo json_encode(['message' => $message]);
         }
     }
 ?>
