@@ -6,18 +6,18 @@
         private $user;
         private $password;
 
-        public function __construct($engine, $environmentVariable) {
-            $url = $this->decomposeURL($environmentVariable);
-            $this->engine   = $engine;
+        public function __construct() {
+            $url = $this->decomposeURL();
+            $this->engine   = 'pgsql';
             $this->name     = trim($url['path'], '/');
             $this->host     = $url['host'];
             $this->user     = $url['user'];
             $this->password = $url['pass'];
         }
 
-        function decomposeURL($variable) {
+        function decomposeURL() {
             // return parse_url($variable);
-            return parse_url(getenv($variable));
+            return parse_url(getenv('DATABASE_URL'));
         }
 
         function connect() {
