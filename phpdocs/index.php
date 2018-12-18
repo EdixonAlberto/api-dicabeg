@@ -11,10 +11,9 @@
         echo $result;
     }
     else {
-        $method = $_GET['method'];
-        $func = $_GET['id'];
-        if ($method == 'user') {
-            $result = $user->getUserByEmail($func);
+        $email = $_GET['email'];
+        if ($email != 'alls') {
+            $result = $user->getUserByEmail($email);
         }
         else {
             $result = $user->getUserAlls();
