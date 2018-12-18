@@ -13,7 +13,7 @@
                 $result = $query->insert($email, $pass);
                 
                 // var_dump($result); // DEBUG
-                
+
                 $errorExist = !is_null($result[1]);
                 if ($errorExist) {
                     return $this->message('(error) could not register');
@@ -32,15 +32,29 @@
         }
 
         function getUserAlls() {
+            return $this->message("en construccion :-( ");
             $list["users"] = array();
             $query = new querys();
             $userData = $query->getAll();
-            $existRow = $userData->rowCount();
 
-           if ($existRow) {
-                $arrayIndexedByColumns = $userData->fetch(PDO::FETCH_ASSOC);
-                $arrayUser['user'] = $arrayIndexedByColumns;
-                $jsonUser = json_encode($arrayUser);
+            $existRow = $userData->rowCount();
+            if ($existRow) {
+                foreach ($userData as $row) {
+                    $item = array(
+                        'email'     => $row['email'],
++                       'password'  => $row['password'],
++                       'username'  => $row['username'],
+                        'age'       => $row['age'],
+                        'nir'       => $row['nir'],
+                        'phone'     => $row['phone'],
+                        'points'    => $row['points']
+                    );
+                    array_push($list["users"], $item);
+                }
+                var_dump($list);
+
+                $jsonUser = json_encode($list);
+                
                 return $jsonUser;
             }
             else {
