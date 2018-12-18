@@ -16,8 +16,8 @@
         }
 
         function decomposeURL($variable) {
-            return parse_url($variable);
-            // return parse_url(getenv($variable));
+            // return parse_url($variable);
+            return parse_url(getenv($variable));
         }
 
         function connect() {

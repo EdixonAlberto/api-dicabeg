@@ -2,8 +2,7 @@
     include 'querys.php';
 
     class apiUser {
-
-        function newUser($email, $pass) {
+        function signUp($email, $pass) {
             $emailExist = $this->checkoutEmail($email);
 
             if ($emailExist) {
@@ -11,10 +10,17 @@
             }
             else {
                 $query = new querys();
-                $resul = $query->signUp($email, $pass);
-                print_r($resul);
-                // if ($query) {}
-                // return $this->message('user signuped');
+                $result = $query->insert($email, $pass);
+
+                //var_dump($result); // DEBUG
+
+                $errorExist = !is_null($result[1]);
+                if ($errorExist) {
+                    return $this->message($errorExist);
+                }
+                else {
+                    return $this->message('user signuped');
+                }
             } 
         }
 
@@ -28,43 +34,16 @@
         function getUserAlls() {
             $list["users"] = array();
             $query = new querys();
-            $users = $query->get();
+            $users = $query->getAll();
             $existRow = $users->rowCount();
 
-            if ($existRow) {
-                foreach ($users as $row) {
-                    $item = array(
-                        "name"      => $row["name"],
-                        "age"       => $row["age"],
-                        "nir"       => $row["nir"],
-                        "phone"     => $row["phone"]
-                    );
-                    array_push($list["users"], $item);
-                }
-                return $this->result($list);
-            } else {
-                return $this->message("don't exist elements");
+           if ($existRow) {
+                $arrayIndexedByColumns = $userData->fetch(PDO::FETCH_ASSOC);
+                $arrayUser['user'] = $arrayIndexedByColumns;
+                $jsonUser = json_encode($arrayUser);
+                return $jsonUser;
             }
-        }
-
-        function getUserData() {
-            $list["users"] = array();
-            $query = new querys();
-            $users = $query->get(null);
-            $existRow = $users->rowCount();
-
-            if ($existRow) {
-                foreach ($users as $row) {
-                    $item = array(
-                        "name"      => $row["name"],
-                        "age"       => $row["age"],
-                        "nir"       => $row["nir"],
-                        "phone"     => $row["phone"]
-                    );
-                    array_push($list["users"], $item);
-                }
-                return $this->result($list);
-            } else {
+            else {
                 return $this->message("don't exist elements");
             }
         }
@@ -84,14 +63,6 @@
             else {
                 return $this->message("don't exist elements");
             }
-        }
-
-        function remove($table) {
-
-        }
-
-        function message($message) {
-            echo json_encode(array("message" => $message));
         }
     }
 ?>
