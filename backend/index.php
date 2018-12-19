@@ -9,19 +9,27 @@
         $pass = filter_var($_POST['pass'],  FILTER_SANITIZE_STRING);
         
         $result = $user->signUp($email, $pass);
+
         echo $result;
     }
     else if ($method == 'GET') {
-        $email = $_GET['email'];
-        if ($email != 'alls') {
-            $result = $user->getUserByEmail($email);
+        $emptyMethod = empty($_GET);
+        
+        if ($emptyMethod) {
+            echo $user->message('Use method POST: user - email or GET: ?email=user email ');
         }
         else {
-            $result = $user->getUserAlls();
-        }
-        echo $result;  
-    }
-    else {
-        echo $user->message('debe usar method POST o GET');
+            $email = $_GET['email'];
+
+            if ($email == 'alls') {
+                $email = $_GET['email'];
+                $result = $user->getUserAlls();    
+            }
+            elseif (strpos($email, '@')) {
+                $email = $_GET['email'];
+                $result = $user->getUserByEmail($email);
+            }
+            echo $result;
+        }  
     }
 ?>

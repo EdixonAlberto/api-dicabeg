@@ -2,6 +2,7 @@
     include 'querys.php';
 
     class apiUser {
+
         function signUp($email, $pass) {
             $emailExist = $this->checkoutEmail($email);
 
@@ -27,13 +28,15 @@
         function checkoutEmail($email) {
             $query = new querys();
             $userData = $query->getBy($email);
+            
             $existRow = $userData->rowCount() ? true : false;
             return $existRow;
         }
 
         function getUserAlls() {
-            return $this->message("en construccion :-( ");
+            return $this->message(' --->en construccion');
             $list["users"] = array();
+
             $query = new querys();
             $userData = $query->getAll();
 
