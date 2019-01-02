@@ -1,7 +1,6 @@
 .vscode
 /vendor
-/other
-/test
-/txt
-/img
-/frontend
+/developing
+/backend/v1/indexPrueba.php
+.htaccess
+.htpasswd
