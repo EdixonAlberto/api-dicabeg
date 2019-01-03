@@ -1,24 +1,72 @@
 <?php
 
 class querysAccount {
+    private $dataPostgre;
 
-    function __construct() {
+    public function __construct() {
+        $this->dataPostgre = new dataBase('pgsql', 'DATABASE_URL_LOCAL');
+    }
+
+    function getAll() {
+        $sql = "SELECT * FROM users_accounts";
+
+        $query = $this->dataPostgre->connect()->prepare($sql);
+        $query->execute();
+
+        return $query;
+    }
+
+    function getBy($id, $column = null) {
+        switch ($column) {
+            case 'username':
+                $sql = "SELECT * FROM users_accounts
+                        WHERE username = ?";
+            break;
+
+            case 'password':
+                $sql = "SELECT * FROM users_accounts
+                        WHERE password = ?";
+            break;
+
+            case 'email':
+                $sql = "SELECT * FROM users_accounts
+                        WHERE email = ?";
+            break;
+
+            default:
+                $sql = "SELECT * FROM users_accounts
+                        WHERE id_account = ?";
+        }
+
+        $query = $this->dataPostgre->connect()->prepare($sql);
+        $query->execute([
+                $id
+            ]);
+
+        return $query;
+    }
+
+    function insertAccount($arraySet) {
+        $sql = "INSERT INTO users_accounts (id_account, username, email, password)
+                VALUES (?, ?, ?, ?)";
+
+        $query = $this->dataPostgre->connect()->prepare($sql);
+        $query->execute([
+                $arraySet[0],
+                $arraySet[1],
+                $arraySet[2],
+                $arraySet[3]
+            ]);
+
+        return $query;
+    }
+
+    function update() {
 
     }
 
-    function insertAccount($username, $email, $password) {
-        $sql = "INSERT INTO users_accounts (username, email, password)
-                VALUES (?, ?, ?)";
+    function delete() {
 
-        $query = $this->data->connect()->prepare($sql);
-        $query->execute([
-                $username,
-                $email,
-                $password,
-            ]);
-        $arrayInfo = $query->errorInfo();
-
-        return $arrayInfo;
     }
 }
 ?>

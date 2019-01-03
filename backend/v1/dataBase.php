@@ -43,7 +43,7 @@ class dataBase {
 
         }
         catch (PDOException $error) {
-            echo '[Connection error in the database] ERROR = ' . $error->getMessage();
+            return '[Connection error in the database] ERROR = ' . $error;
         }
     }
 }

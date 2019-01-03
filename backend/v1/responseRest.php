@@ -31,8 +31,8 @@
             $arrayError['error'] = [];
 
             $arrayErrorDetail = [
-                'code' => '',
-                'msj' => $error
+                'code' => $error[0],
+                'msj' => $error[1]
             ];
 
             array_push($arrayError['error'], $arrayErrorDetail);

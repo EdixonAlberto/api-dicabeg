@@ -2,6 +2,7 @@
 require '../../dataBase.php';
 include '../../security.php';
 include '../../responseRest.php';
+
 include 'querysData.php';
 include 'data.php';
 
@@ -57,9 +58,9 @@ function checkoutParameterGET() {
 
 function preparedataToUpdate(&$arrayValuesValidated) {
     parse_str(file_get_contents('php://input'), $_PATCH);
+    include '../../arraySet.php';
 
-
-    foreach ($arrayKey as $defaultKey) {
+    foreach ($arraySet as $defaultKey) {
 
         $keyFound = false;
         foreach ($_PATCH as $entryKey => $value) {
