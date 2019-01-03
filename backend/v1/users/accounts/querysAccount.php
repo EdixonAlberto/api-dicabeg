@@ -4,7 +4,7 @@ class querysAccount {
     private $dataPostgre;
 
     public function __construct() {
-        $this->dataPostgre = new dataBase('pgsql', 'DATABASE_URL_LOCAL');
+        $this->dataPostgre = new dataBase('pgsql', 'DATABASE_URL');
     }
 
     function getAll() {
@@ -35,7 +35,7 @@ class querysAccount {
 
             default:
                 $sql = "SELECT * FROM users_accounts
-                        WHERE id_account = ?";
+                        WHERE account_id = ?";
         }
 
         $query = $this->dataPostgre->connect()->prepare($sql);
@@ -47,7 +47,7 @@ class querysAccount {
     }
 
     function insertAccount($arraySet) {
-        $sql = "INSERT INTO users_accounts (id_account, username, email, password)
+        $sql = "INSERT INTO users_accounts (account_id, username, email, password)
                 VALUES (?, ?, ?, ?)";
 
         $query = $this->dataPostgre->connect()->prepare($sql);

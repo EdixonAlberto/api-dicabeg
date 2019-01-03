@@ -18,7 +18,7 @@ class querysData {
 
     function getBy($id) {
         $sql = "SELECT * FROM users_data
-                WHERE id = ?";
+                WHERE data_id = ?";
 
         $query = $this->dataPostgre->connect()->prepare($sql);
         $query->execute([
@@ -29,7 +29,7 @@ class querysData {
     }
 
     function insert($arraySet) {
-        $sql = "INSERT INTO users_data (id, names, lastnames, age, image, phone, points, referrals)
+        $sql = "INSERT INTO users_data (data_id, names, lastnames, age, image, phone, points, referrals)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         $query = $this->dataPostgre->connect()->prepare($sql);
@@ -50,7 +50,7 @@ class querysData {
     function update($arraySet) {
         $sql = "UPDATE users_data
                 SET names = ?, lastnames = ?, age = ?, image = ?, phone = ?, points = ?, referrals = ?
-                WHERE id = ?";
+                WHERE data_id = ?";
 
         $query = $this->dataPostgre->connect()->prepare($sql);
         $query->execute([
@@ -69,7 +69,7 @@ class querysData {
 
     function delete($id) {
         $sql = "DELETE FROM users_data
-                WHERE id = ?";
+                WHERE data_id = ?";
 
         $query = $this->dataPostgre->connect()->prepare($sql);
         $query->execute([

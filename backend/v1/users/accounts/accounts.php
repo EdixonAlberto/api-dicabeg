@@ -31,34 +31,45 @@ class accounts extends querysAccount {
     }
 
     function signUp($arrayAccountNew) {
+
         $existAccount = $this->checkoutAccount($arrayAccountNew);
 
         if ($existAccount) {
-            return 'account exist';
+            $arrayResult = ['operation' => 'Account Exist'];
         }
         else {
             $_arrayAccountNew[] = trim(com_create_guid(), '{}');
+
             foreach ($arrayAccountNew as $value) {
                 $_arrayAccountNew[] = $value;
             }
             $result = $this->insertAccount($_arrayAccountNew);
-            $interpret1 = $this->interpretResult($result);
+            $operationAccount = $this->interpretResult($result);
 
-            if ($interpret1) {
+            if ($operationAccount === true) {
                 $arraySetNull[] = $_arrayAccountNew[0];
                 for ($i = 0; $i < 7; $i++) {
                     $arraySetNull[] = null;
                 }
                 $queryData = new querysData();
                 $result = $queryData->insert($arraySetNull);
-                $interpret2 = $this->interpretResult($result);
+                $operationData = $this->interpretResult($result);
 
-                return $interpret2 ? 'added account' : $interpret2;
+                if ($operationData === true) {
+                    $arrayResponse['userAccount'][] = ['response' => 'Added Account'];
+                    $arrayResult = [
+                        'account_id' => $_arrayAccountNew[0],
+                        'username' => $_arrayAccountNew[1],
+                        'email' => $_arrayAccountNew[2],
+                        'password' => $_arrayAccountNew[3]
+                    ];
+                }
+                else $arrayResult = ['response' => $operationData];
             }
-            else {
-                return $interpret1;
-            }
+            else $arrayResult = ['response' => $operationAccount];
         }
+        $arrayResponse['userAccount'][] = $arrayResult;
+        return json_encode($arrayResponse);
     }
 
     function signIn($PUT) {
@@ -90,7 +101,7 @@ class accounts extends querysAccount {
             $result = $this->getBy($value, $key);
             $rows = $result->rowCount();
 
-            return $rows ? true : false;
+            return $rows;
         }
     }
 }

@@ -68,23 +68,15 @@ switch ($method) {
         }
         else {
             parse_str(file_get_contents('php://input'), $_PUT);
-            $createResult = $accounts->signUp($_PUT);
-
-            if ($createResult) {
-                http_response_code(200);
-            }
-            else {
-                $httpCode = http_response_code(400);
-                $arrayError =  [$httpCode, $createResult];
-                $response = $responseRest->error($arrayError);
-                echo $response;
-            }
+            $response = $accounts->signUp($_PUT);
+            echo $response;
         }
     break;
 }
 
 function prepareValuesToCreate() {
     parse_str(file_get_contents('php://input'), $_PUT);
+
     $arraySet = ['username', 'email', 'password'];
 
     foreach ($arraySet as $defaultKey) {
