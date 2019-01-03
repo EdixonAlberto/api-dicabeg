@@ -4,7 +4,7 @@ class querysData {
     private $dataPostgre;
 
     public function __construct() {
-        $this->dataPostgre = new dataBase('pgsql', 'DATABASE_URL_LOCAL');
+        $this->dataPostgre = new dataBase('pgsql', 'DATABASE_URL');
     }
 
     function getAll() {
