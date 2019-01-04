@@ -1,5 +1,4 @@
 <?php
-
 class accounts extends querysAccount {
 
     function getAccountsAlls() {
@@ -38,7 +37,8 @@ class accounts extends querysAccount {
             $arrayResult = ['operation' => 'Account Exist'];
         }
         else {
-            $_arrayAccountNew[] = trim(com_create_guid(), '{}');
+            $gui = new generateGui();
+            $_arrayAccountNew[] = trim($gui->code, '{}');
 
             foreach ($arrayAccountNew as $value) {
                 $_arrayAccountNew[] = $value;
@@ -69,6 +69,7 @@ class accounts extends querysAccount {
             else $arrayResult = ['response' => $operationAccount];
         }
         $arrayResponse['userAccount'][] = $arrayResult;
+
         return json_encode($arrayResponse);
     }
 

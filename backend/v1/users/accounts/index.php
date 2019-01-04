@@ -2,12 +2,10 @@
 require '../../dataBase.php';
 include '../../security.php';
 include '../../responseRest.php';
+include '../../generateGui.php';
 include '../data/querysData.php';
-
 include 'querysAccount.php';
 include 'accounts.php';
-
-
 
 $query = new querysAccount();
 $accounts = new accounts();
@@ -90,7 +88,7 @@ function prepareValuesToCreate() {
                     return false;
                 }
                 if ($entryKey == 'email') {
-                    emailValidate($entryKey);
+                    // emailValidate($entryKey);
                 }
 
                 $keyNotFound = false;
@@ -102,10 +100,5 @@ function prepareValuesToCreate() {
         }
     }
     return true;
-}
-
-
-function emailValidate() {
-    return;
 }
 ?>
