@@ -1,37 +1,26 @@
 <?php
+include 'querysData.php';
+include '../users.php';
+
 
 class data extends querysData {
+    private $users;
 
-    function getdataAlls() {
+    function __construct() {
+        $this->users = new users();
+    }
+    function getDataAlls() {
         $query = $this->getAll();
-        $rows = $query->rowCount();
+        $arrayResponse = $this->users->getUsersAlls($query);
 
-        if ($rows) {
-            for ($i = 0; $i < $rows; $i++) {
-                $arrayIndexedByColumns['usersData'][] = $query->fetch(PDO::FETCH_ASSOC);
-            }
-
-            $jsonData = json_encode($arrayIndexedByColumns);
-            return $jsonData;
-        }
-        else {
-            return "don't exist elements";
-        }
+        return $this->response($arrayResponse);
     }
 
     function getdataById($id) {
-        $userData = $this->getBy($id);
-        $existRow = $userData->rowCount();
+        $query = $this->getBy($id);
+        $arrayResponse = $this->users->getUsersById($query);
 
-        if ($existRow) {
-            $arrayIndexedByColumns = $userData->fetch(PDO::FETCH_ASSOC);
-            $arrayData['userData'][] = $arrayIndexedByColumns;
-
-            return json_encode($arrayData);
-        }
-        else {
-            return "data not exist";
-        }
+        return $this->response($arrayResponse);
     }
 
     function updatedataById($arraydataNew) {
@@ -40,7 +29,7 @@ class data extends querysData {
 
         var_dump($arraydataNew);
         var_dump($arraydataOld);
-        // die();
+        die();
 
         $i = 0;
         foreach ($arraydataOld['user_data'] as $value) {
@@ -54,11 +43,17 @@ class data extends querysData {
         die();
     }
 
-    private function checkoutEmail($email) {
-        $userData = $this->getBy($email);
+    // private function checkoutEmail($email) {
+    //     $userData = $this->getBy($email);
 
-        $existRow = $userData->rowCount() ? true : false;
-        return $existRow;
+    //     $existRow = $userData->rowCount() ? true : false;
+    //     return $existRow;
+    // }
+
+    function response($_arrayResponse) {
+        $arrayResponse['userData'] = $_arrayResponse;
+
+        return json_encode($arrayResponse);
     }
 }
 ?>

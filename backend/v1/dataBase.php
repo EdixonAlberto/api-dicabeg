@@ -18,8 +18,7 @@ class dataBase {
             $this->password = $url['pass'];
         }
         else {
-            $rest = new response_rest();
-            $var = $rest->error('Environment varable do not found');
+            $var ='Environment varable do not found';
             die($var);
         }
     }

@@ -1,26 +1,29 @@
 <?php
-require '../../dataBase.php';
+include '../../pgsqlConnection.php';
 include '../../security.php';
-include '../../responseRest.php';
-
-include 'querysData.php';
 include 'data.php';
 
 $data = new data();
 $security = new security();
-$responseRest = new responseRest();
-
-
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case 'GET':
-        checkoutParameterGET();
-        getData($response);
-        if ($response) {
-            http_response_code(200);
-            echo $response;
+        $parameterValidate = prepareParameterGet();
+
+        if ($parameterValidate === true) {
+            $id = $_GET['id'];
+            if ($id == 'alls') {
+                $result = $data->getDataAlls();
+            }
+            else $result = $data->getDataById($id);
         }
+        else {
+            echo $parameterValidate;
+            break;
+        }
+
+        echo $result;
     break;
 
     case 'PATCH':
@@ -39,20 +42,17 @@ switch ($method) {
 
 }
 
-function checkoutParameterGET() {
+function prepareParameterGet() {
     foreach ($_GET as $key => $value) {
-        if ($key != 'id') {
-            echo 'id not found';
-            http_response_code(400);
-            die();
-        }
-        else if ($key == 'id') {
-            if (empty($_GET['id'])) {
-                echo 'id empty';
-                http_response_code(400);
-                die();
+        if ($key === 'id') {
+            if (!empty($value)) {
+                return true;
             }
+            else $_arrayResponse = ['Error' => "Parameter: {$key} is empty"];
         }
+        else $_arrayResponse = ['Error' => "Parameter: {$key} not valid"];
+
+        return responseError($_arrayResponse);
     }
 }
 

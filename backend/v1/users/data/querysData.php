@@ -1,16 +1,11 @@
 <?php
 
-class querysData {
-    private $dataPostgre;
-
-    public function __construct() {
-        $this->dataPostgre = new dataBase('pgsql', 'DATABASE_URL');
-    }
+class querysData extends pgsqlConnection {
 
     function getAll() {
         $sql = "SELECT * FROM users_data";
 
-        $query = $this->dataPostgre->connect()->prepare($sql);
+        $query = $this->connection()->prepare($sql);
         $query->execute();
 
         return $query;
@@ -20,7 +15,7 @@ class querysData {
         $sql = "SELECT * FROM users_data
                 WHERE data_id = ?";
 
-        $query = $this->dataPostgre->connect()->prepare($sql);
+        $query =$this->connection()->prepare($sql);
         $query->execute([
             $id
         ]);
@@ -32,7 +27,7 @@ class querysData {
         $sql = "INSERT INTO users_data (data_id, names, lastnames, age, image, phone, points, referrals)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        $query = $this->dataPostgre->connect()->prepare($sql);
+        $query = $this->connection()->prepare($sql);
         $query->execute([
                 $arraySet[0],
                 $arraySet[1],
@@ -52,7 +47,7 @@ class querysData {
                 SET names = ?, lastnames = ?, age = ?, image = ?, phone = ?, points = ?, referrals = ?
                 WHERE data_id = ?";
 
-        $query = $this->dataPostgre->connect()->prepare($sql);
+        $query = $this->connection()->prepare($sql);
         $query->execute([
                 $arraySet[1],
                 $arraySet[2],
@@ -71,7 +66,7 @@ class querysData {
         $sql = "DELETE FROM users_data
                 WHERE data_id = ?";
 
-        $query = $this->dataPostgre->connect()->prepare($sql);
+        $query = $this->connection()->prepare($sql);
         $query->execute([
                 $id
             ]);
