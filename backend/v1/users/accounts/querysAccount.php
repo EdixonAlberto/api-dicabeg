@@ -1,16 +1,11 @@
 <?php
 
-class querysAccount {
-    private $dataPostgre;
-
-    public function __construct() {
-        $this->dataPostgre = new dataBase('pgsql', 'DATABASE_URL');
-    }
+class querysAccount extends pgsqlConnection {
 
     function getAll() {
         $sql = "SELECT * FROM users_accounts";
 
-        $query = $this->dataPostgre->connect()->prepare($sql);
+        $query = $this->connection()->prepare($sql);
         $query->execute();
 
         return $query;
@@ -38,7 +33,7 @@ class querysAccount {
                         WHERE account_id = ?";
         }
 
-        $query = $this->dataPostgre->connect()->prepare($sql);
+        $query = $this->connection()->prepare($sql);
         $query->execute([
                 $id
             ]);
@@ -50,7 +45,7 @@ class querysAccount {
         $sql = "INSERT INTO users_accounts (account_id, username, email, password)
                 VALUES (?, ?, ?, ?)";
 
-        $query = $this->dataPostgre->connect()->prepare($sql);
+        $query = $this->connection()->prepare($sql);
         $query->execute([
                 $arraySet[0],
                 $arraySet[1],
