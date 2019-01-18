@@ -1,6 +1,3 @@
 .vscode
 /vendor
 /developing
-/backend/v1/indexPrueba.php
-.htaccess
-.htpasswd
