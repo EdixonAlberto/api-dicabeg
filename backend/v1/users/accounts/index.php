@@ -1,4 +1,5 @@
 <?php
+
 include '../../pgsqlConnection.php';
 include '../../security.php';
 include 'accounts.php';
@@ -78,19 +79,21 @@ function prepareParameterGet() {
 function prepareParameter() {
     if ($_POST) {
         $method = $_POST;
-        $arraySet = ['email', 'password'];
+        $arrayAccountParameters = ['email', 'password'];
     }
     else {
         parse_str(file_get_contents('php://input'), $_PUT);
         $method = $_PUT;
-        $arraySet = ['username', 'email', 'password'];
+        $arrayAccountParameters = ['username', 'email', 'password'];
     }
 
-    foreach ($arraySet as $defaultKey) {
+    foreach ($arrayAccountParameters as $defaultKey) {
         $keyNotFound = true;
         foreach ($method as $entryKey => $value) {
             if ($defaultKey === $entryKey) {
                 if (!empty($value)) {
+
+
                     if ($entryKey == 'username') {
 
                     }
@@ -100,10 +103,12 @@ function prepareParameter() {
                         $method['email'] = $emailNew;
                     }
                     else if ($entryKey == 'password') {
-
+                        $passwordNew = $security->encryptPassword($value);
                     }
                     $keyNotFound = false;
                     break;
+
+
                 }
                 else {
                     $_arrayResponse = ['Error' => "Parameter: {$key} is empty"];

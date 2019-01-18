@@ -2,7 +2,7 @@
 
 class security {
 
-    function validateEmail($email) {
+    function cleanEmail($email) {
         $email = trim($email);
         $email= filter_var($email, FILTER_SANITIZE_STRING);
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
@@ -11,16 +11,17 @@ class security {
         return $email;
     }
 
-    function validatePhone($phone) {
-        $phone = trim($data);
-        $data = "0426as";
-        $phone = preg_replace("[^A-Za-z0-9]","",$data);
+    function cleanPhone($data) {
+        $data = trim($data);
+        $data = preg_match('/^((1-)?\d{3})-\d{3}-\d{4}/', $data);
 
-        return $phone;
+        return $data;
     }
 
-    function validatePass($data) {
+    function encryptPassword($data) {
+        $data = password_hash($data, PASSWORD_DEFAULT); // La seguridad se manteniene actualizada
 
+        return $data;
     }
 }
 ?>

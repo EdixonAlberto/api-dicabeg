@@ -1,10 +1,11 @@
 <?php
+
 include '../../pgsqlConnection.php';
 include '../../security.php';
 include 'data.php';
 
 $data = new data();
-$security = new security();
+
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
@@ -27,11 +28,11 @@ switch ($method) {
     break;
 
     case 'PATCH':
-        $arrayValuesValidated = preparedataToUpdate($arraySet);
-        $correctOperation = $data->updatedataById($arrayValuesValidated);
+        $parameterValidate = prepareParameterPatch();
+        $correctOperation = $data->updatedataById($arrayValidatedPatch);
 
         if ($correctOperation) {
-            $response = $responseRest->prepareResponse($arraySet, $arrayValuesValidated);
+            $response = $responseRest->prepareResponse($arraySet, $arrayValidatedPatch);
         }
 
         http_response_code(200);
@@ -56,47 +57,57 @@ function prepareParameterGet() {
     }
 }
 
-function preparedataToUpdate(&$arrayValuesValidated) {
+function prepareParameterPatch() {
     parse_str(file_get_contents('php://input'), $_PATCH);
-    include '../../arraySet.php';
+    $arrayDataParameters = [
+        'names',
+        'lastnames',
+        'age',
+        'image',
+        'phone',
+        'points',
+        'referrals'
+    ];
 
-    foreach ($arraySet as $defaultKey) {
+    $arrayValidatedPatch = array();
 
+    $countNull = 0;
+    foreach ($arrayDataParameters as $defaultKey) {
         $keyFound = false;
+
         foreach ($_PATCH as $entryKey => $value) {
             if ($defaultKey === $entryKey) {
-
                 if (empty($value)) {
-                    $arrayValuesValidated[] = null;
+                    $arrayValidatedPatch[] = null;
+                    $countNull++;
                 }
                 else {
-                    valueValidate($entryKey);
-
+                    $security = new security();
+                    if ($defaultKey == 'age' or $defaultKey == 'points') {
+                        if (!is_numeric($value)) {
+                            $_arrayResponse = ['Error' => "Parameter: {$key} is numeric"];
+                            die;
+                        }
+                    }
+                    else if ($defaultKey == 'phone') {
+                        $value = $security->cleanPhone($value);
+                    }
+                    $arrayValidatedPatch[] = $value;
                 }
                 $keyFound = true;
                 break;
             }
         }
-
         if (!$keyFound) {
-            $arrayValuesValidated[] = null;
+            $_arrayResponse = ['Error' => "algo"];
         }
     }
 
-    var_dump($arrayValuesValidated);
-    die();
-}
+    // if (count($countNull) == count($arrayValidatedPatch)) {
+    //     echo 'mal'; die;
+    // }
 
-function valueValidate($key) {
-    if ($entryKey === 'phone') {
-        $arrayValuesValidated[] = validatePhone($value);
-    }
-    else {
-    }
-}
-
-function createData(&$response) {
-
+    var_dump($arrayValidatedPatch); die;
 }
 
 function getData(&$response) {
@@ -111,29 +122,10 @@ function getData(&$response) {
     }
 }
 
-function updateData(&$response) {
-    parse_str(file_get_contents('php://input'), $_PATCH);
-    foreach ($_PATCH as $value) {
-        //if (is)
+function responseError($_arrayResponse) {
+    http_response_code(400);
+    $arrayResponse['userData'][] = $_arrayResponse;
 
-    }
-    $id = $_PATCH['id'];
-    $names = $_PATCH['names'];
-    // $lastnames = $_PATCH['lastnames'];
-    // $age = $_PATCH['age'];
-    // $image = $_PATCH['image'];
-    // $phone = $_PATCH['phone'];
-    // $points = $_PATCH['points'];
-    // $referrals = $_PATCH['referrals'];
-
-    $query = new querysData();
-    $query->update($id , $names, $lastnames, $age, $image, $phone, $points, $referrals);
-
-    if (is_null($query->errorInfo()[1])) {
-        $response = true;
-    }
-    else {
-        echo ($query->errorInfo());
-    }
+    return json_encode($arrayResponse);
 }
 ?>

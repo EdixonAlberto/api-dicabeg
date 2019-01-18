@@ -51,7 +51,7 @@ class data extends querysData {
     // }
 
     function response($_arrayResponse) {
-        $arrayResponse['userData'] = $_arrayResponse;
+        $arrayResponse['usersData'] = $_arrayResponse;
 
         return json_encode($arrayResponse);
     }
