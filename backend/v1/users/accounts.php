@@ -1,25 +1,21 @@
 <?php
 include 'querysAccount.php';
-include '../users.php';
-include '../data/querysData.php';
-include '../../generateGui.php';
+include 'users.php';
+include 'data/querysData.php';
+include '../generateGui.php';
 
 class accounts extends querysAccount {
 
-    function getAccountsAlls() {
-        $query = $this->getAll();
-        $users = new users();
-        $arrayResponse =  $users->getUsersAlls($query);
-
-        return $this->response($arrayResponse);
+    static function getAccountsAlls() {
+        $query = self::getAll();
+        $arrayResponse = users::getUsersAlls($query);
+        return self::response($arrayResponse);
     }
 
-    function getAccountById($id) {
-        $query = $this->getBy($id);
-        $users = new users();
-        $arrayResponse = $users->getUsersAlls($query);
-
-        return $this->response($arrayResponse);
+    static function getAccountById($id) {
+        $query = self::getBy($id);
+        $arrayResponse = users::getUsersAlls($query);
+        return self::response($arrayResponse);
     }
 
     function signUp($POST) {

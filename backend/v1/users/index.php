@@ -1,28 +1,26 @@
 <?php
-include '../../pgsqlConnection.php';
-include '../../security.php';
+include '../pgsqlConnection.php';
+include '../security.php';
 include 'accounts.php';
 
 $query = new querysAccount();
-$accounts = new accounts();
+
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case 'GET':
         $parameterValidate = prepareParameterGet();
-
         if ($parameterValidate === true) {
             $id = $_GET['id'];
             if ($id == 'alls') {
-                $result = $accounts->getAccountsAlls();
+                $result = accounts::getAccountsAlls();
             }
-            else $result = $accounts->getAccountById($id);
+            else $result = accounts::getAccountById($id);
         }
         else {
             echo $parameterValidate;
             break;
         }
-
         echo $result;
     break;
 
@@ -37,7 +35,6 @@ switch ($method) {
             echo $parameterValidate;
             break;
         }
-
         echo $result;
     break;
 

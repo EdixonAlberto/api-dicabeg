@@ -3,7 +3,7 @@ require 'dataBase.php';
 
 class pgsqlConnection {
 
-    function connection() {
+    static function connection() {
         $dataPostgre = new dataBase('pgsql', 'DATABASE_URL');
 
         return $dataPostgre->connect();

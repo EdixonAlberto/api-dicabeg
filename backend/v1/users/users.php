@@ -2,7 +2,7 @@
 
 class users {
 
-    function getUsersAlls($query) {
+    static function getUsersAlls($query) {
         $rows = $query->rowCount();
 
         if ($rows) {
@@ -20,7 +20,7 @@ class users {
         return $arrayResponse;
     }
 
-    function getUsersById($query) {
+    static function getUsersById($query) {
         $existRow = $query->rowCount();
 
         if ($existRow) {
