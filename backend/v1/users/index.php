@@ -1,9 +1,7 @@
 <?php
-include '../pgsqlConnection.php';
-include '../security.php';
-include 'accounts.php';
 
-$query = new querysAccount();
+require_once '../Security.php';
+require_once 'Users.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -13,9 +11,9 @@ switch ($method) {
         if ($parameterValidate === true) {
             $id = $_GET['id'];
             if ($id == 'alls') {
-                $result = accounts::getAccountsAlls();
+                $result = Users::getUsersAlls();
             }
-            else $result = accounts::getAccountById($id);
+            else $result = Users::getUsersById($id);
         }
         else {
             echo $parameterValidate;
@@ -25,11 +23,10 @@ switch ($method) {
     break;
 
     case 'PUT':
-    $parameterValidate = prepareParameter();
-
-    if ($parameterValidate === true) {
+        echo $parameterValidate = prepareParameterPUT(); die;
+        if ($parameterValidate === true) {
             parse_str(file_get_contents('php://input'), $_PUT);
-            $result = $accounts->signUp($_PUT);
+            $result = Users::signUp($_PUT);
         }
         else {
             echo $parameterValidate;
@@ -38,17 +35,30 @@ switch ($method) {
         echo $result;
     break;
 
-    case 'POST':
-        $parameterValidate = prepareParameter();
-
-        if ($parameterValidate == true) {
-            $result = $accounts->signIn($_POST);
+    case 'PATCH':
+        echo $parameterValidate = prepareParameterPatch(); die;
+        if ($parameterValidate === true) {
+            parse_str(file_get_contents('php://input'), $_PATCH);
+            $result = Users::userUpdate($_PATCH);
         }
         else {
             echo $parameterValidate;
             break;
         }
+        echo $result;
+    break;
 
+    //FIXME: tengo que comprobar errores y acomodar metodos a staticos, y reacer el code en Users
+    case 'POST':
+        $parameterValidate = prepareParameter();
+
+        if ($parameterValidate == true) {
+            $result = $Users->signIn($_POST);
+        }
+        else {
+            echo $parameterValidate;
+            break;
+        }
         echo $result;
     break;
 
@@ -58,69 +68,96 @@ switch ($method) {
     break;
 }
 
-function prepareParameterGet() {
-    foreach ($_GET as $key => $value) {
-        if ($key === 'id') {
-            if (!empty($value)) {
-                return true;
-            }
-            else $_arrayResponse = ['Error' => "Parameter: {$key} is empty"];
-        }
-        else $_arrayResponse = ['Error' => "Parameter: {$key} not valid"];
+function prepareParameterGET() {
+    validateId($_GET, $errorResponse);
 
-        return responseError($_arrayResponse);
+    if (!$errorResponse) {
+        return true;
     }
+    else return responseError($errorResponse);
 }
 
-function prepareParameter() {
-    if ($_POST) {
-        $method = $_POST;
-        $arraySet = ['email', 'password'];
+function prepareParameterPUT() {
+    parse_str(file_get_contents('php://input'), $_PUT);
+    if ($_PUT) {
+        validate($_PUT, $errorResponse);
     }
-    else {
-        parse_str(file_get_contents('php://input'), $_PUT);
-        $method = $_PUT;
-        $arraySet = ['username', 'email', 'password'];
+    else $errorResponse = ['Error' => 'No parameter found'];
+
+    if (!$errorResponse) {
+        return true;
     }
+    else return responseError($errorResponse);
+}
 
-    foreach ($arraySet as $defaultKey) {
-        $keyNotFound = true;
-        foreach ($method as $entryKey => $value) {
-            if ($defaultKey === $entryKey) {
-                if (!empty($value)) {
-                    if ($entryKey == 'username') {
+function prepareParameterPatch() {
+    parse_str(file_get_contents('php://input'), $_PATCH);
+    $errorResponse = null;
+    if ($_PATCH) {
+        // 1° parametro
+        validateId($_PATCH, $errorResponse);
+        // 2° parametro
+        if (!$errorResponse) {
+            validate($_PATCH, $errorResponse);
+        }
+    }
+    else $errorResponse = ['Error' => 'No parameter found'];
 
-                    }
-                    else if ($entryKey == 'email') {
-                        $security = new security();
-                        $emailNew = $security->validateEmail($value);
-                        $method['email'] = $emailNew;
-                    }
-                    else if ($entryKey == 'password') {
+    if (!$errorResponse) {
+        return true;
+    }
+    else return responseError($errorResponse);
+}
 
-                    }
-                    $keyNotFound = false;
-                    break;
-                }
-                else {
-                    $_arrayResponse = ['Error' => "Parameter: {$key} is empty"];
-                    return responseError($_arrayResponse);
-                }
+// TODO:
+function prepareParameterPOST() {
+}
+
+//TODO:
+function prepareParameterDELETE() {
+}
+
+
+// var_dump($resul); die;
+
+
+function validateId($method, &$errorResponse) {
+    if (isset($method['id'])) {
+        $id = $method['id'];
+        if (!empty($id)) {
+            if (strlen($id) != 36) {
+                $errorResponse = ['Error' => 'Parameter: id is incorrect'];
             }
         }
-        if ($keyNotFound) {
-            $_arrayResponse = ['Error' => "Parameter: {$key} not found"];
-            return responseError($_arrayResponse);
-        }
+        else $errorResponse = ['Error' => 'Parameter: id is empty'];
     }
+    else $errorResponse = ['Error' => "Parameter: id not found"];
+}
 
-    return true;
+function validate($method, &$errorResponse) {
+    if (isset($method['email'])) {
+        $email = $method['email'];
+        if (!empty($email)) { //TODO:
+            // $emailNew = Security::validateEmail($email);
+            // $method['email'] = $emailNew;
+        }
+        else return $errorResponse = ['Error' => 'Parameter: email is empty'];
+    }
+    else return $errorResponse = ['Error' => "Parameter: email not found"];
+
+    if (isset($method['password'])) {
+        $pass = $method['password'];
+        if (!empty($pass)) { //TODO:
+            // validar
+        }
+        else $errorResponse = ['Error' => 'Parameter: password is empty'];
+    }
+    else $errorResponse = ['Error' => "Parameter: password not found"];
 }
 
 function responseError($_arrayResponse) {
     http_response_code(400);
-    $arrayResponse['userAccount'][] = $_arrayResponse;
+    $arrayResponse['users'][] = $_arrayResponse;
 
     return json_encode($arrayResponse);
 }
-?>

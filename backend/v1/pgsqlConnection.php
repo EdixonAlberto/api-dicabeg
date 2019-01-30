@@ -1,12 +1,12 @@
 <?php
-require 'dataBase.php';
 
-class pgsqlConnection {
+require_once 'DataBase.php';
 
-    static function connection() {
-        $dataPostgre = new dataBase('pgsql', 'DATABASE_URL');
+class PgSqlConnection {
+
+    public static function connection() {
+        $dataPostgre = new dataBase('pgsql', 'DATABASE_URL_LOCAL');
 
         return $dataPostgre->connect();
     }
 }
-?>

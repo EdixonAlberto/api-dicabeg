@@ -1,5 +1,3 @@
 <?php
 
-echo 'api-dicabeg v1';
-
-?>
+echo 'v1';

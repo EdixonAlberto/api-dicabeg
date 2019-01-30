@@ -1,6 +1,6 @@
 <?php
 
-class dataBase {
+class DataBase {
     private $engine;
     private $name;
     private $host;
@@ -46,4 +46,3 @@ class dataBase {
         }
     }
 }
-?>

@@ -1,30 +1,34 @@
 <?php
-include '../../pgsqlConnection.php';
-include '../../security.php';
-include 'data.php';
 
-$data = new data();
+require_once '../../PgSqlConnection.php';
+include '../../security.php';
+require_once 'Data.php';
+
 $security = new security();
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case 'GET':
         $parameterValidate = prepareParameterGet();
-
         if ($parameterValidate === true) {
             $id = $_GET['id'];
             if ($id == 'alls') {
-                $result = $data->getDataAlls();
+                $result = Data::getDataAlls();
             }
-            else $result = $data->getDataById($id);
+            else $result = Data::getDataById($id);
         }
         else {
             echo $parameterValidate;
             break;
         }
-
         echo $result;
     break;
+
+
+
+
+
+
 
     case 'PATCH':
         $arrayValuesValidated = preparedataToUpdate($arraySet);

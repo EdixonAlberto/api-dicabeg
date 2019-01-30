@@ -1,9 +1,0 @@
-[submodule "frontend/Decabeg"]
-	path = frontend/Decabeg
-	url = https://github.com/RomuloDevelop/Decabeg.git
-[submodule "frontend/--force"]
-	path = frontend/--force
-	url = https://github.com/RomuloDevelop/Decabeg.git
-[submodule "frontend/DecabegApp"]
-	path = frontend/DecabegApp
-	url = https://github.com/RomuloDevelop/Decabeg.git

@@ -1,21 +1,21 @@
 <?php
 
-class querysData extends pgsqlConnection {
+class DataQuerys extends PgSqlConnection {
 
-    function getAll() {
+    public static function getAlls() {
         $sql = "SELECT * FROM users_data";
 
-        $query = $this->connection()->prepare($sql);
+        $query = self::connection()->prepare($sql);
         $query->execute();
 
         return $query;
     }
 
-    function getBy($id) {
+    public static function getById($id) {
         $sql = "SELECT * FROM users_data
-                WHERE data_id = ?";
+                WHERE user_id = ?";
 
-        $query =$this->connection()->prepare($sql);
+        $query =self::connection()->prepare($sql);
         $query->execute([
             $id
         ]);
@@ -23,11 +23,11 @@ class querysData extends pgsqlConnection {
         return $query;
     }
 
-    function insert($arraySet) {
-        $sql = "INSERT INTO users_data (data_id, names, lastnames, age, image, phone, points, referrals)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public static function insert($arraySet) {
+        $sql = "INSERT INTO users_data (user_id, username, names, lastnames, age, image, phone, points, movile_data, update_date)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        $query = $this->connection()->prepare($sql);
+        $query = self::connection()->prepare($sql);
         $query->execute([
                 $arraySet[0],
                 $arraySet[1],
@@ -36,7 +36,9 @@ class querysData extends pgsqlConnection {
                 $arraySet[4],
                 $arraySet[5],
                 $arraySet[6],
-                $arraySet[7]
+                $arraySet[7],
+                $arraySet[8],
+                $arraySet[9]
             ]);
 
         return $query;
@@ -62,6 +64,8 @@ class querysData extends pgsqlConnection {
         return $query;
     }
 
+
+    // no deberia existir este metodo ?
     function delete($id) {
         $sql = "DELETE FROM users_data
                 WHERE data_id = ?";
@@ -74,4 +78,3 @@ class querysData extends pgsqlConnection {
         return $query;
     }
 }
-?>

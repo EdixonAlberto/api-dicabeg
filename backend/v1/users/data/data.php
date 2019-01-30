@@ -1,27 +1,28 @@
 <?php
-include 'querysData.php';
-include '../users.php';
 
+require_once '../../GeneralQuerys.php';
+require_once 'DataQuerys.php';
 
-class data extends querysData {
-    private $users;
+class Data extends DataQuerys {
 
-    function __construct() {
-        $this->users = new users();
-    }
-    function getDataAlls() {
-        $query = $this->getAll();
-        $arrayResponse = $this->users->getUsersAlls($query);
+    public static function getDataAlls() {
+        $query = self::getAlls();
+        $arrayResponse = GeneralQuerys::getAlls($query);
 
-        return $this->response($arrayResponse);
+        return self::response($arrayResponse);
     }
 
-    function getdataById($id) {
-        $query = $this->getBy($id);
-        $arrayResponse = $this->users->getUsersById($query);
+    function getDataById($id) {
+        $query = self::getById($id);
+        $arrayResponse = GeneralQuerys::getById($query);
 
-        return $this->response($arrayResponse);
+        return self::response($arrayResponse);
     }
+
+
+
+
+
 
     function updatedataById($arraydataNew) {
         $arraydataOld = $this->getdataById($arraydataNew[0]);
@@ -51,9 +52,8 @@ class data extends querysData {
     // }
 
     function response($_arrayResponse) {
-        $arrayResponse['userData'] = $_arrayResponse;
+        $arrayResponse['usersData'] = $_arrayResponse;
 
         return json_encode($arrayResponse);
     }
 }
-?>
