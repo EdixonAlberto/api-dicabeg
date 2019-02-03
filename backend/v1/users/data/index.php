@@ -1,143 +1,38 @@
 <?php
 
-require_once '../../PgSqlConnection.php';
-include '../../security.php';
+require_once '../../tools/db/PgSqlConnection.php';
+require_once '../../tools/Validations.php';
 require_once 'Data.php';
 
-$security = new security();
 $method = $_SERVER['REQUEST_METHOD'];
+parse_str(file_get_contents('php://input'), $_REQUEST['parameters']);
 
-switch ($method) {
-    case 'GET':
-        $parameterValidate = prepareParameterGet();
-        if ($parameterValidate === true) {
-            $id = $_GET['id'];
-            if ($id == 'alls') {
-                $result = Data::getDataAlls();
-            }
-            else $result = Data::getDataById($id);
-        }
-        else {
-            echo $parameterValidate;
+try {
+    switch ($method) {
+        case 'GET':
+            Validations::id();
+            $result = ($_REQUEST['id'] == 'alls') ?
+                Data::getDataAlls() :
+                Data::getDataById();
+            http_response_ok($result);
             break;
-        }
-        echo $result;
-    break;
 
-
-
-
-
-
-
-    case 'PATCH':
-        $arrayValuesValidated = preparedataToUpdate($arraySet);
-        $correctOperation = $data->updatedataById($arrayValuesValidated);
-
-        if ($correctOperation) {
-            $response = $responseRest->prepareResponse($arraySet, $arrayValuesValidated);
-        }
-
-        http_response_code(200);
-        echo $response;
-    break;
-
-    default:
-
+        case 'PATCH':
+            Validations::id();
+            Validations::parameters('data');
+            $result = Data::updateData();
+            http_response_ok($result);
+            break;
+    }
+} catch (Exception $error) {
+    $arrayResponse['usersData'][] = ['Error' => $error->getMessage()];
+    http_response_code($error->getCode());
+    echo json_encode($arrayResponse);
 }
 
-function prepareParameterGet() {
-    foreach ($_GET as $key => $value) {
-        if ($key === 'id') {
-            if (!empty($value)) {
-                return true;
-            }
-            else $_arrayResponse = ['Error' => "Parameter: {$key} is empty"];
-        }
-        else $_arrayResponse = ['Error' => "Parameter: {$key} not valid"];
-
-        return responseError($_arrayResponse);
-    }
+function http_response_ok($response)
+{
+    http_response_code(200);
+    $arrayResponse['usersData'] = $response;
+    echo json_encode($arrayResponse);
 }
-
-function preparedataToUpdate(&$arrayValuesValidated) {
-    parse_str(file_get_contents('php://input'), $_PATCH);
-    include '../../arraySet.php';
-
-    foreach ($arraySet as $defaultKey) {
-
-        $keyFound = false;
-        foreach ($_PATCH as $entryKey => $value) {
-            if ($defaultKey === $entryKey) {
-
-                if (empty($value)) {
-                    $arrayValuesValidated[] = null;
-                }
-                else {
-                    valueValidate($entryKey);
-
-                }
-                $keyFound = true;
-                break;
-            }
-        }
-
-        if (!$keyFound) {
-            $arrayValuesValidated[] = null;
-        }
-    }
-
-    var_dump($arrayValuesValidated);
-    die();
-}
-
-function valueValidate($key) {
-    if ($entryKey === 'phone') {
-        $arrayValuesValidated[] = validatePhone($value);
-    }
-    else {
-    }
-}
-
-function createData(&$response) {
-
-}
-
-function getData(&$response) {
-    $id = $_GET['id'];
-    $user = new data();
-
-    if ($id == 'alls') {
-        $response = $user->getdataAlls();
-    }
-    else {
-        $response = $user->getdataById($id);
-    }
-}
-
-function updateData(&$response) {
-    parse_str(file_get_contents('php://input'), $_PATCH);
-    foreach ($_PATCH as $value) {
-        //if (is)
-
-    }
-    $id = $_PATCH['id'];
-    $names = $_PATCH['names'];
-    // $lastnames = $_PATCH['lastnames'];
-    // $age = $_PATCH['age'];
-    // $image = $_PATCH['image'];
-    // $phone = $_PATCH['phone'];
-    // $points = $_PATCH['points'];
-    // $referrals = $_PATCH['referrals'];
-
-    $query = new querysData();
-    $query->update($id , $names, $lastnames, $age, $image, $phone, $points, $referrals);
-
-    if (is_null($query->errorInfo()[1])) {
-        $response = true;
-    }
-    else {
-        echo ($query->errorInfo());
-    }
-}
-?>

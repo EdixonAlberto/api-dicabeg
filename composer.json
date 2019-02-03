@@ -1,5 +1,17 @@
 {
+    "name": "api-dicabeg",
+    "description": "API for app movie",
+    "license": "GNU",
+    "type": "api",
+    "authors": [
+        {
+            "name": "Edixon Alberto",
+            "email": "edixonalbertto@gmail.com",
+            "homepage": "http://linkedin/in/edixonalberto.com"
+        }
+    ],
     "require": {
         "php": "~7.2.0"
-    }
+    },
+    "autoload": {}
 }

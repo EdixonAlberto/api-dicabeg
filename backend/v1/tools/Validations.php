@@ -1,0 +1,106 @@
+<?php
+
+require_once 'Security.php';
+
+class Validations
+{
+    public static function id()
+    {
+        $id = $_REQUEST['id'];
+        if (strlen($id) == 36 or $id == 'alls') {
+            return;
+        } else throw new Exception("id incorrect", 400);
+    }
+
+    public static function parameters($origin)
+    {
+        return;
+        switch ($origin) {
+            case 'USERS':
+                if ($_REQUEST) {
+                    self::parametersUsers();
+                } else throw new Exception('No parameter found');
+                break;
+
+            case 'DATA':
+                if ($_REQUEST) {
+                    self::parametersData();
+                } else throw new Exception('No parameter found');
+                break;
+            case 'REFERRALS':
+
+                break;
+        }
+    }
+
+    private function parametersUsers()
+    {
+        if (isset($_REQUEST['email'])) {
+            $email = $_REQUEST['email'];
+            if (!empty($email)) { // TODO: validacion del dato
+            } else throw new Exception('Parameter: email is empty');
+        } else throw new Exception("Parameter: email not found");
+        if (isset($_REQUEST['password'])) {
+            $pass = $_REQUEST['password'];
+            if (!empty($pass)) { // TODO: validar y encriptar
+            } else throw new Exception('Parameter: password is empty');
+        } else throw new Exception("Parameter: password not found");
+    }
+
+    private function parametersData()
+    {
+        $arraySet = [
+            'username',
+            'names',
+            'lastname',
+            'age',
+            'image',
+            'phone',
+            'points',
+            'movile_data',
+        ];
+        foreach ($arraySet as $defaultKey) {
+            $keyFound = false;
+            foreach ($_REQUEST as $entryKey => $value) {
+                if ($defaultKey === $entryKey) {
+                    if (empty($value)) {
+                        $_REQUEST[] = null;
+                    } else {
+                        valueValidate($entryKey);
+
+                    }
+                    $keyFound = true;
+                    break;
+                }
+            }
+            if (!$keyFound) {
+                $arrayValuesValidated[] = null;
+            }
+        }
+
+        function updateData(&$response)
+        {
+            parse_str(file_get_contents('php://input'), $_PATCH);
+            foreach ($_PATCH as $value) {
+            }
+            $id = $_PATCH['id'];
+            $names = $_PATCH['names'];
+            // $lastnames = $_PATCH['lastnames'];
+            // $age = $_PATCH['age'];
+            // $image = $_PATCH['image'];
+            // $phone = $_PATCH['phone'];
+            // $points = $_PATCH['points'];
+            // $referrals = $_PATCH['referrals'];
+
+            $query = new querysData();
+            $query->update($id, $names, $lastnames, $age, $image, $phone, $points, $referrals);
+
+            if (is_null($query->errorInfo()[1])) {
+                $response = true;
+            } else {
+                echo ($query->errorInfo());
+            }
+        }
+
+    }
+}
