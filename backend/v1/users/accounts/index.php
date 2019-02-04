@@ -7,8 +7,8 @@ require_once 'Accounts.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
-// var_dump($method, $_REQUEST);
-// die;
+var_dump($_SERVER['REQUEST_URI'], $method, $_REQUEST);
+die;
 
 try {
     if ($method != 'PUT' and $_GET['id'] != 'alls') Sessions::verifySession();
