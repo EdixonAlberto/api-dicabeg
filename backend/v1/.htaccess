@@ -1,0 +1,15 @@
+RewriteEngine On
+RewriteBase /v1
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteCond %{SCRIPT_FILENAME} !-f
+
+# Friendly URL
+
+# ruta1/id1/ruta2/id2
+RewriteRule ^([a-z]+)/([A-Z0-9-]*)/([a-z]+)/([A-Z0-9-]*)/$ $1/$3/index.php?id1=$2&id2=$4 [L]
+
+# ruta1/id/ruta2
+RewriteRule ^([a-z]+)/([A-Z0-9-]*)/([a-z]+)/$ $1/$3/index.php?id=$2 [L]
+
+# ruta1/ruta2
+RewriteRule ^([a-z]+)/([a-z]+)/$ $1/$2/index.php?id=alls [L]
