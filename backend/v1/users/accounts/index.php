@@ -7,7 +7,7 @@ require_once 'Accounts.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
-// var_dump($_SERVER['REQUEST_URI'], $method, $_REQUEST, $_GET);
+var_dump($_SERVER['REQUEST_URI']);
 // die;
 
 try {
