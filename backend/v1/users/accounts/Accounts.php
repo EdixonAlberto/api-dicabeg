@@ -78,7 +78,7 @@ class Accounts extends AccountsQuerys
         return $arrayResponse;
     }
 
-    private function interpretResult($result)
+    private static function interpretResult($result)
     {
         $error = $result->errorInfo();
         $errorExist = !is_null($error[1]);
@@ -87,7 +87,7 @@ class Accounts extends AccountsQuerys
         }
     }
 
-    private function checkout($field)
+    private static function checkout($field)
     {
         if ($field == 'id') {
             $result = self::selectById($_GET['id']);
@@ -98,7 +98,7 @@ class Accounts extends AccountsQuerys
         return $rows ? true : false;
     }
 
-    private function error()
+    private static function error()
     {
         throw new Exception('User does not exist', 400);
     }

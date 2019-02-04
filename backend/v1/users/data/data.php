@@ -64,7 +64,7 @@ class Data extends DataQuerys
 
     // TODO: Estudiar si es necesario la fuction deleteData
 
-    private function interpretResult($result)
+    private static function interpretResult($result)
     {
         $error = $result->errorInfo();
         $errorExist = !is_null($error[1]);
