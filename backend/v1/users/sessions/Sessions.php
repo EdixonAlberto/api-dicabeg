@@ -15,7 +15,7 @@ class Sessions extends SessionsQuerys
 
     public static function getSessionsById()
     {
-        $query = self::selectById($_GET['id']);
+        $query = self::selectById();
         $result = GeneralMethods::processById($query);
         if ($result) {
             return $result;

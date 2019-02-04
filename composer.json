@@ -1,11 +1,11 @@
 {
-    "name": "api-dicabeg",
+    "name": "api_dicabeg/api_dicabeg",
     "description": "API for app movie",
-    "license": "GNU",
-    "type": "api",
+    "license": "GPL-3.0-only",
+    "type": "API",
     "authors": [
         {
-            "name": "Edixon Alberto",
+            "name": "Edixon_Alberto",
             "email": "edixonalbertto@gmail.com",
             "homepage": "http://linkedin/in/edixonalberto.com"
         }

@@ -11,7 +11,7 @@ class GeneralMethods
                 $arrayIndexedByColumns = $query->fetch(PDO::FETCH_ASSOC);
                 $arrayResponse[] = $arrayIndexedByColumns;
             }
-        } else return false;//else throw new Exception('There is no data', 400);
+        } else return false;
 
         return $arrayResponse;
     }
@@ -23,7 +23,7 @@ class GeneralMethods
         if ($row) {
             $arrayIndexedByColumns = $query->fetch(PDO::FETCH_ASSOC);
             $arrayResponse[] = $arrayIndexedByColumns;
-        } else return false; //throw new Exception('id not exist', 400);
+        } else return false;
 
         return $arrayResponse;
     }

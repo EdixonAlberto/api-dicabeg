@@ -37,11 +37,11 @@ class Accounts extends AccountsQuerys
             self::interpretResult($result);
             Data::insertData(); // TODO: Usar la clase abstracta o la clase query. Ver esto con mas detalle en la integracion de (accounts-data) despues
 
-            $arrayResponse = [
+            $arrayResponse[] = [
                 'Successful' => 'Created Users',
                 'id' => $_GET['id']
             ];
-        } else self::error();
+        } else throw new Exception('User exist', 400);
 
         return $arrayResponse;
     }

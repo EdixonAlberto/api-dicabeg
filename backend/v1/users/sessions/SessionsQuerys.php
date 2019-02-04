@@ -12,7 +12,7 @@ class SessionsQuerys extends PgSqlConnection
         return $query;
     }
 
-    public static function selectById($value)
+    public static function selectById()
     {
         // TODO: Pensar mejor si esta consulta se reduce solo a select id
         $sql = "SELECT * FROM sessions

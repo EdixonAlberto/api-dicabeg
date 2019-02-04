@@ -11,7 +11,7 @@ parse_str(file_get_contents('php://input'), $_REQUEST);
 // die;
 
 try {
-    Sessions::verifySession();
+    if ($_GET['id'] != 'alls') Sessions::verifySession();
 
     switch ($method) {
         case 'GET':
