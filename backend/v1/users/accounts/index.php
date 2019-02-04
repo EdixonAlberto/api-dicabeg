@@ -2,59 +2,49 @@
 
 require_once '../../tools/db/PgSqlConnection.php';
 require_once '../../tools/Validations.php';
+require_once '../sessions/Sessions.php';
 require_once 'Accounts.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
-
+parse_str(file_get_contents('php://input'), $_REQUEST);
 // var_dump($method, $_REQUEST);
 // die;
 
 try {
+    Sessions::verifySession();
+
     switch ($method) {
         case 'GET':
             Validations::id();
-            $result = ($_GET['id'] == 'alls') ?
+            $response = ($_GET['id'] == 'alls') ?
                 Accounts::getAccountsAlls() :
                 Accounts::getAccountsById();
-            http_response_ok($result);
+            http_response_ok($response);
             break;
 
         case 'PUT':
-            parse_str(file_get_contents('php://input'), $_REQUEST);
             Validations::parameters('accounts');
-            $result = Accounts::insertAccount();
-            http_response_ok($result);
+            $response = Accounts::insertAccount();
+            http_response_ok($response);
             break;
 
         case 'PATCH':
             Validations::id();
-            parse_str(file_get_contents('php://input'), $_REQUEST);
             Validations::parameters('accounts');
-            $result = Accounts::updateAccount();
-            http_response_ok($result);
+            $response = Accounts::updateAccount();
+            http_response_ok($response);
             break;
 
         case 'DELETE':
             Validations::id();
-            parse_str(file_get_contents('php://input'), $_REQUEST);
             Validations::parameters('accounts');
-            $result = Accounts::deleteAccount();
-            http_response_ok($result);
+            $response = Accounts::deleteAccount();
+            http_response_ok($response);
             break;
-        // case 'POST':
-        //     $parameterValidate = prepareParameterPOST();
-        //     if ($parameterValidate === true) {
-        //         $result = Accounts::signIn($_POST);
-        //     } else {
-        //         echo $parameterValidate;
-        //         break;
-        //     }
-        //     echo $result;
-        //     break;
     }
 } catch (Exception $error) {
     $arrayResponse['usersAccounts'][] = ['Error' => $error->getMessage()];
-    http_response_code($error->getCode());
+    http_response_code($error->getCode()); //TODO: Revisar como funciona este metodo;
     echo json_encode($arrayResponse);
 }
 

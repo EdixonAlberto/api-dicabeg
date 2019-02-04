@@ -6,7 +6,7 @@ class Validations
 {
     public static function id()
     {
-        $id = $_REQUEST['id'];
+        $id = $_GET['id'];
         if (strlen($id) == 36 or $id == 'alls') {
             return;
         } else throw new Exception("id incorrect", 400);
@@ -14,7 +14,7 @@ class Validations
 
     public static function parameters($origin)
     {
-        return;
+        return; // TODO: Falta hacer toda la verificacion de parametros segun el vervo http usado
         switch ($origin) {
             case 'USERS':
                 if ($_REQUEST) {

@@ -14,6 +14,7 @@ class AccountsQuerys extends PgSqlConnection
 
     public static function selectById($value, $key = 'id')
     {
+        // TODO: Pensar mejor si esta consulta se reduce solo a select id
         switch ($key) {
             case 'id':
                 $sql = "SELECT * FROM users_accounts
@@ -23,11 +24,6 @@ class AccountsQuerys extends PgSqlConnection
             case 'email':
                 $sql = "SELECT * FROM users_accounts
                         WHERE email = ?";
-                break;
-
-            case 'password':
-                $sql = "SELECT * FROM users_accounts
-                        WHERE password = ?";
                 break;
         }
 
@@ -41,39 +37,37 @@ class AccountsQuerys extends PgSqlConnection
 
     public static function insert($arraySet)
     {
-        $sql = "INSERT INTO users_accounts (user_id, email, password, create_date, update_date)
-                VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO users_accounts (user_id, email, password)
+                VALUES (?, ?, ?)";
 
         $query = self::connection()->prepare($sql);
         $query->execute([
             $_GET['id'],
             $arraySet[0],
-            $arraySet[1],
-            $arraySet[2],
-            $arraySet[3]
+            $arraySet[1]
         ]);
 
         return $query;
     }
 
-    public static function update($column, $arraySet)
+    public static function update($key, $value)
     {
-        if ($column == 'email') {
+        // TODO: Como usar una sola sentencia sql con el uso de variables
+        if ($key == 'email') {
             $sql = "UPDATE users_accounts
-                    SET email = ?, update_date = ?
+                    SET email = ?
                     WHERE user_id = ?";
 
-        } else if ($column == 'password') {
+        } else {
             $sql = "UPDATE users_accounts
-                    SET password = ?, update_date = ?
+                    SET password = ?
                     WHERE user_id = ?";
         }
 
         $query = self::connection()->prepare($sql);
         $query->execute([
-            $arraySet[0],
-            $arraySet[1],
-            $_GET['id'],
+            $value,
+            $_GET['id']
         ]);
 
         return $query;

@@ -2,35 +2,38 @@
 
 require_once '../../tools/db/PgSqlConnection.php';
 require_once '../../tools/Validations.php';
-require_once '../sessions/Sessions.php';
-require_once 'Data.php';
+require_once 'Sessions.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
-// var_dump($method, $_REQUEST);
+// var_dump($method, $_GET, $_REQUEST);
 // die;
 
 try {
-    Sessions::verifySession();
-
     switch ($method) {
         case 'GET':
             Validations::id();
             $response = ($_GET['id'] == 'alls') ?
-                Data::getDataAlls() :
-                Data::getDataById();
+                Sessions::getSessionsAlls() :
+                Sessions::getSessionsById();
             http_response_ok($response);
             break;
 
-        case 'PATCH':
-            Validations::id();
-            Validations::parameters('data');
-            $response = Data::updateData();
+        case 'PUT':
+            // Validations::parameters('sessions');
+            $response = Sessions::createSession();
+            http_response_ok($response);
+            break;
+
+        case 'DELETE':
+            // Validations::parameters('sessions');
+            $response = Sessions::removeSession();
             http_response_ok($response);
             break;
     }
+
 } catch (Exception $error) {
-    $arrayResponse['usersData'][] = ['Error' => $error->getMessage()];
+    $arrayResponse['sessions'][] = ['Error' => $error->getMessage()];
     http_response_code($error->getCode());
     echo json_encode($arrayResponse);
 }
@@ -38,6 +41,6 @@ try {
 function http_response_ok($response)
 {
     http_response_code(200);
-    $arrayResponse['usersData'] = $response;
+    $arrayResponse['sessions'] = $response;
     echo json_encode($arrayResponse);
 }

@@ -19,7 +19,7 @@ class DataQuerys extends PgSqlConnection
 
         $query = self::connection()->prepare($sql);
         $query->execute([
-            $_REQUEST['id']
+            $_GET['id']
         ]);
 
         return $query;
@@ -27,12 +27,12 @@ class DataQuerys extends PgSqlConnection
 
     public static function insert($arraySet)
     {
-        $sql = "INSERT INTO users_data (user_id, username, names, lastnames, age, image, phone, points, movile_data, update_date)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO users_data (user_id, username, names, lastnames, age, image, phone, points, movile_data)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $query = self::connection()->prepare($sql);
         $query->execute([
-            $_REQUEST['id'],
+            $_GET['id'],
             $arraySet[0],
             $arraySet[1],
             $arraySet[2],
@@ -40,8 +40,7 @@ class DataQuerys extends PgSqlConnection
             $arraySet[4],
             $arraySet[5],
             $arraySet[6],
-            $arraySet[7],
-            $arraySet[8]
+            $arraySet[7]
         ]);
 
         return $query;
@@ -49,9 +48,9 @@ class DataQuerys extends PgSqlConnection
 
     public static function update($arraySet)
     {
-        $user_id = $_REQUEST['id'];
+        $user_id = $_GET['id'];
         $sql = "UPDATE users_data
-                SET username = ?, names = ?, lastnames = ?, age = ?, image = ?, phone = ?, points = ?, movile_data = ?, update_date = ?)
+                SET username = ?, names = ?, lastnames = ?, age = ?, image = ?, phone = ?, points = ?, movile_data = ?
                 WHERE user_id = ?";
 
         $query = self::connection()->prepare($sql);
@@ -64,8 +63,7 @@ class DataQuerys extends PgSqlConnection
             $arraySet[5],
             $arraySet[6],
             $arraySet[7],
-            $arraySet[8],
-            $_REQUEST['id']
+            $_GET['id']
         ]);
 
         return $query;
@@ -78,7 +76,7 @@ class DataQuerys extends PgSqlConnection
 
         $query = self::connection()->prepare($sql);
         $query->execute([
-            $_REQUEST['id']
+            $_GET['id']
         ]);
 
         return $query;

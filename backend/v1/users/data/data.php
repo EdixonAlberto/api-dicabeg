@@ -8,13 +8,19 @@ class Data extends DataQuerys
     public static function getDataAlls()
     {
         $query = self::selectAlls();
-        return GeneralMethods::processAlls($query);
+        $result = GeneralMethods::processAlls($query);
+        if ($result) {
+            return $result;
+        } else throw new Exception('There are no users', 400);
     }
 
     public static function getDataById()
     {
-        $query = self::selectById();
-        return GeneralMethods::processById($query);
+        $query = self::selectById($_GET['id']);
+        $result = GeneralMethods::processById($query);
+        if ($result) {
+            return $result;
+        } else throw new Exception('User does not exist', 400);
     }
 
     public static function insertData()
@@ -22,39 +28,41 @@ class Data extends DataQuerys
         $email = $_REQUEST['email'];
         $lengh = strpos($email, '@');
         $username = substr($email, 0, $lengh);
-        $arraySetDefault[] = $username;
+        $arrayData[] = $username;
 
         for ($i = 0; $i < 7; $i++) {
-            $arraySetDefault[] = null;
+            $arrayData[] = null;
         }
-        $arraySetDefault[] = null; // TODO: $arraySetDefault[] = TimeStamp::timeGet();
 
-        $result = self::insert($arraySetDefault);
+        $result = self::insert($arrayData);
         self::interpretResult($result);
     }
 
     public static function updateData()
     {
-        $dataOld = self::getDataById()[0];
-        $dataNew = $_REQUEST['parameters'];
-
-        foreach ($dataNew as $key => $value) {
-            foreach ($dataOld as $_key => $_value) {
+        $oldData = self::getDataById()[0];
+        $newData = $_REQUEST;
+        // TODO: Revisar esta parte del codigo para optimisar
+        foreach ($oldData as $_key => $_value) {
+            $_keyFound = false;
+            foreach ($newData as $key => $value) {
                 if ($_key == $key) {
                     $arrayData[] = $value;
-                    continue;
+                    $_keyFound = true;
                 }
             }
-            $arrayData[] = $_value;
+            if (!$_keyFound and $_key != 'user_id') {
+                $arrayData[] = $_value;
+            }
         }
-        var_dump($arrayData);
-        die;
         $result = DataQuerys::update($arrayData);
         self::interpretResult($result);
-        return 'Updated User Data';
+        $arrayResponse[] = ['Successful' => 'Updated user data'];
+
+        return $arrayResponse;
     }
 
-    // deleteData no esta por
+    // TODO: Estudiar si es necesario la fuction deleteData
 
     private function interpretResult($result)
     {

@@ -10,6 +10,7 @@ EndPoint
     + v1/users/id/data/
     + v1/users/id/referrals/
     + v1/users/id/history/
+        + token
 
     **videos/**
     + v1/videos/
@@ -29,15 +30,21 @@ EndPoint
     + v1/users/id/referrals/
         + user_id del referido
 
+    **sessions/**
+    + v1/users/sessions/
+        + email
+        + password
+
     **videos/**
     + v1/users/id/history/
-        + video_id
-    +
 ---
 
 + PATCH: **Actualizar**
+
+    **users/**
     + v1/users/id/accounts/
-        + email or password
+        + email
+        + password
     + v1/users/id/data/
         + names
         + lastnames
@@ -49,8 +56,13 @@ EndPoint
 ---
 
 + DELETE: **Eliminar**
-    + v1/users/id/
+
+    **users/**
+    + v1/users/id/accounts
     + v1/users/id/referrals/
     + v1/users/id/referrals/id/
     + v1/users/id/history/
     + v1/users/id/history/id/
+
+    **sessions/**
+    + v1/users/id/sessions/

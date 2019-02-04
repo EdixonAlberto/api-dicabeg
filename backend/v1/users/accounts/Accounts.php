@@ -10,63 +10,61 @@ class Accounts extends AccountsQuerys
     public static function getAccountsAlls()
     {
         $query = self::selectAlls();
-        return GeneralMethods::processAlls($query);
+        $result = GeneralMethods::processAlls($query);
+        if ($result) {
+            return $result;
+        } else self::error();
     }
 
     public static function getAccountsById()
     {
         $query = self::selectById($_GET['id']);
-        return GeneralMethods::processById($query);
+        $result = GeneralMethods::processById($query);
+        if ($result) {
+            return $result;
+        } else self::error();
     }
 
     public static function insertAccount()
     {
-        $existingUser = self::checkout();
+        $existingUser = self::checkout('email');
         if (!$existingUser) {
             $_GET['id'] = Gui::generate();
-            foreach ($_REQUEST as $value) {
-                $arrayAccount[] = $value;
-            }
-            $arrayAccount[] = null;
-            $arrayAccount[] = null;
-            // TODO: $arrayAccount[] = TimeStamp::timeGet();c
+            $arrayAccount[] = $_REQUEST['email'];
+            $arrayAccount[] = Security::encryptPassword();
 
             $result = self::insert($arrayAccount);
             self::interpretResult($result);
-            Data::insertData();
+            Data::insertData(); // TODO: Usar la clase abstracta o la clase query. Ver esto con mas detalle en la integracion de (accounts-data) despues
 
             $arrayResponse = [
                 'Successful' => 'Created Users',
                 'id' => $_GET['id']
             ];
-        } else throw new Exception('User already exists', 400);
+        } else self::error();
 
         return $arrayResponse;
     }
 
     public static function updateAccount()
     {
-        $existingUser = self::checkout();
+        $existingUser = self::checkout('id');
         if ($existingUser) {
             foreach ($_REQUEST as $key => $value) {
-                $column = $key;
-                $arrayAccount[] = $value;
+                $value = ($key == 'password') ? Security::encryptPassword() : $value;
             }
-            $arrayAccount[] = null;
-            // TODO: $arrayAccount[] = TimeStamp::timeGet();
-
-            $result = self::update($column, $arrayAccount);
+            $result = self::update($key, $value);
             self::interpretResult($result);
 
-            $arrayResponse = ['Successful' => 'Updated user account'];
-        } else throw new Exception('User not exist', 400);
+            $arrayResponse[] = ['Successful' => 'Updated user account'];
+        } else self::error();
 
         return $arrayResponse;
     }
 
     public static function deleteAccount()
     {
-        $existingUser = self::checkout();
+        $existingUser = self::checkout('id');
         if ($existingUser) {
             $result = DataQuerys::delete();
             self::interpretResult($result);
@@ -74,8 +72,8 @@ class Accounts extends AccountsQuerys
             $result = self::delete();
             self::interpretResult($result);
 
-            $arrayResponse = ['Successful' => 'Deleted user account'];
-        } else throw new Exception('User does not exist', 400);
+            $arrayResponse[] = ['Successful' => 'Deleted user account'];
+        } else self::error();
 
         return $arrayResponse;
     }
@@ -89,10 +87,19 @@ class Accounts extends AccountsQuerys
         }
     }
 
-    private function checkout()
+    private function checkout($field)
     {
-        $result = self::selectById($_GET['id']);
+        if ($field == 'id') {
+            $result = self::selectById($_GET['id']);
+        } else if ($field == 'email') {
+            $result = self::selectById($_REQUEST['email'], 'email');
+        }
         $rows = $result->rowCount();
         return $rows ? true : false;
+    }
+
+    private function error()
+    {
+        throw new Exception('User does not exist', 400);
     }
 }
