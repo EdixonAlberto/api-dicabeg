@@ -60,7 +60,7 @@ class Sessions extends SessionsQuerys
         return $arrayResponse;
     }
 
-    private function validatePass()
+    private static function validatePass()
     {
         $email = $_REQUEST['email'];
         // TODO: Revisar si se puede consultar por id, para usar get, en ves de select
@@ -79,7 +79,7 @@ class Sessions extends SessionsQuerys
         } else throw new Exception("Email not exist", 400);
     }
 
-    private function interpretResult($result)
+    private static function interpretResult($result)
     {
         $error = $result->errorInfo();
         $errorExist = !is_null($error[1]);
@@ -88,7 +88,7 @@ class Sessions extends SessionsQuerys
         }
     }
 
-    private function checkout($field)
+    private static function checkout($field)
     {
         if ($field == 'id') {
             $result = self::selectById($_GET['id']);
