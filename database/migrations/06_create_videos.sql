@@ -4,7 +4,8 @@ CREATE TABLE "videos" (
   "name" varchar(20),
   "link" varchar,
   "answers" json,
+  "visualizations " integer,
   "create_date" timestamp,
-  PRIMARY KEY (video_id),
-  CONSTRAINT videos_provider_id_FK FOREIGN KEY(provider_id) REFERENCES providers(provider_id)
+  
+  PRIMARY KEY ("video_id")
 );

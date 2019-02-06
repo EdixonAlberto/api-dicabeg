@@ -11,6 +11,5 @@ class Videos extends VideosQuerys
         if ($result) {
             return $result;
         } else throw new Exception('Videos does not exist', 400);
-
     }
 }
