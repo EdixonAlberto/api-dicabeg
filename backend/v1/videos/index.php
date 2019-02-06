@@ -1,8 +1,10 @@
 <?php
 
 require_once '../tools/db/PgSqlConnection.php';
-require_once '../sessions/Sessions.php';
 require_once '../tools/Validations.php';
+require_once '../tools/Security.php';
+require_once '../tools/GeneralMethods.php';
+require_once '../sessions/Sessions.php';
 require_once 'Videos.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
