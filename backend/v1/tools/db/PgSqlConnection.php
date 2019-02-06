@@ -6,7 +6,11 @@ class PgSqlConnection
 {
     public static function connection()
     {
-        $dataPostgre = new dataBase('pgsql', 'DATABASE_URL');
-        return $dataPostgre->connect();
+        try {
+            $dataPostgre = new DataBase('pgsql', 'DATABASE_URL');
+            return $dataPostgre->connect();
+        } catch (Exception $th) {
+            echo $th;
+        }
     }
 }

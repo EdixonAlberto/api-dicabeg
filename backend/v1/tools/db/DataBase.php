@@ -24,7 +24,7 @@ class DataBase
         }
     }
 
-    function decomposeURL($url)
+    private function decomposeURL($url)
     {
         $urlCorrect = getenv($url);
 
@@ -35,16 +35,19 @@ class DataBase
         }
     }
 
-    function connect()
+    public function connect()
     {
         try {
-            $stringConnection = $this->engine . ':dbname=' . $this->name . ';host=' . $this->host;
-            $newConnection = new PDO($stringConnection, $this->user, $this->password);
+            $connection = $this->engine . ':dbname=' . $this->name . ';host=' . $this->host;
+            $newConnection = new PDO($connection, $this->user, $this->password);
             return $newConnection;
-
-        } catch (PDOException $error) {
-            return '[Connection error in the database] ERROR = ' . $error;
+        } catch (Exception $error) {
+            $arrayResponse[] = [
+                'Type' => '[Connection error in the database]',
+                'Error' => $error
+            ];
+            // var_dump($arrayResponse);
         }
-        // TODO: Agregar cod Finally para cerrar conexion!
+        // TODO: Agregar codigo para cerrar conexion!
     }
 }

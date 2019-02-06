@@ -31,7 +31,7 @@ class Security
     public static function generateToken()
     {
         // TODO: Investigar sobre las tecnicas para crear token personalizado fuertes
-        $token = 'SalchiPapa';
+        $token = 'SalchiPapa'; // correo + server date
         return password_hash($token, PASSWORD_DEFAULT);
     }
 }

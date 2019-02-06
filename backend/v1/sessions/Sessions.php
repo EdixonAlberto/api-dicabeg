@@ -1,8 +1,8 @@
  <?php
 
-require_once '../../tools/Security.php';
-require_once '../../tools/GeneralMethods.php';
-require_once '../accounts/AccountsQuerys.php';
+require_once '../tools/Security.php';
+require_once '../tools/GeneralMethods.php';
+require_once '../users/accounts/AccountsQuerys.php';
 require_once 'SessionsQuerys.php';
 
 class Sessions extends SessionsQuerys

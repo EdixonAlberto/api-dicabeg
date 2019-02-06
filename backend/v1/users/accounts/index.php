@@ -2,7 +2,7 @@
 
 require_once '../../tools/db/PgSqlConnection.php';
 require_once '../../tools/Validations.php';
-require_once '../sessions/Sessions.php';
+require_once '../../sessions/Sessions.php';
 require_once 'Accounts.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
