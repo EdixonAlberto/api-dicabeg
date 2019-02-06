@@ -2,4 +2,6 @@
 /vendor
 /developing
 /backend/v1/indexPrueba.php
+/backend/v1/test
 .htpasswd
+backend/v1/index.php

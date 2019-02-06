@@ -26,6 +26,7 @@ try {
             break;
 
         case 'DELETE':
+            // Sessions::verifySession(); TODO: Para usar esto aqui debo solo verificar el token
             // Validations::parameters('sessions');
             $response = Sessions::removeSession();
             http_response_ok($response);

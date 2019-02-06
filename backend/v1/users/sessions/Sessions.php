@@ -33,7 +33,8 @@ class Sessions extends SessionsQuerys
         $arrayResponse[] = [
             'Successful' => 'Verified User',
             'id' => $_GET['id'],
-            'Token' => $token
+            'API-Token' => $token,
+            'UserData-Path' => 'https://' . $_SERVER['SERVER_NAME'] . '/v1/users/' . $_GET['id'] . '/data/'
         ];
 
         return $arrayResponse;
@@ -42,10 +43,7 @@ class Sessions extends SessionsQuerys
     public static function verifySession()
     {
         $session = self::getSessionsById()[0];
-        $userToken = array_pop($_REQUEST);
-        if ($userToken === $session['token']) {
-            return;
-        } else throw new Exception('Token incorrect', 400);
+        self::verifyToken($session);
     }
 
     public static function removeSession()
@@ -78,6 +76,13 @@ class Sessions extends SessionsQuerys
                 $_GET['id'] = $user['user_id'];
             } else throw new Exception("Passsword inconrrect", 400);
         } else throw new Exception("Email not exist", 400);
+    }
+
+    private static function verifyToken($session)
+    {
+        $clientToken = $_SERVER['HTTP_API_TOKEN'];
+        if ($clientToken === $session['token']) {
+        } else throw new Exception('Token incorrect', 400);
     }
 
     private static function interpretResult($result)
