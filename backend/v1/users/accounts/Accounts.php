@@ -64,6 +64,10 @@ class Accounts extends AccountsQuerys
     {
         $existingUser = self::checkout('id');
         if ($existingUser) {
+
+            $result = SessionsQuerys::delete();
+            self::interpretResult($result);
+
             $result = DataQuerys::delete();
             self::interpretResult($result);
 

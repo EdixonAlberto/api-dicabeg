@@ -30,21 +30,21 @@ try {
             break;
 
         case 'PUT':
-            Validations::parameters('accounts');
+            // Validations::parameters('accounts');
             $response = Accounts::insertAccount();
             http_response_ok($response);
             break;
 
         case 'PATCH':
             Validations::id();
-            Validations::parameters('accounts');
+            // Validations::parameters('accounts');
             $response = Accounts::updateAccount();
             http_response_ok($response);
             break;
 
         case 'DELETE':
             Validations::id();
-            Validations::parameters('accounts');
+            // Validations::parameters('accounts');
             $response = Accounts::deleteAccount();
             http_response_ok($response);
             break;

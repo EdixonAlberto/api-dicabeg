@@ -1,9 +1,12 @@
 <?php
 
+// Tools
 require_once '../tools/db/PgSqlConnection.php';
 require_once '../tools/Validations.php';
 require_once '../tools/Security.php';
 require_once '../tools/GeneralMethods.php';
+
+// Resource
 require_once '../users/accounts/AccountsQuerys.php';
 require_once '../users/data/Data.php';
 require_once 'Sessions.php';
@@ -30,8 +33,7 @@ try {
             break;
 
         case 'DELETE':
-            // Sessions::verifySession(); TODO: Para usar esto aqui debo solo verificar el token
-            // Validations::parameters('sessions');
+            Sessions::verifySession();
             $response = Sessions::removeSession();
             http_response_ok($response);
             break;

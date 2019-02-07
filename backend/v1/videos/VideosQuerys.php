@@ -4,7 +4,7 @@ class VideosQuerys extends PgSqlConnection
 {
     public static function selectAlls()
     {
-        $sql = "SELECT * FROM Videos";
+        $sql = "SELECT * FROM videos";
 
         $query = self::connection()->prepare($sql);
         $query->execute();
@@ -16,7 +16,7 @@ class VideosQuerys extends PgSqlConnection
     {
         switch ($key) {
             case 'id':
-                $sql = "SELECT * FROM Videos
+                $sql = "SELECT * FROM videos
                         WHERE video_id = ?";
                 break;
 
