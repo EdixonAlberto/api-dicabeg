@@ -1,7 +1,11 @@
 <?php
 
+// Tools
 require_once '../../tools/db/PgSqlConnection.php';
 require_once '../../tools/Validations.php';
+require_once '../../tools/GeneralMethods.php';
+
+// Resource
 require_once '../../sessions/Sessions.php';
 require_once 'Data.php';
 

@@ -1,8 +1,5 @@
 <?php
 
-require_once '../../tools/Gui.php';
-require_once '../../tools/GeneralMethods.php';
-require_once '../data/Data.php';
 require_once 'AccountsQuerys.php';
 
 class Accounts extends AccountsQuerys
@@ -38,7 +35,9 @@ class Accounts extends AccountsQuerys
             Data::insertData(); // TODO: Usar la clase abstracta o la clase query. Ver esto con mas detalle en la integracion de (accounts-data) despues
 
             $arrayResponse[] = [
-                'Successful' => 'Created Users'
+                'Successful' => 'Created Users',
+                'Response-Code' => '201',
+                'SignIn-Path' => 'https://' . $_SERVER['SERVER_NAME'] . '/v1/sessions/'
             ];
         } else throw new Exception('User exist', 400);
 

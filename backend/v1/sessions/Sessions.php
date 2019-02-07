@@ -27,10 +27,13 @@ class Sessions extends SessionsQuerys
         $result = self::insert($token);
         self::interpretResult($result);
 
+        $userData = Data::getDataById($_GET['id']);
+
         $arrayResponse[] = [
             'Successful' => 'Verified User',
-            'id' => $_GET['id'],
-            'API-Token' => $token,
+            'Response-Code' => '200',
+            'User-Data' => $userData,
+            'Api-Token' => $token,
             'UserData-Path' => 'https://' . $_SERVER['SERVER_NAME'] . '/v1/users/' . $_GET['id'] . '/data/'
         ];
 
@@ -71,7 +74,16 @@ class Sessions extends SessionsQuerys
 
             if ($verify) {
                 $_GET['id'] = $user['user_id'];
-            } else throw new Exception("Passsword inconrrect", 400);
+            } else {
+                // TODO: Preparar respuesta mas detallada
+                // $arrayFoo['Sessions'][] = [
+                //     'cod error' => '401',
+                //     'description' => 'Passsword inconrrect'
+                // ];
+                // $jsonRes = json_encode($arrayFoo);
+
+                throw new Exception('Passsword inconrrect', 401);
+            }
         } else throw new Exception("Email not exist", 400);
     }
 

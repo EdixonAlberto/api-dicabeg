@@ -1,13 +1,12 @@
 <?php
 
-require_once '../../tools/GeneralMethods.php';
 require_once 'DataQuerys.php';
 
-class Data extends DataQuerys
+class Data
 {
     public static function getDataAlls()
     {
-        $query = self::selectAlls();
+        $query = DataQuerys::selectAlls();
         $result = GeneralMethods::processAlls($query);
         if ($result) {
             return $result;
@@ -16,7 +15,7 @@ class Data extends DataQuerys
 
     public static function getDataById()
     {
-        $query = self::selectById($_GET['id']);
+        $query = DataQuerys::selectById($_GET['id']);
         $result = GeneralMethods::processById($query);
         if ($result) {
             return $result;
@@ -34,7 +33,7 @@ class Data extends DataQuerys
             $arrayData[] = null;
         }
 
-        $result = self::insert($arrayData);
+        $result = DataQuerys::insert($arrayData);
         self::interpretResult($result);
     }
 

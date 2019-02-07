@@ -5,6 +5,7 @@ require_once '../tools/Validations.php';
 require_once '../tools/Security.php';
 require_once '../tools/GeneralMethods.php';
 require_once '../users/accounts/AccountsQuerys.php';
+require_once '../users/data/Data.php';
 require_once 'Sessions.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -22,7 +23,7 @@ try {
             http_response_ok($response);
             break;
 
-        case 'PUT':
+        case 'POST':
             // Validations::parameters('sessions');
             $response = Sessions::createSession();
             http_response_ok($response);
