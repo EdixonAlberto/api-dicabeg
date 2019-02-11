@@ -9,6 +9,7 @@ require_once '../../tools/Security.php';
 
 // Resource
 require_once '../../sessions/Sessions.php';
+require_once '../referrals/ReferralsQuerys.php';
 require_once '../data/Data.php';
 require_once 'Accounts.php';
 

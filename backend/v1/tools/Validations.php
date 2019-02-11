@@ -6,10 +6,13 @@ class Validations
 {
     public static function id()
     {
-        $id = $_GET['id'];
-        if (strlen($id) == 36 or $id == 'alls') {
-            return;
-        } else throw new Exception("id incorrect", 400);
+        foreach ($_GET as $id) {
+            if ($id === 'alls') {
+                return;
+            } elseif (strlen($id) == 36) {
+                continue; //TODO: Validar formato de gui
+            } else throw new Exception("id incorrect", 400);
+        }
     }
 
     public static function parameters($origin)

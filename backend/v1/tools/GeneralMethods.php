@@ -21,8 +21,21 @@ class GeneralMethods
         $row = $query->rowCount();
 
         if ($row) {
-            $arrayIndexedByColumns = $query->fetch(PDO::FETCH_ASSOC);
-            $arrayResponse[] = $arrayIndexedByColumns;
+            $objIndexedByColumns = $query->fetch(PDO::FETCH_OBJ);
+        } else return false;
+
+        return $objIndexedByColumns;
+    }
+
+    public static function processJson($query)
+    {
+        $rows = $query->rowCount();
+
+        if ($rows) {
+            $objIndexedByColumns = $query->fetch(PDO::FETCH_OBJ);
+            $strJson = $objIndexedByColumns->json;
+            $arrayResponse = json_decode($strJson);
+
         } else return false;
 
         return $arrayResponse;

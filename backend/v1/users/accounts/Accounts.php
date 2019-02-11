@@ -32,6 +32,10 @@ class Accounts extends AccountsQuerys
 
             $result = self::insert($arrayAccount);
             self::interpretResult($result);
+
+            $result = ReferralsQuerys::insert();
+            self::interpretResult($result);
+
             Data::insertData(); // TODO: Usar la clase abstracta o la clase query. Ver esto con mas detalle en la integracion de (accounts-data) despues
 
             $arrayResponse[] = [
@@ -66,6 +70,9 @@ class Accounts extends AccountsQuerys
         if ($existingUser) {
 
             $result = SessionsQuerys::delete();
+            self::interpretResult($result);
+
+            $result = ReferralsQuerys::delete();
             self::interpretResult($result);
 
             $result = DataQuerys::delete();
