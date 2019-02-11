@@ -15,7 +15,7 @@ class Data
 
     public static function getDataById()
     {
-        $query = DataQuerys::selectById($_GET['id']);
+        $query = DataQuerys::selectById("*");
         $result = GeneralMethods::processById($query);
         if ($result) {
             return $result;
@@ -27,13 +27,8 @@ class Data
         $email = $_REQUEST['email'];
         $lengh = strpos($email, '@');
         $username = substr($email, 0, $lengh);
-        $arrayData[] = $username;
 
-        for ($i = 0; $i < 7; $i++) {
-            $arrayData[] = null;
-        }
-
-        $result = DataQuerys::insert($arrayData);
+        $result = DataQuerys::insert($username);
         self::interpretResult($result);
     }
 

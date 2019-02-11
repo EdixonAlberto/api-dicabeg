@@ -27,7 +27,7 @@ class Sessions extends SessionsQuerys
         $result = self::insert($token);
         self::interpretResult($result);
 
-        $userData = Data::getDataById($_GET['id']);
+        $userData = Data::getDataById();
 
         $arrayResponse[] = [
             'Successful' => 'Verified User',
@@ -42,8 +42,8 @@ class Sessions extends SessionsQuerys
 
     public static function verifySession()
     {
-        $session = self::getSessionsById()[0];
-        self::verifyToken($session);
+        $objSession = self::getSessionsById();
+        self::verifyToken($objSession);
     }
 
     public static function removeSession()
@@ -87,10 +87,10 @@ class Sessions extends SessionsQuerys
         } else throw new Exception("Email not exist", 400);
     }
 
-    private static function verifyToken($session)
+    private static function verifyToken($objSession)
     {
         $clientToken = $_SERVER['HTTP_API_TOKEN'];
-        if ($clientToken === $session['token']) {
+        if ($clientToken === $objSession->token) {
         } else throw new Exception('Token incorrect', 400);
     }
 

@@ -12,9 +12,10 @@ class DataQuerys extends PgSqlConnection
         return $query;
     }
 
-    public static function selectById()
+    public static function selectById($fields)
     {
-        $sql = "SELECT * FROM users_data
+        $sql = "SELECT " . $fields
+            . " FROM users_data
                 WHERE user_id = ?";
 
         $query = self::connection()->prepare($sql);
@@ -25,22 +26,15 @@ class DataQuerys extends PgSqlConnection
         return $query;
     }
 
-    public static function insert($arraySet)
+    public static function insert($username)
     {
-        $sql = "INSERT INTO users_data (user_id, username, names, lastnames, age, image, phone, points, movile_data)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO users_data (user_id, username)
+                VALUES (?, ?)";
 
         $query = self::connection()->prepare($sql);
         $query->execute([
             $_GET['id'],
-            $arraySet[0],
-            $arraySet[1],
-            $arraySet[2],
-            $arraySet[3],
-            $arraySet[4],
-            $arraySet[5],
-            $arraySet[6],
-            $arraySet[7]
+            $username
         ]);
 
         return $query;
@@ -48,9 +42,8 @@ class DataQuerys extends PgSqlConnection
 
     public static function update($arraySet)
     {
-        $user_id = $_GET['id'];
         $sql = "UPDATE users_data
-                SET username = ?, names = ?, lastnames = ?, age = ?, image = ?, phone = ?, points = ?, movile_data = ?
+                SET username = ?, names = ?, lastnames = ?, age = ?, image = ?, phone = ?, points = ?, movile_data = ?, update_date = ?
                 WHERE user_id = ?";
 
         $query = self::connection()->prepare($sql);
@@ -63,6 +56,7 @@ class DataQuerys extends PgSqlConnection
             $arraySet[5],
             $arraySet[6],
             $arraySet[7],
+            date('d-m-Y'),
             $_GET['id']
         ]);
 

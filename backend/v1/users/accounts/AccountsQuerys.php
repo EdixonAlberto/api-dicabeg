@@ -37,14 +37,15 @@ class AccountsQuerys extends PgSqlConnection
 
     public static function insert($arraySet)
     {
-        $sql = "INSERT INTO users_accounts (user_id, email, password)
-                VALUES (?, ?, ?)";
+        $sql = "INSERT INTO users_accounts (user_id, email, password, create_update)
+                VALUES (?, ?, ?, ?)";
 
         $query = self::connection()->prepare($sql);
         $query->execute([
             $_GET['id'],
             $arraySet[0],
-            $arraySet[1]
+            $arraySet[1],
+            date('d-m-Y')
         ]);
 
         return $query;
@@ -55,19 +56,20 @@ class AccountsQuerys extends PgSqlConnection
         // TODO: Como usar una sola sentencia sql con el uso de variables
         if ($key == 'email') {
             $sql = "UPDATE users_accounts
-                    SET email = ?
+                    SET email = ?, update_date = ?
                     WHERE user_id = ?";
 
         } else {
             $sql = "UPDATE users_accounts
-                    SET password = ?
+                    SET password = ?, update_date = ?
                     WHERE user_id = ?";
         }
 
         $query = self::connection()->prepare($sql);
         $query->execute([
             $value,
-            $_GET['id']
+            $_GET['id'],
+            date('d-m-Y')
         ]);
 
         return $query;
