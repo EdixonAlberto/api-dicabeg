@@ -24,6 +24,7 @@ try {
             $response = ($_GET['id_2'] == 'alls') ?
                 Referrals::getReferralsAlls() :
                 Referrals::getReferralsById();
+
             if ($response) {
             } else throw new Exception('Referrals does not exist', 400);
             break;
