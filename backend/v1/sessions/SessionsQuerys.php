@@ -26,15 +26,16 @@ class SessionsQuerys extends PgSqlConnection
         return $query;
     }
 
-    public static function insert($value)
+    public static function insert($token)
     {
-        $sql = "INSERT INTO sessions (user_id, token)
-                VALUES (?, ?)";
+        $sql = "INSERT INTO sessions (user_id, token, create_date)
+                VALUES (?, ?, ?)";
 
         $query = self::connection()->prepare($sql);
         $query->execute([
             $_GET['id'],
-            $value
+            $token,
+            date('Y-d-m')
         ]);
 
         return $query;

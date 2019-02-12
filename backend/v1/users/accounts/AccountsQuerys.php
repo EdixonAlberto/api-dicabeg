@@ -37,7 +37,7 @@ class AccountsQuerys extends PgSqlConnection
 
     public static function insert($arraySet)
     {
-        $sql = "INSERT INTO users_accounts (user_id, email, password, create_update)
+        $sql = "INSERT INTO users_accounts (user_id, email, password, create_date)
                 VALUES (?, ?, ?, ?)";
 
         $query = self::connection()->prepare($sql);
@@ -45,7 +45,7 @@ class AccountsQuerys extends PgSqlConnection
             $_GET['id'],
             $arraySet[0],
             $arraySet[1],
-            date('d-m-Y')
+            date('Y-d-m')
         ]);
 
         return $query;
@@ -69,7 +69,7 @@ class AccountsQuerys extends PgSqlConnection
         $query->execute([
             $value,
             $_GET['id'],
-            date('d-m-Y')
+            date('Y-d-m')
         ]);
 
         return $query;
