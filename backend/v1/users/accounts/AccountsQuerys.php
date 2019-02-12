@@ -45,7 +45,7 @@ class AccountsQuerys extends PgSqlConnection
             $_GET['id'],
             $arraySet[0],
             $arraySet[1],
-            date('Y-d-m')
+            date('h:i:s')
         ]);
 
         return $query;
