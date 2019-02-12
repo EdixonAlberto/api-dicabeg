@@ -4,7 +4,7 @@ class ReferralsQuerys extends PgSqlConnection
 {
     public static function selectAlls()
     {
-        $sql = "SELECT referrals_json AS json
+        $sql = "SELECT referrals_data AS json
                 FROM referrals
                 WHERE user_id = ?";
 
@@ -32,7 +32,7 @@ class ReferralsQuerys extends PgSqlConnection
     public static function update($referrals)
     {
         $sql = "UPDATE referrals
-                SET referrals_json = ?
+                SET referrals_data = ?
                 WHERE user_id = ?";
 
         $query = self::connection()->prepare($sql);
