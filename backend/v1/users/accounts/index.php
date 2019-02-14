@@ -18,7 +18,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
-    if ($method != 'POST') {
+    if ($method != 'POST' and $_GET['id'] != 'alls') {
         Validations::id();
         Sessions::verifySession();
     }
