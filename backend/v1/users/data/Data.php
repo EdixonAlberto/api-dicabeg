@@ -6,35 +6,21 @@ class Data
 {
     public static function getDataAlls()
     {
-        $query = DataQuerys::selectAlls();
-        $result = GeneralMethods::processAlls($query);
-        if ($result) {
-            return $result;
-        } else throw new Exception('There are no users', 400);
+        $data = DataQuerys::selectAlls();
+        if ($data) JsonResponse::read('data', $data);
+        else throw new Exception('not found resourse', 404);
     }
 
     public static function getDataById()
     {
-        $query = DataQuerys::selectById("*");
-        $result = GeneralMethods::processById($query);
-        if ($result) {
-            return $result;
-        } else throw new Exception('User does not exist', 400);
-    }
-
-    public static function insertData()
-    {
-        $email = $_REQUEST['email'];
-        $lengh = strpos($email, '@');
-        $username = substr($email, 0, $lengh);
-
-        $result = DataQuerys::insert($username);
-        self::interpretResult($result);
+        $data = DataQuerys::selectById();
+        if ($data) JsonResponse::read('data', $data);
+        else throw new Exception('not found resourse', 404);
     }
 
     public static function updateData()
     {
-        $oldData = self::getDataById()[0];
+        $oldData = (array)DataQuerys::selectById();
         $newData = $_REQUEST;
         // TODO: Revisar esta parte del codigo para optimisar
         foreach ($oldData as $_key => $_value) {
@@ -49,21 +35,9 @@ class Data
                 $arrayData[] = $_value;
             }
         }
-        $result = DataQuerys::update($arrayData);
-        self::interpretResult($result);
-        $arrayResponse[] = ['Successful' => 'Updated user data'];
+        DataQuerys::update($arrayData);
 
-        return $arrayResponse;
-    }
-
-    // TODO: Estudiar si es necesario la fuction deleteData
-
-    private static function interpretResult($result)
-    {
-        $error = $result->errorInfo();
-        $errorExist = !is_null($error[1]);
-        if ($errorExist) {
-            throw new Exception($error[2], 400);
-        }
+        $data = DataQuerys::selectById();
+        JsonResponse::updated('data', $data);
     }
 }

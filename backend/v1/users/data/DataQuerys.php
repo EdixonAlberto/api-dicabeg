@@ -8,11 +8,10 @@ class DataQuerys extends PgSqlConnection
 
         $query = self::connection()->prepare($sql);
         $query->execute();
-
-        return $query;
+        return GeneralMethods::processSelect($query);
     }
 
-    public static function selectById($fields)
+    public static function selectById($fields = '*')
     {
         $sql = "SELECT " . $fields
             . " FROM users_data
@@ -22,8 +21,20 @@ class DataQuerys extends PgSqlConnection
         $query->execute([
             $_GET['id']
         ]);
+        return GeneralMethods::processSelect($query);
+    }
 
-        return $query;
+    public static function select($where, $value, $fields = '*')
+    {
+        $sql = "SELECT " . $fields
+            . " FROM users_data
+                WHERE " . $where . " = ?";
+
+        $query = self::connection()->prepare($sql);
+        $query->execute([
+            $value
+        ]);
+        return GeneralMethods::processSelect($query);
     }
 
     public static function insert($username)
@@ -36,8 +47,7 @@ class DataQuerys extends PgSqlConnection
             $_GET['id'],
             $username
         ]);
-
-        return $query;
+        return GeneralMethods::processQuery($query);
     }
 
     public static function update($arraySet)
@@ -56,11 +66,10 @@ class DataQuerys extends PgSqlConnection
             $arraySet[5],
             $arraySet[6],
             $arraySet[7],
-            date('d-m-Y'),
+            date('Y-m-d h:i:s'),
             $_GET['id']
         ]);
-
-        return $query;
+        return GeneralMethods::processQuery($query);
     }
 
     public static function delete()
@@ -72,7 +81,6 @@ class DataQuerys extends PgSqlConnection
         $query->execute([
             $_GET['id']
         ]);
-
-        return $query;
+        return GeneralMethods::processQuery($query);
     }
 }
