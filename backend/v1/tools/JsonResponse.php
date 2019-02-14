@@ -2,38 +2,55 @@
 
 class JsonResponse
 {
-    public static function created($content, $path, $resource = null)
+    public static function read($content, $resource)
     {
         $response = [
             $content => [
                 'status' => 200,
+                'response' => 'successful',
+                'description' => 'found resource',
+                'resource' => $resource
+            ]
+        ];
+        self::send($response);
+    }
+
+    public static function created($content, $resource, $path = null, $info = null)
+    {
+        $response = [
+            $content => [
+                'status' => 201,
                 'response' => 'successful',
                 'description' => 'created resource',
                 'resource' => $resource,
-                'path' => $path
+                'path' => $path,
+                'information' => $info
             ]
         ];
-        self::send($response);
+        self::send($response, 201);
     }
 
-    public static function updated($content)
+    public static function updated($content, $resource)
     {
         $response = [
             $content => [
                 'status' => 200,
                 'response' => 'successful',
-                'description' => 'updated resource'
+                'description' => 'updated resource',
+                'resource' => $resource
             ]
         ];
         self::send($response);
     }
 
-    public static function removed()
+    public static function removed($content)
     {
         $response = [
-            'status' => 200,
-            'response' => 'successful',
-            'description' => 'deleted resource',
+            $content => [
+                'status' => 200,
+                'response' => 'successful',
+                'description' => 'deleted resource',
+            ]
         ];
         self::send($response);
     }
