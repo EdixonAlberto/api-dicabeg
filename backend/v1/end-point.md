@@ -27,8 +27,6 @@ EndPoint
     + v1/users/accounts/
         + email
         + password
-    + v1/users/id/referrals/
-        + user_id del referido
 
     **sessions/**
     + v1/users/sessions/
