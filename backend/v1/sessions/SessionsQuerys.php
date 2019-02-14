@@ -9,12 +9,11 @@ class SessionsQuerys extends PgSqlConnection
         $query = self::connection()->prepare($sql);
         $query->execute();
 
-        return $query;
+        return GeneralMethods::processSelect($query);
     }
 
     public static function selectById()
     {
-        // TODO: Pensar mejor si esta consulta se reduce solo a select id
         $sql = "SELECT * FROM sessions
                 WHERE user_id = ?";
 
@@ -23,7 +22,21 @@ class SessionsQuerys extends PgSqlConnection
             $_GET['id']
         ]);
 
-        return $query;
+        return GeneralMethods::processSelect($query);
+    }
+
+    public static function select($where, $value, $fields = '*')
+    {
+        $sql = "SELECT " . $fields
+            . " FROM sessions
+                WHERE " . $where . " = ?";
+
+        $query = self::connection()->prepare($sql);
+        $query->execute([
+            $value
+        ]);
+
+        return GeneralMethods::processSelect($query);
     }
 
     public static function insert($token)
@@ -35,10 +48,10 @@ class SessionsQuerys extends PgSqlConnection
         $query->execute([
             $_GET['id'],
             $token,
-            date('Y-d-m')
+            date('Y-m-d h:i:s')
         ]);
 
-        return $query;
+        return GeneralMethods::processQuery($query);
     }
 
     public static function delete()
@@ -51,6 +64,6 @@ class SessionsQuerys extends PgSqlConnection
             $_GET['id']
         ]);
 
-        return $query;
+        return GeneralMethods::processQuery($query);
     }
 }
