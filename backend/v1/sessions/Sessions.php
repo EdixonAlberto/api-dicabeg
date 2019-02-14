@@ -35,7 +35,7 @@ class Sessions extends SessionsQuerys
     {
         $session = self::selectById();
         if ($session) self::verifyToken($session);
-        else self::errorNotFound();
+        else throw new Exception('user not exist', 404);
     }
 
     public static function removeSession()
