@@ -1,4 +1,0 @@
-DELETE FROM "sessions";
-
-INSERT INTO "sessions" ("user_id", "token")
-VALUES('D08FEB0F-64DF-4696-99F7-4480A4CB8125', '$10$TWaYzM.VXFpKv13VL2MNqOzr2CNbGDs0yMaD0dkBvO0Z70q0EiNyO');
