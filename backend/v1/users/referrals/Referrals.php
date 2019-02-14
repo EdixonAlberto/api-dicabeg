@@ -2,99 +2,118 @@
 
 require_once 'ReferralsQuerys.php';
 
-class Referrals extends ReferralsQuerys
+class Referrals
 {
     public static function getReferralsAlls()
     {
-        $query = self::selectAlls();
-        $arrayResponse = GeneralMethods::processJson($query);
+        $referrals = ReferralsQuerys::selectAlls();
+        $jsonReferrals = $referrals->referrals_data;
+        if ($jsonReferrals) {
+            $arrayReferrals = json_decode($jsonReferrals);
 
-        return $arrayResponse;
+            for ($i = 0; $i < count($arrayReferrals); $i++) {
+                $referred = $arrayReferrals[$i];
+                $_GET['id'] = $referred->referred_id;
+
+                $user = AccountsQuerys::select('user_id', $_GET['id'], 'email');
+                $referred_data = DataQuerys::select('user_id', $_GET['id'], 'username, image, phone');
+                $referred_data->email = $user->email;
+                $referred_data->create_date = $referred->create_date;
+                $arrayReferrals_data[] = $referred_data;
+            }
+            JsonResponse::read('referrals', $arrayReferrals_data);
+
+        } else self::errorNotFound();
     }
 
     public static function getReferralsById()
     {
-        $existReferred = self::checkoutReferral($arrayReferrals, $index);
+        // TODO: redefinir los querys para hacer consultas espedificas en el json
+        $referrals = ReferralsQuerys::selectAlls();
+        $jsonReferrals = $referrals->referrals_data;
+        if ($jsonReferrals) {
+            $arrayReferrals = json_decode($jsonReferrals);
 
-        if ($existReferred) {
-            $arrayResponse[] = $arrayReferrals[$index];
-        } else throw new Exception('Referred does not exist', 400);
+            // TODO: crear una funcion para automatizar esta parte
+            for ($i = 0; $i < count($arrayReferrals); $i++) {
+                $referred = $arrayReferrals[$i];
+                $_GET['id'] = $referred->referred_id;
 
-        return $arrayResponse;
+                if ($_GET['id'] == $_GET['id_2']) {
+                    $user = AccountsQuerys::selectById('email');
+                    $referred_data = DataQuerys::selectById('username, image, phone');
+                    $referred_data->email = $user->email;
+                    $referred_data->create_date = $referred->create_date;
+                }
+            }
+            if (isset($referred_data)) {
+                JsonResponse::read('referred', $referred_data);
+            } else throw new Exception('referred not exist', 404);
+
+        } else self::errorNotFound();
     }
 
-    public static function insertReferrals()
+    public static function createReferrals()
     {
-        $existReferred = self::checkoutReferral($arrayReferrals);
-        if (!$existReferred) {
-            $arrayReferrals[] = self::referredDataGenerator();
+        $referrals = ReferralsQuerys::selectByCode();
+        if ($referrals) {
+            $arrayReferrals = json_decode($referrals->referrals_data);
+
+            $arrayReferrals[] = (object)[
+                'referred_id' => $_GET['id'],
+                'create_date' => date('Y-m-d h:i:s')
+            ];
+
             $jsonReferrals = json_encode($arrayReferrals);
+            ReferralsQuerys::update('invite_code', $_REQUEST['invite-code'], $jsonReferrals);
 
-            $result = self::update($jsonReferrals);
-            self::interpretResult($result);
+        } else throw new Exception('Incorrect invite code', 400);
+    }
 
-            $arrayResponse[] = ['Successful' => 'Created referred'];
+    public static function createCode()
+    {
+        $code = Gui::generate();
+        ReferralsQuerys::updateCode($code);
 
-        } else throw new Exception('Referred exist', 400);
-
-        return $arrayResponse;
+        JsonResponse::created('inviteCode', $code);
     }
 
     public static function deleteReferrals()
     {
-        $existReferred = self::checkoutReferral($arrayReferrals, $index);
+        $referrals = ReferralsQuerys::selectAlls();
+        $jsonReferrals = $referrals->referrals_data;
+        $arrayReferrals = json_decode($jsonReferrals);
+        $user_id = $_GET['id'];
 
-        if ($existReferred) {
-            unset($arrayReferrals[$index]); // Se elimina el objeto en la posicion 'index' del array
-            $jsonReferrals = json_encode($arrayReferrals);
+        for ($i = 0; $i < count($arrayReferrals); $i++) {
+            $referred = $arrayReferrals[$i];
+            $_GET['id'] = $referred->referred_id;
 
-            $result = self::update($jsonReferrals);
-            self::interpretResult($result);
+            if ($_GET['id'] == $_GET['id_2']) {
+                unset($arrayReferrals[$i]);
 
-            $arrayResponse[] = ['Successful' => 'Deleted referred'];
-        } else throw new Exception('Referred does not exist', 400);
-
-        return $arrayResponse;
-    }
-
-    private static function checkoutReferral(&$arrayReferrals, &$index = null)
-    {
-        $arrayReferrals = self::getReferralsAlls();
-
-        if ($arrayReferrals) {
-            for ($i = 0; $i < count($arrayReferrals); $i++) {
-                $objReferred = $arrayReferrals[$i];
-
-                if ($_GET['id_2'] == $objReferred->user_id) {
-                    $index = $i;
-                    return true;
-                }
+                $jsonReferrals = json_encode($arrayReferrals);
+                ReferralsQuerys::update('user_id', $user_id, $jsonReferrals);
             }
-        } else return false;
-    }
-
-    private static function referredDataGenerator()
-    {
-        $id = $_GET['id'];
-        $_GET['id'] = $_GET['id_2'];
-
-        $query = DataQuerys::selectById("user_id, username, image, phone");
-        $objData = GeneralMethods::processById($query);
-
-        if ($objData) {
-            $objData->create_date = date("d-m-Y");
-        } else throw new Exception('Referred does not exist', 400);
-
-        $_GET['id'] = $id;
-        return $objData;
-    }
-
-    private static function interpretResult($result)
-    {
-        $error = $result->errorInfo();
-        $errorExist = !is_null($error[1]);
-        if ($errorExist) {
-            throw new Exception($error[2], 400);
         }
+
+        JsonResponse::removed('referred');
+    }
+
+    // private static function generateReferredData()
+    // {
+    //     $query = DataQuerys::select('user_id, username, image, phone');
+    //     $objData = GeneralMethods::processById($query);
+
+    //     if ($objData) {
+    //         $objData->create_date = date('Y-m-d h:i:s');
+    //     } else throw new Exception('Referred does not exist', 400);
+
+    //     return $objData;
+    // }
+
+    private static function errorNotFound()
+    {
+        throw new Exception('not found resourse', 404);
     }
 }

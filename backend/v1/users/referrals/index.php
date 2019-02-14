@@ -6,9 +6,11 @@ require_once '../../tools/Validations.php';
 require_once '../../tools/GeneralMethods.php';
 require_once '../../tools/Gui.php';
 require_once '../../tools/Security.php';
+require_once '../../tools/JsonResponse.php';
 
 // Resource
 require_once '../../sessions/Sessions.php';
+require_once '../accounts/AccountsQuerys.php';
 require_once '../data/DataQuerys.php';
 require_once 'Referrals.php';
 
@@ -21,34 +23,23 @@ try {
 
     switch ($method) {
         case 'GET':
-            $response = ($_GET['id_2'] == 'alls') ?
+            ($_GET['id_2'] == 'alls') ?
                 Referrals::getReferralsAlls() :
                 Referrals::getReferralsById();
-
-            if ($response) {
-            } else throw new Exception('Referrals does not exist', 400);
             break;
 
-        case 'PUT':
+        case 'POST':
             // Validations::parameters('Referrals');
-            $response = Referrals::insertReferrals();
+            Referrals::createCode();
             break;
 
         case 'DELETE':
             // Validations::parameters('Referrals');
-            $response = Referrals::deleteReferrals();
+            Referrals::deleteReferrals();
             break;
     }
-    http_response_ok($response);
 } catch (Exception $error) {
-    $arrayResponse['referrals'][] = ['Error' => $error->getMessage()];
-    http_response_code($error->getCode());
-    echo json_encode($arrayResponse);
-}
-
-function http_response_ok($response)
-{
-    http_response_code(200);
-    $arrayResponse['referrals'] = $response;
-    echo json_encode($arrayResponse);
+    $response = $error->getMessage();
+    $code = $error->getCode();
+    JsonResponse::error('referral', $response, $code);
 }
