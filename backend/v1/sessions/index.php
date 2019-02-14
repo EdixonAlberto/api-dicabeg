@@ -19,12 +19,9 @@ try {
     switch ($method) {
         case 'GET':
             Validations::id();
-            $result = ($_GET['id'] == 'alls') ?
+            ($_GET['id'] == 'alls') ?
                 Sessions::getSessionsAlls() :
                 Sessions::getSessionsById();
-
-            $response['sessions'][] = $result;
-            JsonResponse::send($response);
             break;
 
         case 'POST':

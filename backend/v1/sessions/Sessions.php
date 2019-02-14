@@ -7,13 +7,14 @@ class Sessions extends SessionsQuerys
     public static function getSessionsAlls()
     {
         $sessions = self::selectAlls();
-        if ($sessions) return $sessions;
+        if ($sessions) JsonResponse::read('sessions', $sessions);
+        else self::errorNotFound();
     }
 
     public static function getSessionsById()
     {
-        $session = self::selectById()[0];
-        if ($session) return $session;
+        $session = self::selectById();
+        if ($session) JsonResponse::read('session', $session);
         else self::errorNotFound();
     }
 
@@ -21,28 +22,20 @@ class Sessions extends SessionsQuerys
     {
         self::validatePass();
         $token = Security::generateToken();
-
         self::insert($token);
-        $data = Data::getDataById()[0];
-        $path = '/v1/users/' . $_GET['id'] . '/data/';
 
-        $response = [
-            'session' => [
-                'Status' => '200',
-                'Response' => 'Successful',
-                'Description' => 'created session',
-                'Data' => $data,
-                'Authorization' => 'Bearer ' . $token,
-                'Path' => 'https://' . $_SERVER['SERVER_NAME'] . $path
-            ]
-        ];
-        JsonResponse::send($response);
+        $data = Data::getDataById();
+        $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/users/' . $_GET['id'] . '/data/';
+        $info = ['Api-Token' => $token];
+
+        JsonResponse::created('session', $data, $path, $info);
     }
 
     public static function verifySession()
     {
-        $session = self::getSessionsById();
-        self::verifyToken($session);
+        $session = self::selectById();
+        if ($session) self::verifyToken($session);
+        else self::errorNotFound();
     }
 
     public static function removeSession()
