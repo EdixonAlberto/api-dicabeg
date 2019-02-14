@@ -1,6 +1,6 @@
 CREATE TABLE "users_data" (
  "user_id" VARCHAR(36),
- "username" VARCHAR(20),
+ "username" VARCHAR(20) NOT NULL,
  "names" VARCHAR(20),
  "lastnames" VARCHAR(20),
  "age" INTEGER,
