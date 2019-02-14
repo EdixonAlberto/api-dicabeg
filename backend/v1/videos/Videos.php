@@ -6,10 +6,8 @@ class Videos extends VideosQuerys
 {
     public static function getVideosAlls()
     {
-        $query = self::selectAlls();
-        $result = GeneralMethods::processAlls($query);
-        if ($result) {
-            return $result;
-        } else throw new Exception('Videos does not exist', 400);
+        $videos = self::selectAlls();
+        if ($videos) JsonResponse::read('videos', $videos);
+        else throw new Exception('not found resource', 404);
     }
 }

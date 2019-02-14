@@ -8,29 +8,19 @@ class VideosQuerys extends PgSqlConnection
 
         $query = self::connection()->prepare($sql);
         $query->execute();
-
-        return $query;
+        return GeneralMethods::processSelect($query);
     }
 
-    public static function selectById($value, $key = 'id')
+    public static function selectById()
     {
-        switch ($key) {
-            case 'id':
-                $sql = "SELECT * FROM videos
-                        WHERE video_id = ?";
-                break;
-
-            case 'email':
-                $sql = "SELECT * FROM users_accounts
-                        WHERE email = ?";
-                break;
-        }
+        $sql = "SELECT *
+                FROM videos
+                WHERE video_id = ?";
 
         $query = self::connection()->prepare($sql);
         $query->execute([
-            $value
+            $_GET['id']
         ]);
-
-        return $query;
+        return GeneralMethods::processSelect($query);
     }
 }
