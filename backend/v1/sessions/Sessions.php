@@ -24,7 +24,7 @@ class Sessions extends SessionsQuerys
         $token = Security::generateToken();
         self::insert($token);
 
-        $data = Data::getDataById();
+        $data = DataQuerys::selectById();
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/users/' . $_GET['id'] . '/data/';
         $info = ['Api-Token' => $token];
 
@@ -49,7 +49,7 @@ class Sessions extends SessionsQuerys
 
     private static function validatePass()
     {
-        $user = AccountsQuerys::select('email', $_REQUEST['email'])[0];
+        $user = AccountsQuerys::select('email', $_REQUEST['email']);
         if ($user) {
             $verify = password_verify($_REQUEST['password'], $user->password);
 

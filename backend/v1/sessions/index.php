@@ -9,7 +9,7 @@ require_once '../tools/JsonResponse.php';
 
 // Resource
 require_once '../users/accounts/AccountsQuerys.php';
-require_once '../users/data/Data.php';
+require_once '../users/data/DataQuerys.php';
 require_once 'Sessions.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
