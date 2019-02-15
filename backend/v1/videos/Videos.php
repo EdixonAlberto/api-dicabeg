@@ -6,7 +6,7 @@ class Videos
 {
     public static function getVideosAlls()
     {
-        $arrayVideos = self::selectAlls();
+        $arrayVideos = VideosQuerys::selectAlls();
         if ($arrayVideos) {
             for ($i = 0; $i < count($arrayVideos); $i++) {
                 $video = $arrayVideos[$i];
