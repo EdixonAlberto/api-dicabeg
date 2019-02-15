@@ -2,12 +2,19 @@
 
 require_once 'VideosQuerys.php';
 
-class Videos extends VideosQuerys
+class Videos
 {
     public static function getVideosAlls()
     {
-        $videos = self::selectAlls();
-        if ($videos) JsonResponse::read('videos', $videos);
-        else throw new Exception('not found resource', 404);
+        $arrayVideos = self::selectAlls();
+        if ($arrayVideos) {
+            for ($i = 0; $i < count($arrayVideos); $i++) {
+                $video = $arrayVideos[$i];
+                $video->answers_data = json_decode($video->answers_data);
+                $_arrayVideos[] = $video;
+            }
+            JsonResponse::read('videos', $_arrayVideos);
+
+        } else throw new Exception('not found resource', 404);
     }
 }

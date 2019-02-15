@@ -16,7 +16,7 @@ parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
     Validations::id();
-    // Sessions::verifySession();
+    Sessions::verifySession();
 
     switch ($method) {
         case 'GET':
@@ -26,7 +26,7 @@ try {
             break;
     }
 } catch (Exception $error) {
-    $arrayResponse['Videos'][] = ['Error' => $error->getMessage()];
-    http_response_code($error->getCode());
-    echo json_encode($arrayResponse);
+    $response = $error->getMessage();
+    $code = $error->getCode();
+    JsonResponse::error('video', $response, $code);
 }
