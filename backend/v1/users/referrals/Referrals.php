@@ -19,9 +19,9 @@ class Referrals
                 $referred_data = DataQuerys::select('user_id', $_GET['id'], 'username, image, phone');
                 $referred_data->email = $user->email;
                 $referred_data->create_date = $referred->create_date;
-                $arrayReferrals_data[] = $referred_data;
+                $_arrayReferrals[] = $referred_data;
             }
-            JsonResponse::read('referrals', $arrayReferrals_data);
+            JsonResponse::read('referrals', $_arrayReferrals);
 
         } else self::errorNotFound();
     }

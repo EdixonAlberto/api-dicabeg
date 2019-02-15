@@ -16,7 +16,6 @@ parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
     Validations::id();
-    Sessions::verifySession();
 
     switch ($method) {
         case 'GET':
