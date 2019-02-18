@@ -21,10 +21,9 @@ class Security
         return $phone;
     }
 
-    public static function encryptPassword()
+    public static function encryptPassword($password)
     {
         // TODO: Seguir investigando sobre esto
-        $password = $_REQUEST['password'];
         return password_hash($password, PASSWORD_DEFAULT);
     }
 
