@@ -10,9 +10,8 @@ require_once '../../tools/JsonResponse.php';
 
 // Resource
 require_once '../../sessions/Sessions.php';
-require_once '../accounts/AccountsQuerys.php';
-require_once '../data/DataQuerys.php';
-require_once 'Referrals.php';
+require_once '../UsersQuerys.php';
+require_once './Referrals.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);

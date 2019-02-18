@@ -24,11 +24,11 @@ class Sessions extends SessionsQuerys
         $token = Security::generateToken();
         self::insert($token);
 
-        $data = DataQuerys::selectById();
+        $user = UsersQuerys::selectById();
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/users/' . $_GET['id'] . '/data/';
         $info = ['Api-Token' => $token];
 
-        JsonResponse::created('session', $data, $path, $info);
+        JsonResponse::created('session', $user, $path, $info);
     }
 
     public static function verifySession()
@@ -49,7 +49,7 @@ class Sessions extends SessionsQuerys
 
     private static function validatePass()
     {
-        $user = AccountsQuerys::select('email', $_REQUEST['email']);
+        $user = UsersQuerys::select('email', $_REQUEST['email']);
         if ($user) {
             $verify = password_verify($_REQUEST['password'], $user->password);
 

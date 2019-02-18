@@ -8,9 +8,8 @@ require_once '../tools/GeneralMethods.php';
 require_once '../tools/JsonResponse.php';
 
 // Resource
-require_once '../users/accounts/AccountsQuerys.php';
-require_once '../users/data/DataQuerys.php';
-require_once 'Sessions.php';
+require_once '../users/UsersQuerys.php';
+require_once './Sessions.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);

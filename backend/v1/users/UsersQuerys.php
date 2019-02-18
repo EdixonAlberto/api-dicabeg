@@ -1,21 +1,23 @@
 <?php
 
-class AccountsQuerys extends PgSqlConnection
+class UsersQuerys extends PgSqlConnection
 {
-    public static function selectAlls()
+    private const SET = 'user_id, email, invite_code, username, names, lastnames, age, image, phone, points, movile_data, create_date, update_date';
+
+    public static function selectAlls($fields = self::SET)
     {
-        $sql = "SELECT *
-                FROM users_accounts";
+        $sql = "SELECT " . $fields
+            . " FROM users";
 
         $query = self::connection()->prepare($sql);
         $query->execute();
         return GeneralMethods::processSelect($query);
     }
 
-    public static function selectById($fields = '*')
+    public static function selectById($fields = self::SET)
     {
         $sql = "SELECT " . $fields
-            . " FROM users_accounts
+            . " FROM users
                 WHERE user_id = ?";
 
         $query = self::connection()->prepare($sql);
@@ -25,10 +27,10 @@ class AccountsQuerys extends PgSqlConnection
         return GeneralMethods::processSelect($query);
     }
 
-    public static function select($where, $value, $fields = '*')
+    public static function select($where, $value, $fields = self::SET)
     {
         $sql = "SELECT " . $fields
-            . " FROM users_accounts
+            . " FROM users
                 WHERE " . $where . " = ?";
 
         $query = self::connection()->prepare($sql);
@@ -40,28 +42,39 @@ class AccountsQuerys extends PgSqlConnection
 
     public static function insert($arraySet)
     {
-        $sql = "INSERT INTO users_accounts (user_id, email, password, create_date)
-                VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO users (user_id, email, password, invite_code, username, create_date)
+                VALUES (?, ?, ?, ?, ?, ?)";
 
         $query = self::connection()->prepare($sql);
         $query->execute([
             $_GET['id'],
             $arraySet[0],
             $arraySet[1],
+            $arraySet[2],
+            $arraySet[3],
             date('Y-m-d h:i:s')
         ]);
         return GeneralMethods::processQuery($query);
     }
 
-    public static function update($where, $value)
+    public static function update($arraySet)
     {
-        $sql = "UPDATE users_accounts
-                SET " . $where . " = ?, update_date = ?
+        $sql = "UPDATE users
+                SET email = ?, password = ?, username = ?, names = ?, lastnames = ?, age = ?, image = ?, phone = ?, points = ?, movile_data = ?, update_date = ?
                 WHERE user_id = ?";
 
         $query = self::connection()->prepare($sql);
         $query->execute([
-            $value,
+            $arraySet[0],
+            $arraySet[1],
+            $arraySet[2],
+            $arraySet[3],
+            $arraySet[4],
+            $arraySet[5],
+            $arraySet[6],
+            $arraySet[7],
+            $arraySet[8],
+            $arraySet[9],
             date('Y-m-d h:i:s'),
             $_GET['id']
         ]);
@@ -70,7 +83,7 @@ class AccountsQuerys extends PgSqlConnection
 
     public static function delete()
     {
-        $sql = "DELETE FROM users_accounts
+        $sql = "DELETE FROM users
                 WHERE user_id = ?";
 
         $query = self::connection()->prepare($sql);
