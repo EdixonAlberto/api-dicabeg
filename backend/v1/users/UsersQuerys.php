@@ -27,7 +27,7 @@ class UsersQuerys extends PgSqlConnection
         return GeneralMethods::processSelect($query);
     }
 
-    public static function select($where, $value, $fields = self::SET)
+    public static function select($where, $fields = self::SET)
     {
         $sql = "SELECT " . $fields
             . " FROM users
@@ -35,9 +35,9 @@ class UsersQuerys extends PgSqlConnection
 
         $query = self::connection()->prepare($sql);
         $query->execute([
-            $value
+            $_REQUEST[$where]
         ]);
-        return GeneralMethods::processSelect($query);
+        return GeneralMethods::processSelect($query, false);
     }
 
     public static function insert($arraySet)
@@ -47,11 +47,11 @@ class UsersQuerys extends PgSqlConnection
 
         $query = self::connection()->prepare($sql);
         $query->execute([
-            $_GET['id'],
             $arraySet[0],
             $arraySet[1],
             $arraySet[2],
             $arraySet[3],
+            $arraySet[4],
             date('Y-m-d h:i:s')
         ]);
         return GeneralMethods::processQuery($query);
@@ -90,6 +90,6 @@ class UsersQuerys extends PgSqlConnection
         $query->execute([
             $_GET['id']
         ]);
-        return GeneralMethods::processQuery($query);
+        return GeneralMethods::processDelete($query);
     }
 }

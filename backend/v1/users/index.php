@@ -17,7 +17,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
-    if ($method != 'POST' and $_GET['id'] != 'alls') {
+    if ($method != 'POST') {
         Validations::id();
         Sessions::verifySession();
     }
@@ -47,5 +47,5 @@ try {
 } catch (Exception $error) {
     $response = $error->getMessage();
     $code = $error->getCode();
-    JsonResponse::error('user', $response, $code);
+    JsonResponse::error($response, $code);
 }
