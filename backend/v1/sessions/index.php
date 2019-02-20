@@ -15,9 +15,13 @@ $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
+    if ($method != 'POST') {
+        Validations::id();
+        Sessions::verifySession();
+    }
+
     switch ($method) {
         case 'GET':
-            Validations::id();
             ($_GET['id'] == 'alls') ?
                 Sessions::getSessionsAlls() :
                 Sessions::getSessionsById();
@@ -28,13 +32,17 @@ try {
             Sessions::createSession();
             break;
 
+        case 'PATCH':
+            // Validations::parameters('sessions');
+            Sessions::updateSession();
+            break;
+
         case 'DELETE':
-            Sessions::verifySession();
             Sessions::removeSession();
             break;
     }
 } catch (Exception $error) {
     $response = $error->getMessage();
     $code = $error->getCode();
-    JsonResponse::error('session', $response, $code);
+    JsonResponse::error($response, $code);
 }

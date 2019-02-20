@@ -8,11 +8,10 @@ class SessionsQuerys extends PgSqlConnection
 
         $query = self::connection()->prepare($sql);
         $query->execute();
-
         return GeneralMethods::processSelect($query);
     }
 
-    public static function selectById()
+    public static function selectById($getError)
     {
         $sql = "SELECT * FROM sessions
                 WHERE user_id = ?";
@@ -21,22 +20,19 @@ class SessionsQuerys extends PgSqlConnection
         $query->execute([
             $_GET['id']
         ]);
-
-        return GeneralMethods::processSelect($query);
+        return GeneralMethods::processSelect($query, $getError);
     }
 
-    public static function select($where, $value, $fields = '*')
+    public static function selectByToken()
     {
-        $sql = "SELECT " . $fields
-            . " FROM sessions
-                WHERE " . $where . " = ?";
+        $sql = "SELECT * FROM sessions
+                WHERE token = ?";
 
         $query = self::connection()->prepare($sql);
         $query->execute([
-            $value
+            $_SERVER['HTTP_API_TOKEN']
         ]);
-
-        return GeneralMethods::processSelect($query);
+        return GeneralMethods::processSelect($query, false);
     }
 
     public static function insert($token)
@@ -48,22 +44,35 @@ class SessionsQuerys extends PgSqlConnection
         $query->execute([
             $_GET['id'],
             $token,
-            date('Y-m-d h:i:s')
+            date('Y-m-d h:i')
         ]);
+        return GeneralMethods::processQuery($query);
+    }
 
+    public static function update($token)
+    {
+        $sql = "UPDATE sessions
+                SET token = ?, create_date = ?
+                WHERE token = ?";
+
+        $query = self::connection()->prepare($sql);
+        $query->execute([
+            $token,
+            date('Y-m-d H:i'),
+            $_SERVER['HTTP_API_TOKEN']
+        ]);
         return GeneralMethods::processQuery($query);
     }
 
     public static function delete()
     {
         $sql = "DELETE FROM sessions
-                WHERE user_id = ?";
+                WHERE token = ?";
 
         $query = self::connection()->prepare($sql);
         $query->execute([
-            $_GET['id']
+            $_SERVER['HTTP_API_TOKEN']
         ]);
-
-        return GeneralMethods::processQuery($query);
+        return GeneralMethods::processDelete($query);
     }
 }

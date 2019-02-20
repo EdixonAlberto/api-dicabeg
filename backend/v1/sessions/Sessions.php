@@ -2,72 +2,91 @@
 
 require_once 'SessionsQuerys.php';
 
-class Sessions extends SessionsQuerys
+class Sessions
 {
+    private const EXPIRATION_TIME = '1 day'; // TODO: estudiar este tiempo
+
     public static function getSessionsAlls()
     {
-        $sessions = self::selectAlls();
-        if ($sessions) JsonResponse::read('sessions', $sessions);
-        else self::errorNotFound();
+        $sessions = SessionsQuerys::selectAlls();
+        JsonResponse::read('sessions', $sessions);
     }
 
     public static function getSessionsById()
     {
-        $session = self::selectById();
-        if ($session) JsonResponse::read('session', $session);
-        else self::errorNotFound();
+        $session = SessionsQuerys::selectById();
+        JsonResponse::read('session', $session);
     }
 
     public static function createSession()
     {
-        self::validatePass();
+        $user = UsersQuerys::select('email', 'user_id, password');
+        if ($user) {
+            $_GET['id'] = $user->user_id;
+            $session = SessionsQuerys::selectById(false);
+            if (!$session) {
+                self::validatePass($user->password);
+
+                $token = Security::generateToken();
+                SessionsQuerys::insert($token);
+
+                $_SERVER['HTTP_API_TOKEN'] = $token;
+                $session = SessionsQuerys::selectByToken();
+                $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/users/' . $_GET['id'] . '/';
+                $expirationTime = strtotime($session->create_date . ' + ' . self::EXPIRATION_TIME);
+
+                $user = UsersQuerys::selectById();
+                $info = [
+                    'Api-Token' => $token,
+                    'Expiration-Time' => $expirationTime,
+                    'User' => $user
+                ];
+                JsonResponse::created('session', $session, $path, $info);
+
+            } else throw new Exception('session exist', 404);
+        } else throw new Exception('email not exist', 404);
+    }
+
+    public static function updateSession()
+    {
         $token = Security::generateToken();
-        self::insert($token);
+        SessionsQuerys::update($token);
 
-        $user = UsersQuerys::selectById();
-        $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/users/' . $_GET['id'] . '/data/';
-        $info = ['Api-Token' => $token];
+        $_SERVER['HTTP_API_TOKEN'] = $token;
+        $session = SessionsQuerys::selectByToken();
 
-        JsonResponse::created('session', $user, $path, $info);
+        $expirationTime = strtotime($session->create_date . ' + ' . self::EXPIRATION_TIME);
+        $info = [
+            'Expiration-Time' => $expirationTime
+        ];
+        JsonResponse::updated('session', $session, $info);
     }
 
     public static function verifySession()
     {
-        $session = self::selectById();
-        if ($session) self::verifyToken($session);
-        else throw new Exception('user not exist', 404);
+        $session = SessionsQuerys::selectByToken();
+        if ($session) {
+            $sessionTime = strtotime($session->create_date);
+            $experationTime = strtotime(date('Y-m-d h:i') . ' - ' . self::EXPIRATION_TIME);
+
+            if ($experationTime < $sessionTime) {
+            } else throw new Exception('token expired', 401);
+
+        } else throw new Exception('token incorrect', 401);
     }
 
     public static function removeSession()
     {
-        $session = self::selectById();
-        if ($session) {
-            self::delete();
-            JsonResponse::removed();
-        } else self::errorNotFound();
+        SessionsQuerys::selectByToken();
+        SessionsQuerys::delete();
+
+        JsonResponse::removed();
     }
 
-    private static function validatePass()
+    private static function validatePass($password)
     {
-        $user = UsersQuerys::select('email', $_REQUEST['email']);
-        if ($user) {
-            $verify = password_verify($_REQUEST['password'], $user->password);
-
-            if ($verify) {
-                $_GET['id'] = $user->user_id;
-            } else throw new Exception('passsword incorrect', 401);
-        } else throw new Exception('email not exist', 404);
-    }
-
-    private static function verifyToken($session)
-    {
-        $clientToken = $_SERVER['HTTP_API_TOKEN'];
-        if ($clientToken === $session->token) {
-        } else throw new Exception('token incorrect', 401);
-    }
-
-    private static function errorNotFound()
-    {
-        throw new Exception('not found resourse', 404);
+        $verify = password_verify($_REQUEST['password'], $password);
+        if ($verify) {
+        } else throw new Exception('passsword incorrect', 401);
     }
 }
