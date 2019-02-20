@@ -4,7 +4,7 @@ require_once 'SessionsQuerys.php';
 
 class Sessions
 {
-    private const EXPIRATION_TIME = '1 day'; // TODO: estudiar este tiempo
+    private const EXPIRATION_TIME = '30 minute'; // TODO: estudiar este tiempo
 
     public static function getSessionsAlls()
     {
