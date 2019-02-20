@@ -27,27 +27,24 @@ class Referrals
     {
         $exitCode = isset($_REQUEST['invite_code']);
         if ($exitCode) {
-            $user = UsersQuerys::select('invite_code', 'user_id', false);
+            $user = UsersQuerys::select('invite_code');
             if ($user) {
-                $_GET['id'] = $user->user_id;
-
+                $_GET['id'] = $user->user_id; // id del usuario que otorgo el codigo de invitacion
                 $arrayReferrals = ReferralsQuerys::selectAlls(false);
-                $referred = (object)[
+                $arrayReferrals[] = (object)[
                     'referred_id' => $referred_id,
                     'create_date' => date('Y-m-d h:i')
                 ];
-                $arrayReferrals[] = $referred;
                 $jsonReferrals = json_encode($arrayReferrals);
 
-                ReferralsQuerys::update($jsonReferrals);
+                ($arrayReferrals) ?
+                    ReferralsQuerys::update($jsonReferrals) :
+                    ReferralsQuerys::insert(null);
 
-            } else throw new Exception('invite-code incorrect', 400);
-        } else {
-            ReferralsQuerys::insert(null);
-            return null;
-        }
+                return 'added as an referred';
 
-        return 'added as an referred';
+            } else throw new Exception('invite code incorrect', 400);
+        } else return null;
     }
 
     public static function removeReferred()

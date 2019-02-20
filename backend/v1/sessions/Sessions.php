@@ -1,6 +1,5 @@
  <?php
 
-require_once '../tools/Options.php';
 require_once 'SessionsQuerys.php';
 
 class Sessions

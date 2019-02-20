@@ -22,19 +22,20 @@ class Users
         if (!$user) {
             $id = Gui::generate();
             $info = Referrals::createReferred($id);
+
             $email = $_REQUEST['email'];
             $password = Security::encryptPassword($_REQUEST['password']);
             $inviteCode = Gui::generate();
             $username = substr($email, 0, strpos($email, '@'));
 
-            $arrayUser[] = $id;
             $arrayUser[] = $email;
             $arrayUser[] = $password;
             $arrayUser[] = $inviteCode;
             $arrayUser[] = $username;
-            UsersQuerys::insert($arrayUser);
 
             $_GET['id'] = $id;
+            UsersQuerys::insert($arrayUser);
+
             $user = UsersQuerys::selectById('user_id, email, invite_code, username');
             $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/sessions/';
             JsonResponse::created('user', $user, $path, $info);

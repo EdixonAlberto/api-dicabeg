@@ -47,12 +47,12 @@ class UsersQuerys extends PgSqlConnection
 
         $query = self::connection()->prepare($sql);
         $query->execute([
+            $_GET['id'],
             $arraySet[0],
             $arraySet[1],
             $arraySet[2],
             $arraySet[3],
-            $arraySet[4],
-            date('Y-m-d h:i:s')
+            date('Y-m-d h:i')
         ]);
         return GeneralMethods::processQuery($query);
     }
@@ -75,7 +75,7 @@ class UsersQuerys extends PgSqlConnection
             $arraySet[7],
             $arraySet[8],
             $arraySet[9],
-            date('Y-m-d h:i:s'),
+            date('Y-m-d h:i'),
             $_GET['id']
         ]);
         return GeneralMethods::processQuery($query);

@@ -6,6 +6,7 @@ require_once '../tools/Validations.php';
 require_once '../tools/Security.php';
 require_once '../tools/GeneralMethods.php';
 require_once '../tools/JsonResponse.php';
+require_once '../tools/Options.php';
 
 // Resource
 require_once '../sessions/Sessions.php';
@@ -16,6 +17,7 @@ parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
     Validations::id();
+    Sessions::verifySession();
 
     switch ($method) {
         case 'GET':
@@ -27,5 +29,5 @@ try {
 } catch (Exception $error) {
     $response = $error->getMessage();
     $code = $error->getCode();
-    JsonResponse::error('video', $response, $code);
+    JsonResponse::error($response, $code);
 }
