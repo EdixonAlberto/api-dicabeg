@@ -26,7 +26,7 @@ class SessionsQuerys extends PgSqlConnection
     public static function selectByToken()
     {
         $sql = "SELECT * FROM sessions
-                WHERE token = ?";
+                WHERE api_token = ?";
 
         $query = self::connection()->prepare($sql);
         $query->execute([
@@ -37,7 +37,7 @@ class SessionsQuerys extends PgSqlConnection
 
     public static function insert($token)
     {
-        $sql = "INSERT INTO sessions (user_id, token, create_date)
+        $sql = "INSERT INTO sessions (user_id, api_token, create_date)
                 VALUES (?, ?, ?)";
 
         $query = self::connection()->prepare($sql);
@@ -52,8 +52,8 @@ class SessionsQuerys extends PgSqlConnection
     public static function update($token)
     {
         $sql = "UPDATE sessions
-                SET token = ?, create_date = ?
-                WHERE token = ?";
+                SET api_token = ?, create_date = ?
+                WHERE api_token = ?";
 
         $query = self::connection()->prepare($sql);
         $query->execute([
@@ -67,7 +67,7 @@ class SessionsQuerys extends PgSqlConnection
     public static function delete()
     {
         $sql = "DELETE FROM sessions
-                WHERE token = ?";
+                WHERE api_token = ?";
 
         $query = self::connection()->prepare($sql);
         $query->execute([

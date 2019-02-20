@@ -35,7 +35,6 @@ class Sessions
 
                 $user = UsersQuerys::selectById();
                 $info = [
-                    'Api-Token' => $token,
                     'Expiration-Time' => $expirationTime,
                     'User' => $user
                 ];
