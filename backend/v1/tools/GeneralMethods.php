@@ -2,7 +2,7 @@
 
 class GeneralMethods
 {
-    public static function processSelect($query)
+    public static function processSelect($query, $getError = true)
     {
         $rows = $query->rowCount();
 
@@ -12,7 +12,9 @@ class GeneralMethods
                 $arrayResponse[] = $objIndexedByColumns;
             }
         } else if ($rows == 1) {
-            return $query->fetch(PDO::FETCH_OBJ);
+            $arrayResponse = $query->fetch(PDO::FETCH_OBJ);
+        } else if ($getError) {
+            throw new Exception('not found resourse', 404);
         } else return false;
 
         return $arrayResponse;
@@ -24,32 +26,13 @@ class GeneralMethods
         $errorExist = !is_null($error[1]);
         if ($errorExist) {
             throw new Exception($error[2], 400);
-        } else true;
+        }
     }
 
-    // public static function processJson($query)
-    // {
-    //     $rows = $query->rowCount();
-
-    //     if ($rows) {
-    //         $objIndexedByColumns = $query->fetch(PDO::FETCH_OBJ);
-    //         $strJson = $objIndexedByColumns->json;
-    //         $arrayResponse = json_decode($strJson);
-
-    //     } else return false;
-
-    //     return $arrayResponse;
-    // }
-
-    // public static function checkUser($field, &$objUser)
-    // {
-    //     if ($field == 'id') {
-    //         $result = self::selectById();
-    //     } else {
-    //         $query = AccountsQuerys::select($field, $_REQUEST[$field]);
-    //         $result = self::processSingleQuery($query);
-    //         $objUser = $result;
-    //     }
-    //     return (is_object($result)) ? true : false;
-    // }
+    public static function processDelete($query)
+    {
+        $rows = $query->rowCount();
+        if ($rows >= 1) {
+        } else throw new Exception('delete failed', 500);
+    }
 }
