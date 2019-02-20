@@ -24,21 +24,16 @@ try {
         case 'GET':
             ($_GET['id_2'] == 'alls') ?
                 Referrals::getReferralsAlls() :
-                Referrals::getReferralsById();
-            break;
-
-        case 'POST':
-            // Validations::parameters('Referrals');
-            Referrals::createCode();
+                Referrals::getReferredById();
             break;
 
         case 'DELETE':
             // Validations::parameters('Referrals');
-            Referrals::deleteReferrals();
+            Referrals::removeReferred();
             break;
     }
 } catch (Exception $error) {
     $response = $error->getMessage();
     $code = $error->getCode();
-    JsonResponse::error('referral', $response, $code);
+    JsonResponse::error($response, $code);
 }
