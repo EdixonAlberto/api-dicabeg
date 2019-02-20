@@ -5,11 +5,11 @@ class JsonResponse
     public static function read($content, $resource)
     {
         $response = [
-            $content => [
-                'status' => 200,
-                'response' => 'successful',
-                'description' => 'found resource',
-                'resource' => $resource
+            'status' => 200,
+            'response' => 'successful',
+            'description' => 'found resource',
+            'resource' => [
+                $content => $resource
             ]
         ];
         self::send($response);
@@ -18,51 +18,48 @@ class JsonResponse
     public static function created($content, $resource, $path = null, $info = null)
     {
         $response = [
-            $content => [
-                'status' => 201,
-                'response' => 'successful',
-                'description' => 'created resource',
-                'resource' => $resource,
-                'path' => $path,
-                'information' => $info
-            ]
+            'status' => 201,
+            'response' => 'successful',
+            'description' => 'created resource',
+            'resource' => [
+                $content => $resource
+            ],
+            'path' => $path,
+            'information' => $info
         ];
         self::send($response, 201);
     }
 
-    public static function updated($content, $resource)
+    public static function updated($content, $resource, $info = null)
     {
         $response = [
-            $content => [
-                'status' => 200,
-                'response' => 'successful',
-                'description' => 'updated resource',
-                'resource' => $resource
-            ]
+            'status' => 200,
+            'response' => 'successful',
+            'description' => 'updated resource',
+            'resource' => [
+                $content => $resource
+            ],
+            'information' => $info
         ];
         self::send($response);
     }
 
-    public static function removed($content)
+    public static function removed()
     {
         $response = [
-            $content => [
-                'status' => 200,
-                'response' => 'successful',
-                'description' => 'deleted resource',
-            ]
+            'status' => 200,
+            'response' => 'successful',
+            'description' => 'deleted resource',
         ];
         self::send($response);
     }
 
-    public static function error($content, $description, $code)
+    public static function error($description, $code)
     {
         $response = [
-            $content => [
-                'status' => $code,
-                'response' => 'error',
-                'description' => $description,
-            ]
+            'status' => $code,
+            'response' => 'error',
+            'description' => $description,
         ];
         self::send($response, $code);
     }
