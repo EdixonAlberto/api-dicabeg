@@ -1,11 +1,10 @@
  <?php
 
+require_once '../tools/Options.php';
 require_once 'SessionsQuerys.php';
 
 class Sessions
 {
-    private const EXPIRATION_TIME = '30 minute'; // TODO: estudiar este tiempo
-
     public static function getSessionsAlls()
     {
         $sessions = SessionsQuerys::selectAlls();
@@ -33,7 +32,7 @@ class Sessions
                 $_SERVER['HTTP_API_TOKEN'] = $token;
                 $session = SessionsQuerys::selectByToken();
                 $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/users/' . $_GET['id'] . '/';
-                $expirationTime = strtotime($session->create_date . ' + ' . self::EXPIRATION_TIME);
+                $expirationTime = strtotime($session->create_date . Options::expirationTime());
 
                 $user = UsersQuerys::selectById();
                 $info = [
@@ -55,7 +54,7 @@ class Sessions
         $_SERVER['HTTP_API_TOKEN'] = $token;
         $session = SessionsQuerys::selectByToken();
 
-        $expirationTime = strtotime($session->create_date . ' + ' . self::EXPIRATION_TIME);
+        $expirationTime = strtotime($session->create_date . Options::expirationTime());
         $info = [
             'Expiration-Time' => $expirationTime
         ];
@@ -66,11 +65,11 @@ class Sessions
     {
         $session = SessionsQuerys::selectByToken();
         if ($session) {
-            $sessionTime = strtotime($session->create_date);
-            $experationTime = strtotime(date('Y-m-d h:i') . ' - ' . self::EXPIRATION_TIME);
+            $sessionTime = strtotime($session->create_date . Options::expirationTime());
+            $experationTime = strtotime(date('Y-m-d h:i'));
 
-            if ($experationTime < $sessionTime) {
-            } else throw new Exception('token expired', 401);
+            if ($experationTime < $sessionTime);
+            else throw new Exception('token expired', 401);
 
         } else throw new Exception('token incorrect', 401);
     }
@@ -86,7 +85,7 @@ class Sessions
     private static function validatePass($password)
     {
         $verify = password_verify($_REQUEST['password'], $password);
-        if ($verify) {
-        } else throw new Exception('passsword incorrect', 401);
+        if ($verify);
+        else throw new Exception('passsword incorrect', 401);
     }
 }
