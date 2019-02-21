@@ -27,35 +27,34 @@ class Referrals
     {
         $exitCode = isset($_REQUEST['invite_code']);
         if ($exitCode) {
-            $user = UsersQuerys::select('invite_code');
+            $user = UsersQuerys::select('invite_code', 'user_id');
             if ($user) {
-                $_GET['id'] = $user->user_id; // id del usuario que otorgo el codigo de invitacion
-                $arrayReferrals = ReferralsQuerys::selectAlls(false);
+                $_GET['id'] = $user->user_id;
+                $arrayReferrals = ReferralsQuerys::selectAlls();
                 $arrayReferrals[] = (object)[
                     'referred_id' => $referred_id,
-                    'create_date' => date('Y-m-d h:i')
+                    'create_date' => date('Y-m-d H:i')
                 ];
                 $jsonReferrals = json_encode($arrayReferrals);
 
-                ($arrayReferrals) ?
-                    ReferralsQuerys::update($jsonReferrals) :
-                    ReferralsQuerys::insert(null);
-
+                ReferralsQuerys::update($jsonReferrals);
                 return 'added as an referred';
 
             } else throw new Exception('invite code incorrect', 400);
-        } else return null;
+        } else {
+            $_REQUEST['invite_code'] = null;
+            return null;
+        }
     }
 
-    public static function removeReferred()
+    public static function removeReferred($response = true)
     {
         $arrayReferrals = ReferralsQuerys::selectAlls();
         self::extractReferred($arrayReferrals, $i);
         unset($arrayReferrals[$i]);
-
         $jsonReferrals = json_encode($arrayReferrals);
         ReferralsQuerys::update($jsonReferrals);
-        JsonResponse::removed();
+        if ($response) JsonResponse::removed();
     }
 
     public static function extractReferred($arrayReferrals, &$index = null)

@@ -33,6 +33,11 @@ class Sessions
                 $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/users/' . $_GET['id'] . '/';
                 $expirationTime = strtotime($session->create_date . Options::expirationTime());
 
+                // FIXME: fecha con TZ aparentemente mal
+                // $time = date('Y-m-d H:i', $expirationTime);
+                // var_dump($expirationTime, $time);
+                // die;
+
                 $user = UsersQuerys::selectById();
                 $info = [
                     'Expiration-Time' => $expirationTime,
@@ -64,9 +69,9 @@ class Sessions
         $session = SessionsQuerys::selectByToken();
         if ($session) {
             $sessionTime = strtotime($session->create_date . Options::expirationTime());
-            $experationTime = strtotime(date('Y-m-d h:i'));
+            $expirationTime = strtotime(date('Y-m-d H:i'));
 
-            if ($experationTime < $sessionTime);
+            if ($expirationTime < $sessionTime);
             else throw new Exception('token expired', 401);
 
         } else throw new Exception('token incorrect', 401);
@@ -74,9 +79,7 @@ class Sessions
 
     public static function removeSession()
     {
-        SessionsQuerys::selectByToken();
         SessionsQuerys::delete();
-
         JsonResponse::removed();
     }
 

@@ -18,11 +18,11 @@ class Users
 
     public static function createUser()
     {
-        $user = UsersQuerys::select('email');
-        if (!$user) {
+        $existUser = UsersQuerys::search('email');
+        if (!$existUser) {
+
             $id = Gui::generate();
             $info = Referrals::createReferred($id);
-
             $email = $_REQUEST['email'];
             $password = Security::encryptPassword($_REQUEST['password']);
             $inviteCode = Gui::generate();
@@ -31,10 +31,12 @@ class Users
             $arrayUser[] = $email;
             $arrayUser[] = $password;
             $arrayUser[] = $inviteCode;
+            $arrayUser[] = $_REQUEST['invite_code'];
             $arrayUser[] = $username;
 
             $_GET['id'] = $id;
             UsersQuerys::insert($arrayUser);
+            ReferralsQuerys::insert($inviteCode);
 
             $user = UsersQuerys::selectById('user_id, email, invite_code, username');
             $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/sessions/';
@@ -46,7 +48,8 @@ class Users
     public static function updateUser()
     {
         $user = (array)UsersQuerys::selectById('*');
-        unset($user['invite_code']); // se descarta el codigo de invitacion
+        // se descartan los codigos para referido
+        unset($user['invite_code'], $user['registration_code']);
         $newUser = $_REQUEST;
 
         foreach ($user as $_key => $_value) {
@@ -69,13 +72,20 @@ class Users
         JsonResponse::updated('user', $user);
     }
 
-    public static function deleteUser()
+    public static function removeUser()
     {
-        UsersQuerys::selectById();
-
         ReferralsQuerys::delete();
         SessionsQuerys::delete();
+        $user = UsersQuerys::selectById('registration_code');
         UsersQuerys::delete();
+
+        if ($user) {
+            $_REQUEST['invite_code'] = $user->registration_code;
+            $user = UsersQuerys::select('invite_code', 'user_id');
+            $_GET['id_2'] = $_GET['id'];
+            $_GET['id'] = $user->user_id;
+            Referrals::removeReferred(false);
+        }
 
         JsonResponse::removed();
     }

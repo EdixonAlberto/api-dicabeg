@@ -44,7 +44,7 @@ class SessionsQuerys extends PgSqlConnection
         $query->execute([
             $_GET['id'],
             $token,
-            date('Y-m-d h:i')
+            date('Y-m-d H:i')
         ]);
         return GeneralMethods::processQuery($query);
     }

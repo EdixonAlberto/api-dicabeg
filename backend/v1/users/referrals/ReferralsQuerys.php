@@ -2,7 +2,34 @@
 
 class ReferralsQuerys extends PgSqlConnection
 {
-    public static function selectAlls($getError = true)
+    public static function search()
+    {
+        $sql = "SELECT COUNT(user_id)
+                FROM referrals
+                WHERE user_id = ?";
+
+        $query = self::connection()->prepare($sql);
+        $query->execute([
+            $_GET['id']
+        ]);
+        $result = $query->fetch(PDO::FETCH_OBJ);
+        return $result->count;
+    }
+
+    public static function selectByCode($field)
+    {
+        $sql = "SELECT " . $field
+            . " FROM referrals
+                WHERE invite_code = ?";
+
+        $query = self::connection()->prepare($sql);
+        $query->execute([
+            $_REQUEST['invite_code']
+        ]);
+        return $query->fetch(PDO::FETCH_OBJ);
+    }
+
+    public static function selectAlls()
     {
         $sql = "SELECT referrals_data
                 FROM referrals
@@ -12,19 +39,19 @@ class ReferralsQuerys extends PgSqlConnection
         $query->execute([
             $_GET['id']
         ]);
-        $referrals = GeneralMethods::processSelect($query, $getError);
+        $referrals = GeneralMethods::processSelect($query);
         return json_decode($referrals->referrals_data);
     }
 
-    public static function insert($referrals)
+    public static function insert($inviteCode)
     {
-        $sql = "INSERT INTO referrals (user_id, referrals_data)
+        $sql = "INSERT INTO referrals (user_id, invite_code)
                 VALUES (?, ?)";
 
         $query = self::connection()->prepare($sql);
         $query->execute([
             $_GET['id'],
-            $referrals
+            $inviteCode
         ]);
         return GeneralMethods::processQuery($query);
     }

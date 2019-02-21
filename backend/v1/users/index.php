@@ -15,6 +15,7 @@ require_once './referrals/Referrals.php';
 require_once './Users.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
+// $_REQUEST[] = $_GET['id']; TODO: Sera mejor pasar los id tambien al REQUEST ?
 parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
@@ -42,7 +43,7 @@ try {
 
         case 'DELETE':
             // Validations::parameters('Users');
-            Users::deleteUser();
+            Users::removeUser();
             break;
     }
 } catch (Exception $error) {
