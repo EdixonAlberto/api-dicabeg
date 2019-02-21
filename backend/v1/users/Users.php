@@ -79,7 +79,7 @@ class Users
         $user = UsersQuerys::selectById('registration_code');
         UsersQuerys::delete();
 
-        if ($user) {
+        if (is_null($user)) {
             $_REQUEST['invite_code'] = $user->registration_code;
             $user = UsersQuerys::select('invite_code', 'user_id');
             $_GET['id_2'] = $_GET['id'];
