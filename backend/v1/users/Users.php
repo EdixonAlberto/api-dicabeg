@@ -22,6 +22,7 @@ class Users
         if (!$existUser) {
 
             $id = Gui::generate();
+            // FIXME: El referido se agrega aunque el usuario no se agregue
             $info = Referrals::createReferred($id);
             $email = $_REQUEST['email'];
             $password = Security::encryptPassword($_REQUEST['password']);
