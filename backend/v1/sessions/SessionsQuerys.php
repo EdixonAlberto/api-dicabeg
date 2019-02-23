@@ -52,7 +52,7 @@ class SessionsQuerys extends PgSqlConnection
     public static function update($token)
     {
         $sql = "UPDATE sessions
-                SET api_token = ?, create_date = ?
+                SET api_token = ?, update_date = ?
                 WHERE api_token = ?";
 
         $query = self::connection()->prepare($sql);
