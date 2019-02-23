@@ -8,7 +8,15 @@ class VideosQuerys extends PgSqlConnection
 
         $query = self::connection()->prepare($sql);
         $query->execute();
-        return GeneralMethods::processSelect($query);
+
+        $rows = $query->rowCount();
+        if ($rows > 0) {
+            for ($i = 0; $i < $rows; $i++) {
+                $objIndexedByColumns = $query->fetch(PDO::FETCH_OBJ);
+                $response[] = $objIndexedByColumns;
+            }
+        } else return false;
+        return $response;
     }
 
     public static function selectById()
