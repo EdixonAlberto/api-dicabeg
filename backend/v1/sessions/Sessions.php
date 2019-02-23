@@ -66,15 +66,17 @@ class Sessions
 
     public static function verifySession()
     {
-        $session = SessionsQuerys::selectByToken();
-        if ($session) {
-            $sessionTime = strtotime($session->create_date . Options::expirationTime());
-            $expirationTime = strtotime(date('Y-m-d H:i'));
+        if (isset($_SERVER['HTTP_API_TOKEN'])) {
+            $session = SessionsQuerys::selectByToken();
+            if ($session) {
+                $sessionTime = strtotime($session->create_date . Options::expirationTime());
+                $expirationTime = strtotime(date('Y-m-d H:i'));
 
-            if ($expirationTime < $sessionTime);
-            else throw new Exception('token expired', 401);
+                if ($expirationTime < $sessionTime);
+                else throw new Exception('token expired', 401);
 
-        } else throw new Exception('token incorrect', 401);
+            } else throw new Exception('token incorrect', 401);
+        } else throw new Exception('not found token', 404);
     }
 
     public static function removeSession()
