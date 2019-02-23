@@ -69,7 +69,13 @@ class Sessions
         $session = SessionsQuerys::selectByToken();
         if ($session) {
             $sessionTime = strtotime($session->create_date . Options::expirationTime());
+            // $dev_sessionTime = date('Y-m-d H:i', $sessionTime);
+            // var_dump($dev_sessionTime);
+
+            date_default_timezone_set('America/Caracas');
             $expirationTime = strtotime(date('Y-m-d H:i'));
+            // $dev_expirationTime = date('Y-m-d H:i', $expirationTime);
+            // var_dump($dev_expirationTime);
 
             if ($expirationTime < $sessionTime);
             else throw new Exception('token expired', 401);
