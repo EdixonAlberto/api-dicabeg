@@ -10,7 +10,7 @@ class Videos
         if ($arrayVideos) {
             for ($i = 0; $i < count($arrayVideos); $i++) {
                 $video = $arrayVideos[$i];
-                $video->answers_data = json_decode($video->answers_data);
+                $video->responses = json_decode($video->responses);
                 $_arrayVideos[] = $video;
             }
             JsonResponse::read('videos', $_arrayVideos);
