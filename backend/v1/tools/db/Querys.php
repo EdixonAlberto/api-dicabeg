@@ -2,70 +2,104 @@
 
 require_once 'PgSqlConnection.php';
 
-class Querys
+class Querys extends PgSqlConnection
 {
    private $table;
-   private $setSelect;
-   private $setInsert;
 
    public function __construct($table)
    {
       $this->table = $table;
-      switch ($table) {
-
-         case 'users':
-            $this->setSelect = 'user_id, email, invite_code, username, names, lastnames, age, image, phone, points, movile_data, create_date, update_date';
-            $this->setInsert = 'user_id, email, password, invite_code, registration_code, username, create_date';
-            $this->setValues = '?, ?, ?, ?, ?, ?, ?';
-            break;
-
-         case 'sessions':
-            $this->set = '';
-            break;
-
-         case 'referrals':
-            $this->set = 'referred_id';
-            break;
-
-         case 'history':
-            $this->set = '';
-            break;
-      }
    }
 
-   public function select($column, $value, $count = false)
+   public function select($column, $condition, $getFields = null)
    {
-      $set = ($count) ? 'COUNT(user_id)' : $this->set;
-      $sql = "SELECT {$set}
-               FROM {$this->table}
-               WHERE {$column} = ?";
+      if (is_null($getFields)) {
+         $fields = $column;
+         $limit = ' LIMIT 1';
+      } else {
+         $fields = $getFields;
+         $limit = '';
+      }
 
-      $query = PgSqlConnection::connection()->prepare($sql);
+      $sql = "SELECT {$fields} FROM " . $this->table
+         . " WHERE {$column} = ?" . $limit;
+
+      $query = parent::connection()->prepare($sql);
       $query->execute([
-         $value
+         $condition
       ]);
+
       $rows = $query->rowCount();
-      if ($rows > 1) {
-         for ($i = 0; $i < $rows; $i++) {
-            $objIndexedByColumns = $query->fetch(PDO::FETCH_OBJ);
-            $response[] = $objIndexedByColumns;
-         }
-      } else $response = $query->fetch(PDO::FETCH_OBJ);
-      return ($search) ? $response->count : $response;
+      if (is_null($getFields) and $rows) {
+         return true;
+      } else {
+         if ($rows > 1) {
+            for ($i = 0; $i < $rows; $i++) {
+               $objIndexedByColumns = $query->fetch(PDO::FETCH_OBJ);
+               $arrayResponse[] = $objIndexedByColumns;
+            }
+            return $arrayResponse;
+         } elseif ($rows == 1) return $query->fetch(PDO::FETCH_OBJ);
+      }
+      throw new Exception('not found resourse', 404);
    }
 
    public function insert($arraySet)
    {
-      $sql = "INSERT INTO {$this->table} ({$this->setInsert})
-               VALUES ($this->setValues)";
-
-      $query = PgSqlConnection::connection()->prepare($sql);
-      $setLenght = count($arraySet);
-      for ($i = 0; $i < $setLenght; $i++) {
-         $query->bindValue($i + 1, $arraySet[$i]);
+      $setInsert = $setValues = '';
+      $index = 1;
+      foreach ($arraySet as $key => $value) {
+         $setInsert .= "{$key}, ";
+         $setValues .= '?, '; // Para construir la expresion: VALUES (?, ?, ...)";
       }
-      $query->bindValue($setLenght + 1, date('Y-m-d H:i'));
+
+      $sql = "INSERT INTO {$this->table} ({$setInsert}create_date)
+               VALUES ({$setValues}?)";
+
+      $query = self::connection()->prepare($sql);
+      foreach ($arraySet as $value) $query->bindValue($index++, $value);
+      $query->bindValue($index, date('Y-m-d H:i'));
       $query->execute();
-      return $query->errorInfo();
+
+      $error = $query->errorInfo()[2];
+      if (is_null($error)) return true;
+      else throw new Exception($error[2], 400);
+   }
+
+   public function update($column, $condition, $arraySet)
+   {
+      $setUpdate = '';
+      $index = 1;
+      foreach ($arraySet as $key => $value) {
+         $setUpdate .= "{$key} = ?, ";
+      }
+
+      $sql = "UPDATE {$this->table} SET {$setUpdate}update_date = ?
+               WHERE {$column} = ?";
+
+      $query = self::connection()->prepare($sql);
+      foreach ($arraySet as $value) $query->bindValue($index++, $value);
+      $query->bindValue($index++, date('Y-m-d H:i'));
+      $query->bindValue($index, $condition);
+      $query->execute();
+
+      $error = $query->errorInfo()[2];
+      if (is_null($error)) return true;
+      else throw new Exception($error[2], 400);
+   }
+
+   public function delete($column, $condition)
+   {
+      $sql = "DELETE FROM {$this->table}
+               WHERE {$column} = ?";
+
+      $query = self::connection()->prepare($sql);
+      $query->execute([
+         $condition
+      ]);
+
+      $rows = $query->rowCount();
+      if ($rows) return true;
+      else throw new Exception('delete failed', 500);
    }
 }
