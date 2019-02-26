@@ -11,6 +11,23 @@ class Querys extends PgSqlConnection
       $this->table = $table;
    }
 
+   public function selectAll($getFields)
+   {
+      $sql = "SELECT {$getFields} FROM {$this->table}";
+
+      $query = self::connection()->prepare($sql);
+      $query->execute();
+
+      $rows = $query->rowCount();
+      if ($rows) {
+         for ($i = 0; $i < $rows; $i++) {
+            $objIndexedByColumns = $query->fetch(PDO::FETCH_OBJ);
+            $arrayResponse[] = $objIndexedByColumns;
+         }
+         return $arrayResponse;
+      } else throw new Exception('not found resourse', 404);
+   }
+
    public function select($column, $condition, $getFields = null)
    {
       if (is_null($getFields)) {
@@ -21,27 +38,18 @@ class Querys extends PgSqlConnection
          $limit = '';
       }
 
-      $sql = "SELECT {$fields} FROM " . $this->table
+      $sql = "SELECT {$fields} FROM {$this->table}"
          . " WHERE {$column} = ?" . $limit;
 
-      $query = parent::connection()->prepare($sql);
+      $query = self::connection()->prepare($sql);
       $query->execute([
          $condition
       ]);
 
       $rows = $query->rowCount();
-      if (is_null($getFields) and $rows) {
-         return true;
-      } else {
-         if ($rows > 1) {
-            for ($i = 0; $i < $rows; $i++) {
-               $objIndexedByColumns = $query->fetch(PDO::FETCH_OBJ);
-               $arrayResponse[] = $objIndexedByColumns;
-            }
-            return $arrayResponse;
-         } elseif ($rows == 1) return $query->fetch(PDO::FETCH_OBJ);
-      }
-      throw new Exception('not found resourse', 404);
+      if (is_null($getFields) and $rows) return true;
+      elseif ($rows) return $query->fetch(PDO::FETCH_OBJ);
+      else throw new Exception('not found resourse', 404);
    }
 
    public function insert($arraySet)
