@@ -2,7 +2,7 @@
 
 class UsersQuerys extends PgSqlConnection
 {
-    private const SET = 'user_id, email, invite_code, username, names, lastnames, age, image, phone, points, movile_data, create_date, update_date';
+    private const SET = 'user_id, email, invite_code, username, names, lastnames, age, avatar, phone, points, movile_data, create_date, update_date';
 
     public static function search($where)
     {
@@ -75,7 +75,7 @@ class UsersQuerys extends PgSqlConnection
     public static function update($arraySet)
     {
         $sql = "UPDATE users
-                SET email = ?, password = ?, username = ?, names = ?, lastnames = ?, age = ?, image = ?, phone = ?, points = ?, movile_data = ?, update_date = ?
+                SET email = ?, password = ?, username = ?, names = ?, lastnames = ?, age = ?, avatar = ?, phone = ?, points = ?, movile_data = ?, update_date = ?
                 WHERE user_id = ?";
 
         $query = self::connection()->prepare($sql);
