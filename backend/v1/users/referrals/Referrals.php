@@ -72,7 +72,7 @@ class Referrals
     public static function getReferredData($referred)
     {
         $_GET['id'] = $referred->referred_id;
-        $user = UsersQuerys::selectById('user_id, email, username, image, phone');
+        $user = UsersQuerys::selectById('user_id, email, username, avatar, phone');
         $user->create_date = $referred->create_date;
         return $user;
     }
