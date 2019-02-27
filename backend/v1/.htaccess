@@ -12,6 +12,7 @@ RewriteRule ^([a-z]+)/([A-Z0-9-]*)/([a-z]+)/([A-Z0-9-]*)/$ $1/$3/index.php?id=$2
 RewriteRule ^([a-z]+)/([A-Z0-9-]*)/([a-z]+)/$ $1/$3/index.php?id=$2&id_2=alls [L]
 
 # ruta1/ruta2
+RewriteRule ^([a-z]+)/([a-z]+)/$ $1/index.php?id=$2 [L]
 RewriteRule ^([a-z]+)/([a-z]+)/$ $1/$2/index.php?id=alls [L]
 
 # ruta1/id

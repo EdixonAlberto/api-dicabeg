@@ -38,3 +38,10 @@ EndPoint
     + v1/users/id/referrals/id/
     + v1/users/id/history/
     + v1/users/id/history/id/
+
+### history
++ POST: v1/users/id/history/vide_id
++ GET: v1/users/id/history/video_id
++ GET: v1/users/id/history/
++ DELETE: v1/users/id/history/video_id
++ DELETE: v1/users/id/history/
