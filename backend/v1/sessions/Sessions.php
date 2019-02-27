@@ -30,13 +30,9 @@ class Sessions
 
                 $_SERVER['HTTP_API_TOKEN'] = $token;
                 $session = SessionsQuerys::selectByToken();
+
                 $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/users/' . $_GET['id'] . '/';
                 $expirationTime = strtotime($session->create_date . Options::expirationTime());
-
-                // FIXME: fecha con TZ aparentemente mal
-                // $time = date('Y-m-d H:i', $expirationTime);
-                // var_dump($expirationTime, $time);
-                // die;
 
                 $user = UsersQuerys::selectById();
                 $info = [
@@ -57,7 +53,10 @@ class Sessions
         $_SERVER['HTTP_API_TOKEN'] = $token;
         $session = SessionsQuerys::selectByToken();
 
-        $expirationTime = strtotime($session->create_date . Options::expirationTime());
+        date_default_timezone_set('America/Caracas');
+        $sessionTime = date('Y-m-d H:i');
+
+        $expirationTime = strtotime($sessionTime . Options::expirationTime());
         $info = [
             'Expiration-Time' => $expirationTime
         ];
@@ -69,17 +68,15 @@ class Sessions
         if (isset($_SERVER['HTTP_API_TOKEN'])) {
             $session = SessionsQuerys::selectByToken();
             if ($session) {
-                $sessionTime = strtotime($session->create_date . Options::expirationTime());
-                // $dev_sessionTime = date('Y-m-d H:i', $sessionTime);
-                // var_dump($dev_sessionTime);
+                $expirationTime = strtotime($session->create_date . Options::expirationTime());
 
                 date_default_timezone_set('America/Caracas');
-                $expirationTime = strtotime(date('Y-m-d H:i'));
-                // $dev_expirationTime = date('Y-m-d H:i', $expirationTime);
-                // var_dump($dev_expirationTime);
+                $sessionTime = strtotime(date('Y-m-d H:i'));
 
-                if ($expirationTime < $sessionTime);
-                else throw new Exception('token expired', 401);
+                if ($sessionTime >= $expirationTime) {
+                    SessionsQuerys::delete();
+                    throw new Exception('token expired', 401);
+                }
             } else throw new Exception('token incorrect', 401);
         } else throw new Exception('not found token', 404);
     }

@@ -11,12 +11,30 @@ class Querys extends PgSqlConnection
       $this->table = $table;
    }
 
-   public function selectAll($getFields)
+   // public function search($column, $condition)
+   // {
+   //    $sql = "SELECT {$column} FROM {$this->table}
+   //             WHERE {$column} = ? LIMIT 1";
+
+   //    $query = self::connection()->prepare($sql);
+   //    $query->execute([
+   //       $condition
+   //    ]);
+
+   //    $rows = $query->rowCount();
+   //    if ($rows) return true;
+   //    else throw new Exception('not found resourse', 404);
+   // }
+
+   public function select($column, $condition, $fields)
    {
-      $sql = "SELECT {$getFields} FROM {$this->table}";
+      $sql = "SELECT {$fields} FROM {$this->table}
+               WHERE {$column} = ?";
 
       $query = self::connection()->prepare($sql);
-      $query->execute();
+      $query->execute([
+         $condition
+      ]);
 
       $rows = $query->rowCount();
       if ($rows) {
@@ -25,31 +43,7 @@ class Querys extends PgSqlConnection
             $arrayResponse[] = $objIndexedByColumns;
          }
          return $arrayResponse;
-      } else throw new Exception('not found resourse', 404);
-   }
-
-   public function select($column, $condition, $getFields = null)
-   {
-      if (is_null($getFields)) {
-         $fields = $column;
-         $limit = ' LIMIT 1';
-      } else {
-         $fields = $getFields;
-         $limit = '';
-      }
-
-      $sql = "SELECT {$fields} FROM {$this->table}"
-         . " WHERE {$column} = ?" . $limit;
-
-      $query = self::connection()->prepare($sql);
-      $query->execute([
-         $condition
-      ]);
-
-      $rows = $query->rowCount();
-      if (is_null($getFields) and $rows) return true;
-      elseif ($rows) return $query->fetch(PDO::FETCH_OBJ);
-      else throw new Exception('not found resourse', 404);
+      } else return false;
    }
 
    public function insert($arraySet)
@@ -71,7 +65,7 @@ class Querys extends PgSqlConnection
 
       $error = $query->errorInfo()[2];
       if (is_null($error)) return true;
-      else throw new Exception($error[2], 400);
+      else throw new Exception($error, 400);
    }
 
    public function update($column, $condition, $arraySet)
@@ -93,7 +87,7 @@ class Querys extends PgSqlConnection
 
       $error = $query->errorInfo()[2];
       if (is_null($error)) return true;
-      else throw new Exception($error[2], 400);
+      else throw new Exception($error, 400);
    }
 
    public function delete($column, $condition)
