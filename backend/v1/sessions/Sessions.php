@@ -96,9 +96,8 @@ class Sessions
         $arraySession = $sessionQuery->select('api_token', $token, 'create_date');
         if ($arraySession == false) throw new Exception('token incorrect', 401);
 
-        $expirationTime = strtotime($arraySession[0]->create_date . Options::expirationTime());
-
         date_default_timezone_set('America/Caracas');
+        $expirationTime = strtotime($arraySession[0]->create_date . Options::expirationTime());
         $sessionTime = strtotime(date('Y-m-d H:i'));
 
         if ($sessionTime >= $expirationTime) {
