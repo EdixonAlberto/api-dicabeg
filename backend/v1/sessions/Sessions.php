@@ -7,13 +7,12 @@ use Exception;
 use Tools\JsonResponse;
 use Tools\Security;
 use V1\Options\Options;
-use V1\Sessions\SessionsQuerys;
 
 class Sessions
 {
     protected const SET_SESSION = 'user_id, api_token, create_token';
     protected const SET = 'user_id, email, invite_code, registration_code, username, names, lastnames, age, avatar, phone, points, movile_data, create_date, update_date';
-    protected const TIME = 'Y-m-d H:i:00';
+    protected const TIME = 'Y-m-d H:i:s';
 
     public static function index()
     {
@@ -103,7 +102,7 @@ class Sessions
         $sessionTime = strtotime(date('Y-m-d H:i'));
 
         if ($sessionTime >= $expirationTime) {
-            SessionsQuerys::delete();
+            $sessionQuery->delete('api_token', $token);
             throw new Exception('token expired', 401);
         }
     }

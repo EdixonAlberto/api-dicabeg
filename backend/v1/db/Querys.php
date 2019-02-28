@@ -71,9 +71,6 @@ class Querys extends PgSqlConnection
       }
       $index = 1;
 
-      var_dump($arraySet, $setInsert);
-      die;
-
       $sql = "INSERT INTO {$this->table} ({$setInsert})
                VALUES ({$setValues})";
 

@@ -9,7 +9,7 @@ use Tools\JsonResponse;
 class HistoryController extends Querys
 {
    private const SET = 'history_id, user_id, video_id, history_views, update_date';
-   protected const TIME = 'Y-m-d H:i:00';
+   protected const TIME = 'Y-m-d H:i:s';
 
    public static function index()
    {

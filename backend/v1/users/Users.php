@@ -12,7 +12,7 @@ use V1\Users\Referrals\Referrals;
 class Users
 {
     protected const SET = 'user_id, email, invite_code, registration_code, username, names, lastnames, age, avatar, phone, points, movile_data, create_date, update_date';
-    protected const TIME = 'Y-m-d H:i:00';
+    protected const TIME = 'Y-m-d H:i:s';
 
     public static function getUsersAlls()
     {

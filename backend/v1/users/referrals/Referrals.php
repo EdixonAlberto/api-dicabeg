@@ -9,7 +9,7 @@ use Tools\JsonResponse;
 class Referrals
 {
     protected const SET = 'referred_id, create_date';
-    protected const TIME = 'Y-m-d H:i:00';
+    protected const TIME = 'Y-m-d H:i:s';
 
     public static function index()
     {
