@@ -24,12 +24,6 @@ class Sessions
         JsonResponse::read('sessions', $arraySession);
     }
 
-    // public static function getSessionsById()
-    // {
-    //     $session = SessionsQuerys::selectById();
-    //     JsonResponse::read('session', $session);
-    // }
-
     public static function store()
     {
         $userQuery = new Querys('users');
