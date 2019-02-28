@@ -1,6 +1,6 @@
 <?php
 
-require_once 'Security.php';
+namespace Tools;
 
 class Validations
 {

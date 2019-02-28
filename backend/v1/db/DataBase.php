@@ -1,5 +1,9 @@
 <?php
 
+namespace Db;
+
+use PDO;
+
 class DataBase
 {
     private $engine;

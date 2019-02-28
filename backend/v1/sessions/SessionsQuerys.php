@@ -1,5 +1,10 @@
 <?php
 
+namespace V1\Sessions;
+
+use Db\PgSqlConnection;
+use Tools\GeneralMethods;
+
 class SessionsQuerys extends PgSqlConnection
 {
     public static function selectAlls()

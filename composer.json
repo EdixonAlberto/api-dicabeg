@@ -13,5 +13,11 @@
     "require": {
         "php": "~7.2.0"
     },
-    "autoload": {}
+    "autoload": {
+        "psr-4": {
+            "V1\\": "backend/v1/",
+            "Db\\": "backend/v1/db",
+            "Tools\\": "backend/v1/tools/"
+        }
+    }
 }

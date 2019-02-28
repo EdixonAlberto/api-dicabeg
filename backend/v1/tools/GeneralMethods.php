@@ -1,5 +1,10 @@
 <?php
 
+namespace Tools;
+
+use PDO;
+use Exception;
+
 class GeneralMethods
 {
     public static function processSelect($query, $getError = true)

@@ -1,5 +1,11 @@
 <?php
 
+namespace V1\Users;
+
+use PDO;
+use Db\PgSqlConnection;
+use Tools\GeneralMethods;
+
 class UsersQuerys extends PgSqlConnection
 {
     private const SET = 'user_id, email, invite_code, username, names, lastnames, age, avatar, phone, points, movile_data, create_date, update_date';

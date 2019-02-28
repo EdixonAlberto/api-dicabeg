@@ -1,21 +1,13 @@
 <?php
 
-// Tools
-require_once '../tools/db/PgSqlConnection.php';
-require_once '../tools/Validations.php';
-require_once '../tools/GeneralMethods.php';
-require_once '../tools/Gui.php';
-require_once '../tools/Security.php';
-require_once '../tools/JsonResponse.php';
-require_once '../options/Options.php';
+require_once __DIR__ . '../../../../vendor/autoload.php';
 
-// Resource
-require_once '../sessions/Sessions.php';
-require_once './referrals/Referrals.php';
-require_once './Users.php';
+use Tools\JsonResponse;
+use Tools\Validations;
+use V1\Sessions\Sessions;
+use V1\Users\Users;
 
 $method = $_SERVER['REQUEST_METHOD'];
-// $_REQUEST[] = $_GET['id']; TODO: Sera mejor pasar los id tambien al REQUEST ?
 parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
@@ -32,17 +24,14 @@ try {
             break;
 
         case 'POST':
-            // Validations::parameters('Users');
             Users::createUser();
             break;
 
         case 'PATCH':
-            // Validations::parameters('Users');
             Users::updateUser();
             break;
 
         case 'DELETE':
-            // Validations::parameters('Users');
             Users::removeUser();
             break;
     }

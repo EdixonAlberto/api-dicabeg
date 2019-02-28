@@ -1,5 +1,11 @@
 <?php
 
+namespace V1\Options;
+
+use PDO;
+use Exception;
+use Db\PgSqlConnection;
+
 class Options
 {
    public static function expirationTime()

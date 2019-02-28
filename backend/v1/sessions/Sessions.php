@@ -1,6 +1,13 @@
- <?php
+<?php
 
-require_once 'SessionsQuerys.php';
+namespace V1\Sessions;
+
+use Exception;
+use Tools\Security;
+use Tools\JsonResponse;
+use V1\Options\Options;
+use V1\Users\UsersQuerys;
+use V1\Sessions\SessionsQuerys;
 
 class Sessions
 {

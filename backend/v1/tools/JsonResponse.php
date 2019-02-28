@@ -1,5 +1,7 @@
 <?php
 
+namespace Tools;
+
 class JsonResponse
 {
     public static function read($content, $resource)

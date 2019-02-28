@@ -1,6 +1,10 @@
 <?php
 
-require_once 'PgSqlConnection.php';
+namespace Db;
+
+use Db\PgSqlConnection;
+use Exception;
+use PDO;
 
 class Querys extends PgSqlConnection
 {
@@ -11,20 +15,22 @@ class Querys extends PgSqlConnection
       $this->table = $table;
    }
 
-   // public function search($column, $condition)
-   // {
-   //    $sql = "SELECT {$column} FROM {$this->table}
-   //             WHERE {$column} = ? LIMIT 1";
+   public function selectAll($fields)
+   {
+      $sql = "SELECT {$fields} FROM {$this->table}";
 
-   //    $query = self::connection()->prepare($sql);
-   //    $query->execute([
-   //       $condition
-   //    ]);
+      $query = self::connection()->prepare($sql);
+      $query->execute();
 
-   //    $rows = $query->rowCount();
-   //    if ($rows) return true;
-   //    else throw new Exception('not found resourse', 404);
-   // }
+      $rows = $query->rowCount();
+      if ($rows) {
+         for ($i = 0; $i < $rows; $i++) {
+            $objIndexedByColumns = $query->fetch(PDO::FETCH_OBJ);
+            $arrayResponse[] = $objIndexedByColumns;
+         }
+         return $arrayResponse;
+      } else return false;
+   }
 
    public function select($column, $condition, $fields)
    {
@@ -49,18 +55,25 @@ class Querys extends PgSqlConnection
    public function insert($arraySet)
    {
       $setInsert = $setValues = '';
+      $setLenght = count($arraySet);
       $index = 1;
-      foreach ($arraySet as $key => $value) {
-         $setInsert .= "{$key}, ";
-         $setValues .= '?, '; // Para construir la expresion: VALUES (?, ?, ...)";
-      }
 
-      $sql = "INSERT INTO {$this->table} ({$setInsert}create_date)
-               VALUES ({$setValues}?)";
+      foreach ($arraySet as $set => $value) {
+         if ($index++ == $setLenght) {
+            $setInsert .= $set;
+            $setValues .= '?';
+         } else {
+            $setInsert .= "{$set}, ";
+            $setValues .= '?, '; // Para construir la expresion: VALUES (?, ?, ...)";
+         }
+      }
+      $index = 1;
+
+      $sql = "INSERT INTO {$this->table} ({$setInsert})
+               VALUES ({$setValues})";
 
       $query = self::connection()->prepare($sql);
       foreach ($arraySet as $value) $query->bindValue($index++, $value);
-      $query->bindValue($index, date('Y-m-d H:i'));
       $query->execute();
 
       $error = $query->errorInfo()[2];
@@ -71,17 +84,23 @@ class Querys extends PgSqlConnection
    public function update($column, $condition, $arraySet)
    {
       $setUpdate = '';
+      $setLenght = count($arraySet);
       $index = 1;
-      foreach ($arraySet as $key => $value) {
-         $setUpdate .= "{$key} = ?, ";
-      }
 
-      $sql = "UPDATE {$this->table} SET {$setUpdate}update_date = ?
+      foreach ($arraySet as $set => $value) {
+         if ($index++ == $setLenght) {
+            $setUpdate .= "{$set} = ?";
+         } else {
+            $setUpdate .= "{$set} = ?, ";
+         }
+      }
+      $index = 1;
+
+      $sql = "UPDATE {$this->table} SET {$setUpdate}
                WHERE {$column} = ?";
 
       $query = self::connection()->prepare($sql);
       foreach ($arraySet as $value) $query->bindValue($index++, $value);
-      $query->bindValue($index++, date('Y-m-d H:i'));
       $query->bindValue($index, $condition);
       $query->execute();
 

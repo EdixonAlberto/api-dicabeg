@@ -1,5 +1,7 @@
 <?php
 
+namespace Tools;
+
 class Security
 {
     public static function validateEmail($email)

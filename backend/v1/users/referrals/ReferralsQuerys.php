@@ -1,5 +1,11 @@
 <?php
 
+namespace V1\Referrals;
+
+use PDO;
+use Db\PgSqlConnection;
+use Tools\GeneralMethods;
+
 class ReferralsQuerys extends PgSqlConnection
 {
     public static function search()
