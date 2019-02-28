@@ -15,7 +15,6 @@ if (isset($_GET['id'])) {
          $time = trim($time, '+');
 
          echo json_encode(['expirationTime' => $time]);
-
       } elseif ($method == 'POST') {
          $time = Options::expirationTime();
          $time = trim($time, '+');
