@@ -1,7 +1,9 @@
 <?php
 
-require_once '../tools/db/PgSqlConnection.php';
-require_once './Options.php';
+require_once __DIR__ . '../../../../vendor/autoload.php';
+
+use Tools\JsonResponse;
+use V1\Options\Options;
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
@@ -20,5 +22,5 @@ if (isset($_GET['id'])) {
 
          Options::setExpirationTime($time, $_REQUEST['time'] . ' minute');
       }
-   }
+   } else JsonResponse::error('not found resource', 400);
 }

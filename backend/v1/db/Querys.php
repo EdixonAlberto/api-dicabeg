@@ -32,8 +32,10 @@ class Querys extends PgSqlConnection
       } else return false;
    }
 
-   public function select($column, $condition, $fields)
+   public function select($column, $condition, $fields = null)
    {
+      $fields = is_null($fields) ? $column : $fields;
+
       $sql = "SELECT {$fields} FROM {$this->table}
                WHERE {$column} = ?";
 
@@ -68,6 +70,9 @@ class Querys extends PgSqlConnection
          }
       }
       $index = 1;
+
+      var_dump($arraySet, $setInsert);
+      die;
 
       $sql = "INSERT INTO {$this->table} ({$setInsert})
                VALUES ({$setValues})";
@@ -120,7 +125,6 @@ class Querys extends PgSqlConnection
       ]);
 
       $rows = $query->rowCount();
-      if ($rows) return true;
-      else throw new Exception('delete failed', 500);
+      return $rows ? true : false;
    }
 }

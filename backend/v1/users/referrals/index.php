@@ -1,18 +1,11 @@
 <?php
 
-// Tools
-require_once '../../tools/db/PgSqlConnection.php';
-require_once '../../tools/Validations.php';
-require_once '../../tools/GeneralMethods.php';
-require_once '../../tools/Gui.php';
-require_once '../../tools/Security.php';
-require_once '../../tools/JsonResponse.php';
-require_once '../../options/Options.php';
+require_once __DIR__ . '../../../../../vendor/autoload.php';
 
-// Resource
-require_once '../../sessions/Sessions.php';
-require_once '../UsersQuerys.php';
-require_once './Referrals.php';
+use Tools\JsonResponse;
+use Tools\Validations;
+use V1\Sessions\Sessions;
+use V1\Users\Referrals\Referrals;
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
@@ -24,13 +17,13 @@ try {
     switch ($method) {
         case 'GET':
             ($_GET['id_2'] == 'alls') ?
-                Referrals::getReferralsAlls() :
-                Referrals::getReferredById();
+                Referrals::index() :
+                Referrals::show();
             break;
 
         case 'DELETE':
             // Validations::parameters('Referrals');
-            Referrals::removeReferred();
+            Referrals::destroy();
             break;
     }
 } catch (Exception $error) {

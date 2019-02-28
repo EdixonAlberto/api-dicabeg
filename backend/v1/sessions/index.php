@@ -1,16 +1,10 @@
 <?php
 
-// Tools
-require_once '../tools/db/PgSqlConnection.php';
-require_once '../tools/Validations.php';
-require_once '../tools/Security.php';
-require_once '../tools/GeneralMethods.php';
-require_once '../tools/JsonResponse.php';
-require_once '../options/Options.php';
+require_once __DIR__ . '../../../../vendor/autoload.php';
 
-// Resource
-require_once '../users/UsersQuerys.php';
-require_once './Sessions.php';
+use Tools\JsonResponse;
+use Tools\Validations;
+use V1\Sessions\Sessions;
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
@@ -29,17 +23,15 @@ try {
             break;
 
         case 'POST':
-            // Validations::parameters('sessions');
-            Sessions::createSession();
+            Sessions::store();
             break;
 
         case 'PATCH':
-            // Validations::parameters('sessions');
-            Sessions::updateSession();
+            Sessions::update();
             break;
 
         case 'DELETE':
-            Sessions::removeSession();
+            Sessions::destroy();
             break;
     }
 } catch (Exception $error) {

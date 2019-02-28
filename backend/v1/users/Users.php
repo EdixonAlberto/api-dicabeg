@@ -7,10 +7,7 @@ use Exception;
 use Tools\Gui;
 use Tools\JsonResponse;
 use Tools\Security;
-use V1\Referrals\ReferralsQuerys;
-use V1\Sessions\SessionsQuerys;
 use V1\Users\Referrals\Referrals;
-use V1\Users\UsersQuerys;
 
 class Users
 {
@@ -20,20 +17,22 @@ class Users
     public static function getUsersAlls()
     {
         $userQuery = new Querys('users');
+
         $arrayUser = $userQuery->selectAll(self::SET);
-        if ($arrayUser) {
-            JsonResponse::read('users', $arrayUser);
-        } else throw new Exception('not found resource', 404);
+        if ($arrayUser == false) throw new Exception('not found resource', 404);
+
+        JsonResponse::read('users', $arrayUser);
     }
 
     public static function getUserById()
     {
         $userQuery = new Querys('users');
+
         $arrayUser = $userQuery->select('user_id', $_GET['id'], self::SET);
-        if ($arrayUser) {
-            $user = $arrayUser[0];
-            JsonResponse::read('user', $user);
-        } else throw new Exception('not found resource', 404);
+        if ($arrayUser == false) throw new Exception('not found resource', 404);
+
+        $user = $arrayUser[0];
+        JsonResponse::read('user', $user);
     }
 
     public static function createUser()
@@ -42,45 +41,45 @@ class Users
         $referredQuery = new Querys('referrals');
 
         $arrayUser = $userQuery->select('email', $_REQUEST['email'], 'user_id');
-        if (!$arrayUser) {
-            // validacion para el codigo de registro
-            $registrationCode = $_REQUEST['invite_code'] ?? null;
-            if (!is_null($registrationCode)) {
-                $arrayId = $userQuery->select('invite_code', $registrationCode, 'user_id');
-                $user_id = $arrayId[0]->user_id;
-                if (!$user_id) throw new Exception('invite code incorrect', 400);
-            }
-            $id = Gui::generate();
+        if ($arrayUser) throw new Exception('email exist', 400);
 
-            $email = $_REQUEST['email'];
-            $password = Security::encryptPassword($_REQUEST['password']);
-            $inviteCode = Gui::generate();
-            $username = substr($email, 0, strpos($email, '@'));
+        // validacion para el codigo de registro
+        $registrationCode = $_REQUEST['invite_code'] ?? null;
+        if (!is_null($registrationCode)) {
+            $arrayID = $userQuery->select('invite_code', $registrationCode, 'user_id');
+            $user_id = $arrayID[0]->user_id;
+            if (!$user_id) throw new Exception('invite code incorrect', 400);
+        }
 
-            $_arrayUser['user_id'] = $id;
-            $_arrayUser['email'] = $email;
-            $_arrayUser['password'] = $password;
-            $_arrayUser['invite_code'] = $inviteCode;
-            $_arrayUser['registration_code'] = $registrationCode;
-            $_arrayUser['username'] = $username;
-            date_default_timezone_set('America/Caracas');
-            $_arrayUser['create_date'] = date(self::TIME);
-            $userQuery->insert($_arrayUser);
+        $id = Gui::generate();
+        $email = $_REQUEST['email'];
+        $password = Security::encryptPassword($_REQUEST['password']);
+        $inviteCode = Gui::generate();
+        $username = substr($email, 0, strpos($email, '@'));
 
-            $arrayReferred['user_id'] = $id;
-            $arrayReferred['invite_code'] = $inviteCode;
-            $referredQuery->insert($arrayReferred);
+        $_arrayUser = [
+            'user_id' => $id,
+            'email' => $email,
+            'password' => $password,
+            'invite_code' => $inviteCode,
+            'registration_code' => $registrationCode,
+            'username' => $username
+        ];
 
-            if (!is_null($registrationCode)) {
-                $_GET['id'] = $user_id;
-                $info = Referrals::createReferred($id);
-            } else $info = null;
+        date_default_timezone_set('America/Caracas');
+        $_arrayUser['create_date'] = date(self::TIME);
+        $userQuery->insert($_arrayUser);
 
-            unset($_arrayUser['password']);
-            $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/sessions/';
-            JsonResponse::created('user', $_arrayUser, $path, $info);
+        if (!is_null($registrationCode)) {
+            $_GET['id'] = $user_id;
+            $_GET['id_2'] = $id;
+            $info = Referrals::store();
+        } else $info = null;
 
-        } else throw new Exception('email exist', 400);
+        unset($_arrayUser['password']);
+        $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/sessions/';
+
+        JsonResponse::created('user', $_arrayUser, $path, $info);
     }
 
     public static function updateUser()
@@ -118,22 +117,16 @@ class Users
 
     public static function removeUser()
     {
-        // $sessionQuery = new Querys('sessions');
+        $sessionQuery = new Querys('sessions');
+        $referredQuery = new Querys('referrals');
         $userQuery = new Querys('users');
-        // $referredQuery = new Querys('referrals');
 
-        $arrayUser = $userQuery->select('user_id', $_GET['id'], 'registration_code');
-        $registrationCode = $arrayUser[0]->registration_code;
+        $arrayUser = $userQuery->select('user_id', $_GET['id'], 'user_id');
+        if ($arrayUser == false) throw new Exception('not found resource', 404);
 
-        // $sessionQuery->delete('user_id', $_GET['id']);
-        // $userQuery->delete('user_id', $_GET['id']);
-        // $referredQuery->delete('user_id', $_GET['id']);
-
-        if (!is_null($registrationCode)) {
-            $arrayUser = $userQuery->select('invite_code', $registrationCode, 'user_id');
-            $user_id = $arrayUser[0]->user_id;
-            Referrals::removeReferred($user_id);
-        }
+        $sessionQuery->delete('user_id', $_GET['id']);
+        $referredQuery->delete('referred_id', $_GET['id']);
+        $userQuery->delete('user_id', $_GET['id']);
 
         JsonResponse::removed();
     }
