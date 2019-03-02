@@ -25,14 +25,12 @@ class Security
 
     public static function encryptPassword($password)
     {
-        // TODO: Seguir investigando sobre esto
         return password_hash($password, PASSWORD_DEFAULT);
     }
 
-    public static function generateToken()
+    public static function generateToken($email)
     {
-        // TODO: Investigar sobre las tecnicas para crear token personalizado fuertes
-        $token = 'SalchiPapa'; // correo + server date
-        return password_hash($token, PASSWORD_DEFAULT);
+        $data = $email . date('Y-m-d H:i:s') . rand();
+        return password_hash($data, PASSWORD_DEFAULT);
     }
 }
