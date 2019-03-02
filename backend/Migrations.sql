@@ -10,7 +10,7 @@ CREATE TABLE "users" (
    "user_id" VARCHAR(36) NOT NULL,
    "email" VARCHAR(40) NOT NULL,
    "password" VARCHAR(255) NOT NULL,
-   "autentication" BOOLEAN NOT NULL DEFAULT FALSE,
+   "authentication" BOOLEAN NOT NULL DEFAULT FALSE,
    "invite_code" VARCHAR(36) NOT NULL,
    "registration_code" VARCHAR(36) NULL DEFAULT NULL,
    "username" VARCHAR(20) NOT NULL,
