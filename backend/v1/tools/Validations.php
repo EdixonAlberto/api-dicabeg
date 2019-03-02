@@ -2,6 +2,8 @@
 
 namespace Tools;
 
+use Exception;
+
 class Validations
 {
     public static function id()
@@ -13,6 +15,12 @@ class Validations
                 continue; //TODO: Validar formato de gui
             } else throw new Exception("id incorrect", 400);
         }
+    }
+
+    public static function token()
+    {
+        $token = $_SERVER['HTTP_API_TOKEN'] ?? false;
+        if ($token == false) throw new Exception('not found token', 404);
     }
 
     public static function parameters($origin)

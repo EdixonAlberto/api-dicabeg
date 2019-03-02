@@ -10,10 +10,11 @@ $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
-    Validations::id();
+    if ($method != 'GET' and $method != 'POST') Validations::token();
+
     switch ($method) {
         case 'GET':
-            if ($_GET['id'] == 'alls') Sessions::index();
+            Sessions::index();
             break;
 
         case 'POST':
