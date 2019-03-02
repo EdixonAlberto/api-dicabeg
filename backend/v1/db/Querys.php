@@ -32,26 +32,27 @@ class Querys extends PgSqlConnection
       } else return false;
    }
 
-   public function select($column, $condition, $fields = null)
+   public function select($column, $condition, $fields = null, $all = false)
    {
-      $fields = is_null($fields) ? $column : $fields;
+      $fields = $fields ?? $column;
 
       $sql = "SELECT {$fields} FROM {$this->table}
                WHERE {$column} = ?";
 
-      $query = self::connection()->prepare($sql);
+      $query = self::connection()->prepare($sql);;
       $query->execute([
          $condition
       ]);
 
       $rows = $query->rowCount();
-      if ($rows) {
+      if ($rows > 1) { // return array
          for ($i = 0; $i < $rows; $i++) {
             $objIndexedByColumns = $query->fetch(PDO::FETCH_OBJ);
             $arrayResponse[] = $objIndexedByColumns;
          }
          return $arrayResponse;
-      } else return false;
+      } elseif ($rows == 1) return $query->fetch(PDO::FETCH_OBJ);
+      else return false;
    }
 
    public function insert($arraySet)
