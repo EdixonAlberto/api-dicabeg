@@ -66,7 +66,7 @@ class HistoryController extends Querys
       }
 
       $_arrayVideo['video_views'] = $_arrayHistory['history_views'];
-      $videoQuery->insert($_arrayVideo);
+      $videoQuery->update('video_id', $_GET['id_2'], $_arrayVideo);
 
       JsonResponse::created('history', $_arrayHistory);
    }
