@@ -10,16 +10,14 @@ $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
-    if ($method != 'POST') {
+    if ($method != 'POST' or $_GET['id'] != 'alls') {
         Validations::id();
         Sessions::verifySession();
     }
 
     switch ($method) {
         case 'GET':
-            ($_GET['id'] == 'alls') ?
-                Sessions::getSessionsAlls() :
-                Sessions::getSessionsById();
+            if ($_GET['id'] == 'alls') Sessions::index();
             break;
 
         case 'POST':

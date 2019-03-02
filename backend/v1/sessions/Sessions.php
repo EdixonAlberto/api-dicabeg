@@ -10,10 +10,11 @@ use V1\Options\Options;
 
 class Sessions
 {
-    protected const SET_SESSION = 'user_id, api_token, create_token';
-    protected const SET = 'user_id, email, invite_code, registration_code, username, names, lastnames, age, avatar, phone, points, movile_data, create_date, update_date';
-    protected const TIME = 'Y-m-d H:i:s';
+    protected const SET_SESSION = 'user_id, api_token, expiration_time, create_token';
+    protected const SET_USER = 'user_id, email, invite_code, registration_code, username, names, lastnames, age, avatar, phone, points, movile_data, create_date, update_date';
+    protected const TIME_FORMAT = 'Y-m-d H:i:s';
 
+    // ::::::::TEST::::::::
     public static function index()
     {
         $sessionQuery = new Querys('sessions');
@@ -29,32 +30,32 @@ class Sessions
         $userQuery = new Querys('users');
         $sessionQuery = new Querys('sessions');
 
-        $arrayUser = $userQuery->select('email', $_REQUEST['email'], 'user_id, password');
-        if ($arrayUser == false) throw new Exception('email not exist', 404);
+        $user = $userQuery->select('email', $_REQUEST['email'], 'user_id, password, email');
+        if ($user == false) throw new Exception('email not exist', 404);
 
-        $user = $arrayUser[0];
-        $user_id = $user->user_id;
-
-        $arraySession = $sessionQuery->select('user_id', $user_id);
-        if ($arraySession !== false) throw new Exception('session exist', 404);
+        $session = $sessionQuery->select('user_id', $user->user_id);
+        if ($session != false) throw new Exception('session exist', 404);
 
         self::validatePass($user->password);
-        $token = Security::generateToken();
+        $token = Security::generateToken($user->email);
 
         date_default_timezone_set('America/Caracas');
+        $sessionTime = date(self::TIME_FORMAT);
+        $expirationTime = strtotime($sessionTime . Options::expirationTime());
+
         $_arraySession = [
-            'user_id' => $user_id,
+            'user_id' => $user->user_id,
             'api_token' => $token,
-            'create_date' => date(self::TIME)
+            'expiration_time' => date(self::TIME_FORMAT, $expirationTime),
+            'create_date' => $sessionTime
         ];
         $sessionQuery->insert($_arraySession);
 
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/users/' . $_GET['id'] . '/';
-        $expirationTime = strtotime($_arraySession['create_date'] . Options::expirationTime());
-        $arrayUser = $userQuery->select('user_id', $user_id, self::SET);
+        $user = $userQuery->select('user_id', $user->user_id, self::SET_USER);
         $info = [
-            'expiration-time' => $expirationTime,
-            'user' => $arrayUser[0]
+            'expiration_time_unix' => $expirationTime,
+            'user' => $user
         ];
         JsonResponse::created('session', $_arraySession, $path, $info);
     }
@@ -62,20 +63,29 @@ class Sessions
     public static function update()
     {
         $sessionQuery = new Querys('sessions');
-
-        $token = Security::generateToken();
-        date_default_timezone_set('America/Caracas');
-        $_arraySession = [
-            'api_token' => $token,
-            'update_date' => date(self::TIME)
-        ];
+        $userQuery = new Querys('users');
 
         $oldToken = $_SERVER['HTTP_API_TOKEN'];
+        $session = $sessionQuery->select('api_token', $oldToken, 'user_id');
+        if ($session == false) throw new Exception('token incorrect', 401);
+
+        $user = $userQuery->select('user_id', $session->user_id, 'email');
+
+        $token = Security::generateToken($user->email);
+        date_default_timezone_set('America/Caracas');
+        $updateDate = date(self::TIME_FORMAT);
+        $expirationTime = strtotime($updateDate . Options::expirationTime());
+
+        $_arraySession = [
+            'api_token' => $token,
+            'expiration_time' => date(self::TIME_FORMAT, $expirationTime),
+            'update_date' => $updateDate
+        ];
+
         $sessionQuery->update('api_token', $oldToken, $_arraySession);
 
-        $expirationTime = strtotime($_arraySession['update_date'] . Options::expirationTime());
         $info = [
-            'expiration-time' => $expirationTime
+            'expiration_time_unix' => $expirationTime
         ];
         JsonResponse::updated('session', $_arraySession, $info);
     }
@@ -87,11 +97,11 @@ class Sessions
         $token = $_SERVER['HTTP_API_TOKEN'] ?? false;
         if ($token == false) throw new Exception('not found token', 404);
 
-        $arraySession = $sessionQuery->select('api_token', $token, 'create_date');
-        if ($arraySession == false) throw new Exception('token incorrect', 401);
+        $session = $sessionQuery->select('api_token', $token, 'expiration_time');
+        if ($session == false) throw new Exception('not found session', 404);
 
         date_default_timezone_set('America/Caracas');
-        $expirationTime = strtotime($arraySession[0]->create_date . Options::expirationTime());
+        $expirationTime = strtotime($session->expiration_time);
         $sessionTime = strtotime(date('Y-m-d H:i'));
 
         if ($sessionTime >= $expirationTime) {
