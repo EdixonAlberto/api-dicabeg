@@ -10,7 +10,7 @@ use V1\Options\Options;
 
 class Sessions
 {
-    protected const SET_SESSION = 'user_id, api_token, expiration_time, create_token';
+    protected const SET_SESSION = 'user_id, api_token, expiration_time, create_date, update_date';
     protected const SET_USER = 'user_id, email, invite_code, registration_code, username, names, lastnames, age, avatar, phone, points, movile_data, create_date, update_date';
     protected const TIME_FORMAT = 'Y-m-d H:i:s';
 
@@ -19,7 +19,7 @@ class Sessions
     {
         $sessionQuery = new Querys('sessions');
 
-        $arraySession = $sessionQuery->select('user_id', $_GET['id'], self::SET_SESSION);
+        $arraySession = $sessionQuery->selectAll(self::SET_SESSION);
         if ($arraySession == false) throw new Exception('not found resource', 404);
 
         JsonResponse::read('sessions', $arraySession);

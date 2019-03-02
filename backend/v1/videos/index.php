@@ -17,8 +17,8 @@ try {
     switch ($method) {
         case 'GET':
             ($_GET['id'] == 'alls') ?
-                Videos::getVideosAlls() :
-                Videos::getVideosById();
+                Videos::index() :
+                Videos::show();
             break;
     }
 } catch (Exception $error) {

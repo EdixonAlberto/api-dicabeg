@@ -32,7 +32,7 @@ class Querys extends PgSqlConnection
       } else return false;
    }
 
-   public function select($column, $condition, $fields = null, $all = false)
+   public function select($column, $condition, $fields = null)
    {
       $fields = $fields ?? $column;
 

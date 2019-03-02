@@ -11,7 +11,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
-    if ($method != 'POST') {
+    if ($method != 'POST' or $_GET['id'] != 'alls') {
         Validations::id();
         Sessions::verifySession();
     }
@@ -19,20 +19,20 @@ try {
     switch ($method) {
         case 'GET':
             ($_GET['id'] == 'alls') ?
-                Users::getUsersAlls() :
-                Users::getUserById();
+                Users::index() :
+                Users::show();
             break;
 
         case 'POST':
-            Users::createUser();
+            Users::store();
             break;
 
         case 'PATCH':
-            Users::updateUser();
+            Users::update();
             break;
 
         case 'DELETE':
-            Users::removeUser();
+            Users::destroy();
             break;
     }
 } catch (Exception $error) {

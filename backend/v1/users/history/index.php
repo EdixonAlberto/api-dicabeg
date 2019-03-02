@@ -24,7 +24,7 @@ try {
          break;
 
       case 'DELETE':
-         HistoryController::destroy();
+         HistoryController::destroy(); // TODO: Eliminar todo
          break;
    }
 } catch (Exception $error) {

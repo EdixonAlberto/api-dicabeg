@@ -30,10 +30,10 @@ class Referrals
         $referredQuery = new Querys('referrals');
 
         $referrals_id = $_GET['id'] . $_GET['id_2'];
-        $arrayReferrals = $referredQuery->select('referrals_id', $referrals_id, self::SET);
-        if ($arrayReferrals == false) throw new Exception('not found resourse', 404);
+        $referred = $referredQuery->select('referrals_id', $referrals_id, self::SET);
+        if ($referred == false) throw new Exception('not found resourse', 404);
 
-        $_referred = self::getReferredData($arrayReferrals[0]);
+        $_referred = self::getReferredData($referred);
         JsonResponse::read('referred', $_referred);
     }
 
@@ -57,8 +57,8 @@ class Referrals
         $referredQuery = new Querys('referrals');
 
         $referrals_id = $_GET['id'] . $_GET['id_2'];
-        $arrayReferrals = $referredQuery->select('referrals_id', $referrals_id);
-        if ($arrayReferrals == false) throw new Exception('not found resourse', 404);
+        $referred = $referredQuery->select('referrals_id', $referrals_id);
+        if ($referred == false) throw new Exception('not found resourse', 404);
 
         $referredQuery->delete('referrals_id', $referrals_id);
         JsonResponse::removed();
@@ -68,12 +68,8 @@ class Referrals
     {
         $userQuery = new Querys('users');
 
-        $referred_id = $referred->referred_id;
-        $arrayUser = $userQuery->select('user_id', $referred_id, 'user_id, email, username, avatar, phone');
-
-        $_referred = $arrayUser[0];
-        $_referred->create_date = $referred->create_date;
-
-        return $_referred;
+        $user = $userQuery->select('user_id', $referred->referred_id, 'user_id, email, username, avatar, phone');
+        $user->create_date = $referred->create_date;
+        return $user;
     }
 }

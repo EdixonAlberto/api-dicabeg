@@ -9,7 +9,7 @@ use Tools\JsonResponse;
 class HistoryController extends Querys
 {
    private const SET = 'history_id, user_id, video_id, history_views, update_date';
-   protected const TIME = 'Y-m-d H:i:s';
+   protected const TIME_FORMAT = 'Y-m-d H:i:s';
 
    public static function index()
    {
@@ -28,30 +28,29 @@ class HistoryController extends Querys
    public static function show()
    {
       $historyQuery = new Querys('history');
-      $videoQuery = new Querys('videos');
 
       $history_id = $_GET['id'] . $_GET['id_2'];
-      $arrayHistory = $historyQuery->select('history_id', $history_id, 'video_id, history_views, update_date');
-      if ($arrayHistory == false) throw new Exception('not found resourse', 404);
+      $history = $historyQuery->select('history_id', $history_id, 'video_id, history_views, update_date');
+      if ($history == false) throw new Exception('not found resourse', 404);
 
-      $_history = self::getHistoryData($arrayHistory[0]);
+      $_history = self::getHistoryData($history);
       JsonResponse::read('history', $_history);
    }
 
    public static function store()
    {
       $historyQuery = new Querys('history');
+      $videoQuery = new Querys('videos');
 
       $history_id = $_GET['id'] . $_GET['id_2'];
-      $arrayHistory = $historyQuery->select('history_id', $history_id, 'history_views');
+      $history = $historyQuery->select('history_id', $history_id, 'history_views');
 
       date_default_timezone_set('America/Caracas');
-      if ($arrayHistory) {
-         $history = $arrayHistory[0];
+      if ($history) {
 
          $_arrayHistory = [
             'history_views' => ++$history->history_views,
-            'update_date' => date(self::TIME)
+            'update_date' => date(self::TIME_FORMAT)
          ];
          $historyQuery->update('history_id', $history_id, $_arrayHistory);
 
@@ -61,10 +60,14 @@ class HistoryController extends Querys
             'user_id' => $_GET['id'],
             'video_id' => $_GET['id_2'],
             'history_views' => 1,
-            'update_date' => date(self::TIME)
+            'update_date' => date(self::TIME_FORMAT)
          ];
          $historyQuery->insert($_arrayHistory);
       }
+
+      $_arrayVideo['video_views'] = $_arrayHistory['history_views'];
+      $videoQuery->insert($_arrayVideo);
+
       JsonResponse::created('history', $_arrayHistory);
    }
 
@@ -73,8 +76,8 @@ class HistoryController extends Querys
       $historyQuery = new Querys('history');
 
       $history_id = $_GET['id'] . $_GET['id_2'];
-      $arrayHistory = $historyQuery->select('history_id', $history_id);
-      if ($arrayHistory == false) throw new Exception('not found resourse', 404);
+      $history = $historyQuery->select('history_id', $history_id);
+      if ($history == false) throw new Exception('not found resourse', 404);
 
       $historyQuery->delete('history_id', $history_id);
       JsonResponse::removed();
@@ -84,13 +87,9 @@ class HistoryController extends Querys
    {
       $videoQuery = new Querys('videos');
 
-      $video_id = $history->video_id;
-      $arrayVideo = $videoQuery->select('video_id', $video_id, 'video_id, name, link, provider_logo');
-
-      $_history = $arrayVideo[0];
-      $_history->views = $history->history_views;
-      $_history->date = $history->update_date;
-
-      return $_history;
+      $video = $videoQuery->select('video_id', $history->video_id, 'video_id, name, link, provider_logo');
+      $video->views = $history->history_views;
+      $video->date = $history->update_date;
+      return $video;
    }
 }
