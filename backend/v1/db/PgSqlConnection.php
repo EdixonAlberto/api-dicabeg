@@ -4,15 +4,11 @@ namespace Db;
 
 use Db\DataBase;
 
-class PgSqlConnection
+class PgSqlConnection extends DataBase
 {
-    public static function connection()
+    protected static function connection()
     {
-        try {
-            $dataPostgre = new DataBase('pgsql', 'DATABASE_URL');
-            return $dataPostgre->connect();
-        } catch (Exception $th) {
-            echo $th;
-        }
+        $dataPostgre = new DataBase('pgsql', 'DATABASE_URL');
+        return $dataPostgre->conn();
     }
 }

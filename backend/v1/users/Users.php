@@ -21,6 +21,7 @@ class Users
 
         $arrayUser = $userQuery->selectAll('password, ' . self::SET);
         if ($arrayUser == false) throw new Exception('not found users', 404);
+
         foreach ($arrayUser as $user) {
             $user->password = 'Estas loco!! si piensas que te voy a dar mi clave';
             $_arrayUser[] = $user;
