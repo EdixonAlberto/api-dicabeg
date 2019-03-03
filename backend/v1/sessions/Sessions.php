@@ -33,7 +33,7 @@ class Sessions
         $user = $userQuery->select('email', $_REQUEST['email'], 'user_id, email, password');
         if ($user == false) throw new Exception('email not exist', 404);
 
-        $session = $sessionQuery->select('user_id', $user->user_id, 'expiration_time');
+        $session = $sessionQuery->select('user_id', $user->user_id, 'api_token, expiration_time');
         if ($session) {
             $activeSession = self::validateExpiration($session);
             if ($activeSession) throw new Exception('active session', 400);
