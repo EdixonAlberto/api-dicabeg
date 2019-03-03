@@ -2,11 +2,11 @@
 
 namespace V1\Options;
 
-use PDO;
-use Exception;
 use Db\PgSqlConnection;
+use Exception;
+use PDO;
 
-class Options
+class Options extends PgSqlConnection
 {
    public static function expirationTime()
    {

@@ -9,6 +9,6 @@ class PgSqlConnection extends DataBase
     protected static function connection()
     {
         $dataPostgre = new DataBase('pgsql', 'DATABASE_URL');
-        return $dataPostgre->conn();
+        return $dataPostgre->connect();
     }
 }
