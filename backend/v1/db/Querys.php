@@ -32,7 +32,7 @@ class Querys extends PgSqlConnection
       } else return false;
    }
 
-   public function select($column, $condition, $fields = null)
+   public function select($column, $condition, $fields = null, $all = false)
    {
       $fields = $fields ?? $column;
 
@@ -45,7 +45,7 @@ class Querys extends PgSqlConnection
       ]);
 
       $rows = $query->rowCount();
-      if ($rows > 1) { // return array
+      if ($rows > 1 or $all == true) { // return array
          for ($i = 0; $i < $rows; $i++) {
             $objIndexedByColumns = $query->fetch(PDO::FETCH_OBJ);
             $arrayResponse[] = $objIndexedByColumns;

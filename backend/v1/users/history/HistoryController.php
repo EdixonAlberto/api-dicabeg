@@ -15,7 +15,7 @@ class HistoryController extends Querys
    {
       $historyQuery = new Querys('history');
 
-      $arrayHistory = $historyQuery->select('user_id', $_GET['id'], 'video_id, history_views, update_date');
+      $arrayHistory = $historyQuery->select('user_id', $_GET['id'], 'video_id, history_views, update_date', true);
       if ($arrayHistory == false) throw new Exception('not found resourse', 404);
 
       foreach ($arrayHistory as $history) {
