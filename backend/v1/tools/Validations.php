@@ -8,11 +8,11 @@ class Validations
 {
     public static function id()
     {
+        // No se valida si los parametros en GET estan seteados, porque apache asegura esto con las redirecciones
         foreach ($_GET as $id) {
-            if ($id === 'alls') {
-                return;
-            } elseif (strlen($id) == 36) {
-                continue; //TODO: Validar formato de gui
+            if ($id === 'alls');
+            elseif (strlen($id) == 36) {
+                continue; //TODO: Validar formato de gui, ej: 2639569E-78C0-4A5D-83EC-20A7CD535210
             } else throw new Exception("id incorrect", 400);
         }
     }
@@ -21,6 +21,7 @@ class Validations
     {
         $token = $_SERVER['HTTP_API_TOKEN'] ?? false;
         if ($token == false) throw new Exception('not found token', 404);
+        return $token;
     }
 
     public static function parameters($origin)

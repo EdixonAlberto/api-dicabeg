@@ -30,7 +30,7 @@ class Security
 
     public static function encryptPassword2($password)
     {
-        // TODO: $password
+        // FIXME:
         $salt = mcrypt_create_iv(22, MCRYPT_DEV_URANDOM);
         $salt = base64_encode($salt);
         $salt = str_replace('+', '.', $salt);

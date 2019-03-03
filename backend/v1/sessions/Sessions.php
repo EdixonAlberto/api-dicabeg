@@ -6,13 +6,14 @@ use Db\Querys;
 use Exception;
 use Tools\JsonResponse;
 use Tools\Security;
+use Tools\Validations;
 use V1\Options\Options;
 
 class Sessions
 {
-    protected const SET_SESSION = 'user_id, api_token, expiration_time, create_date, update_date';
-    protected const SET_USER = 'user_id, email, invite_code, registration_code, username, names, lastnames, age, avatar, phone, points, movile_data, create_date, update_date';
-    protected const TIME_FORMAT = 'Y-m-d H:i:s';
+    private const SET_SESSION = 'user_id, api_token, expiration_time, create_date, update_date';
+    private const SET_USER = 'user_id, email, invite_code, registration_code, username, names, lastnames, age, avatar, phone, points, movile_data, create_date, update_date';
+    private const TIME_FORMAT = 'Y-m-d H:i:s';
 
     // ::::::::TEST::::::::
     public static function index()
@@ -108,7 +109,7 @@ class Sessions
     {
         $sessionQuery = new Querys('sessions');
 
-        $token = $_SERVER['HTTP_API_TOKEN'];
+        $token = Validations::token();
         $session = $sessionQuery->select('api_token', $token, 'api_token, expiration_time');
         if ($session == false) throw new Exception('token incorrect', 401);
 
@@ -116,7 +117,7 @@ class Sessions
         if ($activeSession == false) throw new Exception('token expired', 401);
     }
 
-    protected static function validateExpiration($session)
+    private static function validateExpiration($session)
     {
         $sessionQuery = new Querys('sessions');
 
@@ -130,7 +131,7 @@ class Sessions
         } else return true;
     }
 
-    protected static function validatePass($password)
+    private static function validatePass($password)
     {
         $verify = password_verify($_REQUEST['password'], $password);
         if (!$verify) throw new Exception('passsword incorrect', 401);
