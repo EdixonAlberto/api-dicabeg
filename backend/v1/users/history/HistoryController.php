@@ -73,11 +73,17 @@ class HistoryController extends Querys
    {
       $historyQuery = new Querys('history');
 
-      $history_id = $_GET['id'] . $_GET['id_2'];
-      $history = $historyQuery->select('history_id', $history_id);
-      if ($history == false) throw new Exception('not found resourse', 404);
+      if ($_GET['id_2'] == 'alls') {
+         $history = $historyQuery->select('user_id', $_GET['id']);
+         if ($history == false) throw new Exception('not found resourse', 404);
+         $historyQuery->delete('user_id', $_GET['id']);
+      } else {
+         $history_id = $_GET['id'] . $_GET['id_2'];
 
-      $historyQuery->delete('history_id', $history_id);
+         $history = $historyQuery->select('history_id', $history_id);
+         if ($history == false) throw new Exception('not found resourse', 404);
+         $historyQuery->delete('history_id', $history_id);
+      }
       JsonResponse::removed();
    }
 
