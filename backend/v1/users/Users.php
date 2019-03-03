@@ -50,8 +50,8 @@ class Users
         $registrationCode = $_REQUEST['invite_code'] ?? null;
         if (!is_null($registrationCode)) {
             $user = $userQuery->select('invite_code', $registrationCode, 'user_id');
+            if ($user == false) throw new Exception('invite code incorrect', 400);
             $user_id = $user->user_id;
-            if (!$user_id) throw new Exception('invite code incorrect', 400);
         }
 
         $id = Gui::generate();
