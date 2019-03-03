@@ -28,6 +28,16 @@ class Security
         return password_hash($password, PASSWORD_DEFAULT);
     }
 
+    public static function encryptPassword2($password)
+    {
+        // TODO: $password
+        $salt = mcrypt_create_iv(22, MCRYPT_DEV_URANDOM);
+        $salt = base64_encode($salt);
+        $salt = str_replace('+', '.', $salt);
+        $hash = crypt('rasmuslerdorf', '$2y$10$' . $salt . '$');
+        return $hash;
+    }
+
     public static function generateToken($email)
     {
         $data = $email . date('Y-m-d H:i:s') . rand();
