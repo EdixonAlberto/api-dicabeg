@@ -15,7 +15,7 @@ class Referrals
     {
         $referredQuery = new Querys('referrals');
 
-        $arrayReferrals = $referredQuery->select('user_id', $_GET['id'], self::SET);
+        $arrayReferrals = $referredQuery->select('user_id', $_GET['id'], self::SET, true);
         if ($arrayReferrals == false) throw new Exception('not found resourse', 404);
 
         foreach ($arrayReferrals as $referred) {

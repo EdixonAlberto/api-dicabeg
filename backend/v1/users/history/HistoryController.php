@@ -47,13 +47,11 @@ class HistoryController extends Querys
 
       date_default_timezone_set('America/Caracas');
       if ($history) {
-
          $_arrayHistory = [
             'history_views' => ++$history->history_views,
             'update_date' => date(self::TIME_FORMAT)
          ];
          $historyQuery->update('history_id', $history_id, $_arrayHistory);
-
       } else {
          $_arrayHistory = [
             'history_id' => $_GET['id'] . $_GET['id_2'],
