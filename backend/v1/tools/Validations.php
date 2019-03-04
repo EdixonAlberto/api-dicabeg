@@ -4,17 +4,33 @@ namespace Tools;
 
 use Exception;
 
+//2639569E-78C0-4A5D-83EC-20A7CD535210
+//71508f6f-b61d-a303-22d3-49ecf251f618
+
+
+
+
 class Validations
 {
-    public static function id()
+    public static function gui()
     {
         // No se valida si los parametros en GET estan seteados, porque apache asegura esto con las redirecciones
-        foreach ($_GET as $id) {
-            if ($id === 'alls');
-            elseif (strlen($id) == 36) {
-                continue; //TODO: Validar formato de gui, ej: 2639569E-78C0-4A5D-83EC-20A7CD535210
-            } else throw new Exception("id incorrect", 400);
+        // foreach ($_GET as $gui) {
+
+        $array = array();
+        if (preg_match('/^[A-Z0-9\-]{0,38}$/', '2639569E-78C0-4A5D-83EC-20A7CD535210', $array)) {
+            $resp = 1;
+        } else {
+            $resp = 0;
         }
+        var_dump($resp, $array);
+        die;
+
+            // if ($id === 'alls');
+            // elseif (strlen($id) == 36) {
+            //     continue; //TODO: Validar formato de gui, ej: 2639569E-78C0-4A5D-83EC-20A7CD535210
+            // } else throw new Exception("id incorrect", 400);
+        // }
     }
 
     public static function token()
@@ -26,7 +42,9 @@ class Validations
 
     public static function parameters($origin)
     {
-        return; // TODO: Falta hacer toda la verificacion de parametros segun el vervo http usado
+        return;
+
+        // TODO: Falta hacer toda la verificacion de parametros segun el vervo http usado
         switch ($origin) {
             case 'USERS':
                 if ($_REQUEST) {
@@ -44,17 +62,17 @@ class Validations
                 break;
         }
     }
-
+    /*
     private function parametersUsers()
     {
         if (isset($_REQUEST['email'])) {
             $email = $_REQUEST['email'];
-            if (!empty($email)) { // TODO: validacion del dato
+            if (!empty($email)) {
             } else throw new Exception('Parameter: email is empty');
         } else throw new Exception("Parameter: email not found");
         if (isset($_REQUEST['password'])) {
             $pass = $_REQUEST['password'];
-            if (!empty($pass)) { // TODO: validar y encriptar
+            if (!empty($pass)) {
             } else throw new Exception('Parameter: password is empty');
         } else throw new Exception("Parameter: password not found");
     }
@@ -113,6 +131,6 @@ class Validations
                 echo ($query->errorInfo());
             }
         }
-
     }
+     */
 }
