@@ -7,6 +7,7 @@ use Tools\Constants;
 use Tools\Gui;
 use Tools\JsonResponse;
 use Tools\Security;
+use V1\Options\Time;
 use V1\Users\Referrals\Referrals;
 
 class Users extends Constants
@@ -52,10 +53,10 @@ class Users extends Constants
             $user_id = $user->user_id;
         }
 
-        $id = Gui::generate();
+        $id = Gui::generate('id');
         $email = $_REQUEST['email'];
-        $password = Security::encryptPassword($_REQUEST['password']);
-        $inviteCode = Gui::generate();
+        $password = Security::generateHash($_REQUEST['password'], true);
+        $inviteCode = Gui::generate('code');
         $username = substr($email, 0, strpos($email, '@'));
 
         $_arrayUser = [
@@ -64,11 +65,9 @@ class Users extends Constants
             'password' => $password,
             'invite_code' => $inviteCode,
             'registration_code' => $registrationCode,
-            'username' => $username
+            'username' => $username,
+            'create_date' => Time::current('UTC')
         ];
-
-        date_default_timezone_set('America/Caracas');
-        $_arrayUser['create_date'] = date(self::TIME_FORMAT);
         $userQuery->insert($_arrayUser);
 
         if (!is_null($registrationCode)) {
@@ -99,7 +98,7 @@ class Users extends Constants
             foreach ($_REQUEST as $key => $value) {
                 if ($_key == $key) {
                     $_arrayUser[$_key] = ($key == 'password') ?
-                        Security::encryptPassword($_REQUEST['password']) :
+                        Security::generateHash($_REQUEST['password'], true) :
                         $value;
                     $_keyFound = true;
                 }
@@ -108,8 +107,7 @@ class Users extends Constants
                 $_arrayUser[$_key] = $_value;
             }
         }
-        date_default_timezone_set('America/Caracas');
-        $_arrayUser['update_date'] = date(self::TIME_FORMAT);
+        $_arrayUser['update_date'] = Time::current('UTC');
 
         $userQuery->update('user_id', $_GET['id'], $_arrayUser);
         unset($_arrayUser['password']);

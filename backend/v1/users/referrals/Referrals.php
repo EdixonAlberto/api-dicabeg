@@ -5,6 +5,7 @@ namespace V1\Users\Referrals;
 use Db\Querys;
 use Tools\Constants;
 use Tools\JsonResponse;
+use V1\Options\Time;
 
 class Referrals extends Constants
 {
@@ -41,9 +42,7 @@ class Referrals extends Constants
         $arrayReferrals['referrals_id'] = $_GET['id'] . $_GET['id_2'];
         $arrayReferrals['user_id'] = $_GET['id'];
         $arrayReferrals['referred_id'] = $_GET['id_2'];
-
-        date_default_timezone_set('America/Caracas');
-        $arrayReferrals['create_date'] = date(self::TIME_FORMAT);
+        $arrayReferrals['create_date'] = Time::current('UTC');
 
         $referredQuery->insert($arrayReferrals);
         return 'added as an referred';

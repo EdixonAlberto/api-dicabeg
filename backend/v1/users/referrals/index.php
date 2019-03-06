@@ -11,7 +11,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
-    Validations::id();
+    Validations::gui();
     Sessions::verifySession();
 
     switch ($method) {

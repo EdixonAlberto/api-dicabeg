@@ -5,6 +5,7 @@ namespace V1\Users\History;
 use Db\Querys;
 use Tools\Constants;
 use Tools\JsonResponse;
+use V1\Options\Time;
 
 class HistoryController extends Constants
 {
@@ -12,7 +13,7 @@ class HistoryController extends Constants
    {
       $historyQuery = new Querys('history');
 
-      $arrayHistory = $historyQuery->select('user_id', $_GET['id'], 'video_id, history_views, update_date', true);
+      $arrayHistory = $historyQuery->select('user_id', $_GET['id'], 'video_id, total_views, update_date', true);
       if ($arrayHistory == false) throw new \Exception('not found resourse', 404);
 
       foreach ($arrayHistory as $history) {
@@ -27,7 +28,7 @@ class HistoryController extends Constants
       $historyQuery = new Querys('history');
 
       $history_id = $_GET['id'] . $_GET['id_2'];
-      $history = $historyQuery->select('history_id', $history_id, 'video_id, history_views, update_date');
+      $history = $historyQuery->select('history_id', $history_id, 'video_id, total_views, update_date');
       if ($history == false) throw new \Exception('not found resourse', 404);
 
       $_history = self::getHistoryData($history);
@@ -40,13 +41,13 @@ class HistoryController extends Constants
       $videoQuery = new Querys('videos');
 
       $history_id = $_GET['id'] . $_GET['id_2'];
-      $history = $historyQuery->select('history_id', $history_id, 'history_views');
+      $history = $historyQuery->select('history_id', $history_id, 'total_views');
+      $video = $videoQuery->select('video_id', $_GET['id_2'], 'total_views');
 
-      date_default_timezone_set('America/Caracas');
       if ($history) {
          $_arrayHistory = [
-            'history_views' => ++$history->history_views,
-            'update_date' => date(self::TIME_FORMAT)
+            'total_views' => ++$history->total_views,
+            'update_date' => Time::current('UTC')
          ];
          $historyQuery->update('history_id', $history_id, $_arrayHistory);
       } else {
@@ -54,14 +55,15 @@ class HistoryController extends Constants
             'history_id' => $_GET['id'] . $_GET['id_2'],
             'user_id' => $_GET['id'],
             'video_id' => $_GET['id_2'],
-            'history_views' => 1,
-            'update_date' => date(self::TIME_FORMAT)
+            'total_views' => 1,
+            'update_date' => Time::current('UTC')
          ];
          $historyQuery->insert($_arrayHistory);
+         unset($_arrayHistory['history_id'], $_arrayHistory['user_id']);
       }
 
-      $_arrayVideo['video_views'] = $_arrayHistory['history_views'];
-      $videoQuery->update('video_id', $_GET['id_2'], $_arrayVideo);
+      $views = ++$video->total_views;
+      $videoQuery->update('video_id', $_GET['id_2'], ['total_views' => $views]);
 
       JsonResponse::created('history', $_arrayHistory);
    }
@@ -70,15 +72,13 @@ class HistoryController extends Constants
    {
       $historyQuery = new Querys('history');
 
+      $history = $historyQuery->select('user_id', $_GET['id']);
+      if ($history == false) throw new \Exception('not found resourse', 404);
+
       if ($_GET['id_2'] == 'alls') {
-         $history = $historyQuery->select('user_id', $_GET['id']);
-         if ($history == false) throw new \Exception('not found resourse', 404);
          $historyQuery->delete('user_id', $_GET['id']);
       } else {
          $history_id = $_GET['id'] . $_GET['id_2'];
-
-         $history = $historyQuery->select('history_id', $history_id);
-         if ($history == false) throw new \Exception('not found resourse', 404);
          $historyQuery->delete('history_id', $history_id);
       }
       JsonResponse::removed();
@@ -89,8 +89,8 @@ class HistoryController extends Constants
       $videoQuery = new Querys('videos');
 
       $video = $videoQuery->select('video_id', $history->video_id, 'video_id, name, link, provider_logo');
-      $video->views = $history->history_views;
-      $video->date = $history->update_date;
+      $video->total_views = $history->total_views;
+      $video->update_date = $history->update_date;
       return $video;
    }
 }

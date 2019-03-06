@@ -7,7 +7,7 @@ use Tools\Constants;
 use Tools\JsonResponse;
 use Tools\Security;
 use Tools\Validations;
-use V1\Options\Options;
+use V1\Options\Time;
 
 class Sessions extends Constants
 {
@@ -36,25 +36,22 @@ class Sessions extends Constants
             if ($activeSession) throw new \Exception('active session', 400);
         }
 
-        self::validatePass($user->password);
-        $token = Security::generateToken($user->email);
+        self::validatePass($user);
+        $token = Security::generateHash($user->email);
 
-        date_default_timezone_set('America/Caracas');
-        $sessionTime = date(self::TIME_FORMAT);
-        $expirationTime = strtotime($sessionTime . Options::expirationTime());
-
+        $expirationTime = Time::expiration();
         $_arraySession = [
             'user_id' => $user->user_id,
             'api_token' => $token,
-            'expiration_time' => date(self::TIME_FORMAT, $expirationTime),
-            'create_date' => $sessionTime
+            'expiration_time' => $expirationTime['UTC'],
+            'create_date' => Time::current('UTC')
         ];
         $sessionQuery->insert($_arraySession);
 
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/users/' . $_GET['id'] . '/';
-        $user = $userQuery->select('user_id', $user->user_id, self::SET_USER);
+        $user = $userQuery->select('user_id', $user->user_id, self::SET_USERS);
         $info = [
-            'expiration_time_unix' => $expirationTime,
+            'expiration_time_unix' => $expirationTime['UNIX'],
             'user' => $user
         ];
         JsonResponse::created('session', $_arraySession, $path, $info);
@@ -73,21 +70,18 @@ class Sessions extends Constants
         if ($activeSession == false) throw new \Exception('token expired', 401);
 
         $user = $userQuery->select('user_id', $session->user_id, 'email');
-        $newToken = Security::generateToken($user->email);
+        $newToken = Security::generateHash($user->email);
 
-        date_default_timezone_set('America/Caracas');
-        $updateDate = date(self::TIME_FORMAT);
-        $expirationTime = strtotime($updateDate . Options::expirationTime());
-
+        $expirationTime = Time::expiration();
         $_arraySession = [
             'api_token' => $newToken,
-            'expiration_time' => date(self::TIME_FORMAT, $expirationTime),
-            'update_date' => $updateDate
+            'expiration_time' => $expirationTime['UTC'],
+            'update_date' => time::current('UTC')
         ];
         $sessionQuery->update('api_token', $token, $_arraySession);
 
         $info = [
-            'expiration_time_unix' => $expirationTime
+            'expiration_time_unix' => $expirationTime['UNIX']
         ];
         JsonResponse::updated('session', $_arraySession, $info);
     }
@@ -117,9 +111,8 @@ class Sessions extends Constants
     {
         $sessionQuery = new Querys('sessions');
 
-        date_default_timezone_set('America/Caracas');
-        $expirationTime = $session->expiration_time;
-        $sessionTime = date(self::TIME_FORMAT);
+        $sessionTime = time::current('UNIX');
+        $expirationTime = time::expiration('UNIX');
 
         if ($sessionTime >= $expirationTime) {
             $sessionQuery->delete('api_token', $session->api_token);
@@ -127,9 +120,15 @@ class Sessions extends Constants
         } else return true;
     }
 
-    private static function validatePass($password)
+    private static function validatePass($user)
     {
-        $verify = password_verify($_REQUEST['password'], $password);
+        $verify = password_verify($_REQUEST['password'], $user->password);
         if (!$verify) throw new \Exception('passsword incorrect', 401);
+
+        $rehash = Security::rehash($user->password);
+        if ($rehash == false) return;
+
+        $userQuery = new Querys('users');
+        $userQuery->update('user_id', $user->user_id, ['password' => $user->password]);
     }
 }

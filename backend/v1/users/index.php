@@ -12,7 +12,7 @@ parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
     if ($method != 'POST' and $_GET['id'] != 'alls') {
-        Validations::id();
+        Validations::gui();
         Sessions::verifySession();
     }
 

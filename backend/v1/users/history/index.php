@@ -3,6 +3,7 @@
 require_once __DIR__ . '../../../../../vendor/autoload.php';
 
 use Tools\JsonResponse;
+use Tools\Validations;
 use V1\Sessions\Sessions;
 use V1\Users\History\HistoryController;
 
@@ -10,6 +11,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
+   Validations::gui();
    Sessions::verifySession();
 
    switch ($method) {
