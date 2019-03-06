@@ -3,8 +3,6 @@
 namespace Db;
 
 use Db\PgSqlConnection;
-use Exception;
-use PDO;
 
 class Querys extends PgSqlConnection
 {
@@ -25,14 +23,14 @@ class Querys extends PgSqlConnection
       $rows = $query->rowCount();
       if ($rows) {
          for ($i = 0; $i < $rows; $i++) {
-            $objIndexedByColumns = $query->fetch(PDO::FETCH_OBJ);
+            $objIndexedByColumns = $query->fetch(\PDO::FETCH_OBJ);
             $arrayResponse[] = $objIndexedByColumns;
          }
          return $arrayResponse;
       } else return false;
    }
 
-   public function select($column, $condition, $fields = null, $all = false)
+   public function select($column, $condition, $fields = null, $getArray = false)
    {
       $fields = $fields ?? $column;
 
@@ -45,14 +43,15 @@ class Querys extends PgSqlConnection
       ]);
 
       $rows = $query->rowCount();
-      if ($rows > 1 or $all == true) { // return array
+      if ($rows == false) return false;
+
+      if ($getArray) { // return array
          for ($i = 0; $i < $rows; $i++) {
-            $objIndexedByColumns = $query->fetch(PDO::FETCH_OBJ);
+            $objIndexedByColumns = $query->fetch(\PDO::FETCH_OBJ);
             $arrayResponse[] = $objIndexedByColumns;
          }
          return $arrayResponse;
-      } elseif ($rows == 1) return $query->fetch(PDO::FETCH_OBJ);
-      else return false;
+      } else return $query->fetch(\PDO::FETCH_OBJ);
    }
 
    public function insert($arraySet)
@@ -64,24 +63,22 @@ class Querys extends PgSqlConnection
       foreach ($arraySet as $set => $value) {
          if ($index++ == $setLenght) {
             $setInsert .= $set;
-            $setValues .= '?';
+            $setValues .= "'{$value}'";
          } else {
             $setInsert .= "{$set}, ";
-            $setValues .= '?, '; // Para construir la expresion: VALUES (?, ?, ...)";
+            $setValues .= "'{$value}', ";
          }
       }
-      $index = 1;
 
       $sql = "INSERT INTO {$this->table} ({$setInsert})
                VALUES ({$setValues})";
 
       $query = self::connection()->prepare($sql);
-      foreach ($arraySet as $value) $query->bindValue($index++, $value);
       $query->execute();
 
       $error = $query->errorInfo()[2];
       if (is_null($error)) return true;
-      else throw new Exception($error, 400);
+      else throw new \Exception($error, 400);
    }
 
    public function update($column, $condition, $arraySet)
@@ -92,24 +89,29 @@ class Querys extends PgSqlConnection
 
       foreach ($arraySet as $set => $value) {
          if ($index++ == $setLenght) {
-            $setUpdate .= "{$set} = ?";
+            $setUpdate .= "{$set} = '{$value}'";
          } else {
-            $setUpdate .= "{$set} = ?, ";
+            $setUpdate .= "{$set} = '{$value}', ";
          }
       }
-      $index = 1;
 
-      $sql = "UPDATE {$this->table} SET {$setUpdate}
+      if (!$column and !$condition) {
+         $sql = "UPDATE {$this->table} SET {$setUpdate}";
+         $query = self::connection()->prepare($sql);
+         $query->execute();
+
+      } else {
+         $sql = "UPDATE {$this->table} SET {$setUpdate}
                WHERE {$column} = ?";
-
-      $query = self::connection()->prepare($sql);
-      foreach ($arraySet as $value) $query->bindValue($index++, $value);
-      $query->bindValue($index, $condition);
-      $query->execute();
+         $query = self::connection()->prepare($sql);
+         $query->execute([
+            $condition
+         ]);
+      }
 
       $error = $query->errorInfo()[2];
       if (is_null($error)) return true;
-      else throw new Exception($error, 400);
+      else throw new \Exception($error, 400);
    }
 
    public function delete($column, $condition)
