@@ -3,20 +3,17 @@
 namespace V1\Users\Referrals;
 
 use Db\Querys;
-use Exception;
+use Tools\Constants;
 use Tools\JsonResponse;
 
-class Referrals
+class Referrals extends Constants
 {
-    protected const SET = 'referred_id, create_date';
-    protected const TIME = 'Y-m-d H:i:s';
-
     public static function index()
     {
         $referredQuery = new Querys('referrals');
 
-        $arrayReferrals = $referredQuery->select('user_id', $_GET['id'], self::SET, true);
-        if ($arrayReferrals == false) throw new Exception('not found resourse', 404);
+        $arrayReferrals = $referredQuery->select('user_id', $_GET['id'], self::SET_REFERRALS, true);
+        if ($arrayReferrals == false) throw new \Exception('not found resourse', 404);
 
         foreach ($arrayReferrals as $referred) {
             $referred_data = self::getReferredData($referred);
@@ -30,8 +27,8 @@ class Referrals
         $referredQuery = new Querys('referrals');
 
         $referrals_id = $_GET['id'] . $_GET['id_2'];
-        $referred = $referredQuery->select('referrals_id', $referrals_id, self::SET);
-        if ($referred == false) throw new Exception('not found resourse', 404);
+        $referred = $referredQuery->select('referrals_id', $referrals_id, self::SET_REFERRALS);
+        if ($referred == false) throw new \Exception('not found resourse', 404);
 
         $_referred = self::getReferredData($referred);
         JsonResponse::read('referred', $_referred);
@@ -46,7 +43,7 @@ class Referrals
         $arrayReferrals['referred_id'] = $_GET['id_2'];
 
         date_default_timezone_set('America/Caracas');
-        $arrayReferrals['create_date'] = date(self::TIME);
+        $arrayReferrals['create_date'] = date(self::TIME_FORMAT);
 
         $referredQuery->insert($arrayReferrals);
         return 'added as an referred';
@@ -58,7 +55,7 @@ class Referrals
 
         $referrals_id = $_GET['id'] . $_GET['id_2'];
         $referred = $referredQuery->select('referrals_id', $referrals_id);
-        if ($referred == false) throw new Exception('not found resourse', 404);
+        if ($referred == false) throw new \Exception('not found resourse', 404);
 
         $referredQuery->delete('referrals_id', $referrals_id);
         JsonResponse::removed();

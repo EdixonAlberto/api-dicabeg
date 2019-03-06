@@ -7,7 +7,7 @@ class Gui
     /**
         gui v4
      */
-    public static function generate()
+    public static function generate($type = null)
     {
         $code = sprintf(
             '%04X%04X-%04X-%04X-%04X-%04X%04X%04X',
@@ -20,8 +20,17 @@ class Gui
             mt_rand(0, 65535),
             mt_rand(0, 65535)
         );
-        $result = trim($code, '{}');
-
-        return $result;
+        switch ($type) {
+            case 'id':
+                return trim($code, '{}');
+                break;
+            case 'code':
+                $code = preg_replace('/-/', '', $code);
+                $code = substr($code, 0, 8);
+                return $code;
+                break;
+            default:
+                return $code;
+        }
     }
 }

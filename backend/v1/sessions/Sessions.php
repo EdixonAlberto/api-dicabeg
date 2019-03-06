@@ -3,25 +3,21 @@
 namespace V1\Sessions;
 
 use Db\Querys;
-use Exception;
+use Tools\Constants;
 use Tools\JsonResponse;
 use Tools\Security;
 use Tools\Validations;
 use V1\Options\Options;
 
-class Sessions
+class Sessions extends Constants
 {
-    private const SET_SESSION = 'user_id, api_token, expiration_time, create_date, update_date';
-    private const SET_USER = 'user_id, email, invite_code, registration_code, username, names, lastnames, age, avatar, phone, points, movile_data, create_date, update_date';
-    private const TIME_FORMAT = 'Y-m-d H:i:s';
-
     // ::::::::TEST::::::::
     public static function index()
     {
         $sessionQuery = new Querys('sessions');
 
         $arraySession = $sessionQuery->selectAll(self::SET_SESSION);
-        if ($arraySession == false) throw new Exception('not found resource', 404);
+        if ($arraySession == false) throw new \Exception('not found resource', 404);
 
         JsonResponse::read('sessions', $arraySession);
     }
@@ -32,12 +28,12 @@ class Sessions
         $sessionQuery = new Querys('sessions');
 
         $user = $userQuery->select('email', $_REQUEST['email'], 'user_id, email, password');
-        if ($user == false) throw new Exception('email not exist', 404);
+        if ($user == false) throw new \Exception('email not exist', 404);
 
         $session = $sessionQuery->select('user_id', $user->user_id, 'api_token, expiration_time');
         if ($session) {
             $activeSession = self::validateExpiration($session);
-            if ($activeSession) throw new Exception('active session', 400);
+            if ($activeSession) throw new \Exception('active session', 400);
         }
 
         self::validatePass($user->password);
@@ -71,10 +67,10 @@ class Sessions
 
         $token = $_SERVER['HTTP_API_TOKEN'];
         $session = $sessionQuery->select('api_token', $token, 'user_id, api_token, expiration_time');
-        if ($session == false) throw new Exception('token incorrect', 401);
+        if ($session == false) throw new \Exception('token incorrect', 401);
 
         $activeSession = self::validateExpiration($session);
-        if ($activeSession == false) throw new Exception('token expired', 401);
+        if ($activeSession == false) throw new \Exception('token expired', 401);
 
         $user = $userQuery->select('user_id', $session->user_id, 'email');
         $newToken = Security::generateToken($user->email);
@@ -111,10 +107,10 @@ class Sessions
 
         $token = Validations::token();
         $session = $sessionQuery->select('api_token', $token, 'api_token, expiration_time');
-        if ($session == false) throw new Exception('token incorrect', 401);
+        if ($session == false) throw new \Exception('token incorrect', 401);
 
         $activeSession = self::validateExpiration($session);
-        if ($activeSession == false) throw new Exception('token expired', 401);
+        if ($activeSession == false) throw new \Exception('token expired', 401);
     }
 
     private static function validateExpiration($session)
@@ -134,6 +130,6 @@ class Sessions
     private static function validatePass($password)
     {
         $verify = password_verify($_REQUEST['password'], $password);
-        if (!$verify) throw new Exception('passsword incorrect', 401);
+        if (!$verify) throw new \Exception('passsword incorrect', 401);
     }
 }

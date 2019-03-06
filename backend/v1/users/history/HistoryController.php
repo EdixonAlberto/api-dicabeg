@@ -3,20 +3,17 @@
 namespace V1\Users\History;
 
 use Db\Querys;
-use Exception;
+use Tools\Constants;
 use Tools\JsonResponse;
 
-class HistoryController extends Querys
+class HistoryController extends Constants
 {
-   private const SET = 'history_id, user_id, video_id, history_views, update_date';
-   protected const TIME_FORMAT = 'Y-m-d H:i:s';
-
    public static function index()
    {
       $historyQuery = new Querys('history');
 
       $arrayHistory = $historyQuery->select('user_id', $_GET['id'], 'video_id, history_views, update_date', true);
-      if ($arrayHistory == false) throw new Exception('not found resourse', 404);
+      if ($arrayHistory == false) throw new \Exception('not found resourse', 404);
 
       foreach ($arrayHistory as $history) {
          $history_data = self::getHistoryData($history);
@@ -31,7 +28,7 @@ class HistoryController extends Querys
 
       $history_id = $_GET['id'] . $_GET['id_2'];
       $history = $historyQuery->select('history_id', $history_id, 'video_id, history_views, update_date');
-      if ($history == false) throw new Exception('not found resourse', 404);
+      if ($history == false) throw new \Exception('not found resourse', 404);
 
       $_history = self::getHistoryData($history);
       JsonResponse::read('history', $_history);
@@ -75,13 +72,13 @@ class HistoryController extends Querys
 
       if ($_GET['id_2'] == 'alls') {
          $history = $historyQuery->select('user_id', $_GET['id']);
-         if ($history == false) throw new Exception('not found resourse', 404);
+         if ($history == false) throw new \Exception('not found resourse', 404);
          $historyQuery->delete('user_id', $_GET['id']);
       } else {
          $history_id = $_GET['id'] . $_GET['id_2'];
 
          $history = $historyQuery->select('history_id', $history_id);
-         if ($history == false) throw new Exception('not found resourse', 404);
+         if ($history == false) throw new \Exception('not found resourse', 404);
          $historyQuery->delete('history_id', $history_id);
       }
       JsonResponse::removed();

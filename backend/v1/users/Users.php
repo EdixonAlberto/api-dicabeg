@@ -3,24 +3,21 @@
 namespace V1\Users;
 
 use Db\Querys;
-use Exception;
+use Tools\Constants;
 use Tools\Gui;
 use Tools\JsonResponse;
 use Tools\Security;
 use V1\Users\Referrals\Referrals;
 
-class Users
+class Users extends Constants
 {
-    protected const SET = 'user_id, email, invite_code, registration_code, username, names, lastnames, age, avatar, phone, points, money, create_date, update_date';
-    protected const TIME_FORMAT = 'Y-m-d H:i:s';
-
     // ::::::::TEST::::::::
     public static function index()
     {
         $userQuery = new Querys('users');
 
-        $arrayUser = $userQuery->selectAll('password, ' . self::SET);
-        if ($arrayUser == false) throw new Exception('not found users', 404);
+        $arrayUser = $userQuery->selectAll('password, ' . self::SET_USERS);
+        if ($arrayUser == false) throw new \Exception('not found users', 404);
 
         foreach ($arrayUser as $user) {
             $user->password = 'Estas loco!! si piensas que te voy a dar mi clave';
@@ -33,8 +30,8 @@ class Users
     {
         $userQuery = new Querys('users');
 
-        $user = $userQuery->select('user_id', $_GET['id'], self::SET);
-        if ($user == false) throw new Exception('not found user', 404);
+        $user = $userQuery->select('user_id', $_GET['id'], self::SET_USERS);
+        if ($user == false) throw new \Exception('not found user', 404);
 
         JsonResponse::read('user', $user);
     }
@@ -45,13 +42,13 @@ class Users
         $referredQuery = new Querys('referrals');
 
         $user = $userQuery->select('email', $_REQUEST['email']);
-        if ($user) throw new Exception('email exist', 400);
+        if ($user) throw new \Exception('email exist', 400);
 
         // validacion para el codigo de registro
         $registrationCode = $_REQUEST['invite_code'] ?? null;
         if (!is_null($registrationCode)) {
             $user = $userQuery->select('invite_code', $registrationCode, 'user_id');
-            if ($user == false) throw new Exception('invite code incorrect', 400);
+            if ($user == false) throw new \Exception('invite code incorrect', 400);
             $user_id = $user->user_id;
         }
 
@@ -92,7 +89,7 @@ class Users
     {
         $userQuery = new Querys('users');
 
-        $user = (array)$userQuery->select('user_id', $_GET['id'], self::SET . ', password');
+        $user = (array)$userQuery->select('user_id', $_GET['id'], self::SET_USERS . ', password');
 
         // se descartan los codigos para referido
         unset($user['invite_code'], $user['registration_code']);
@@ -126,7 +123,7 @@ class Users
         $userQuery = new Querys('users');
 
         $user = $userQuery->select('user_id', $_GET['id'], 'user_id');
-        if ($user == false) throw new Exception('not found user', 404);
+        if ($user == false) throw new \Exception('not found user', 404);
 
         $sessionQuery->delete('user_id', $_GET['id']);
         $referredQuery->delete('referred_id', $_GET['id']);
