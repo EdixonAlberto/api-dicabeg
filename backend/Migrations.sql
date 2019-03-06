@@ -68,7 +68,7 @@ CREATE TABLE "videos" (
    "question" VARCHAR(255) NULL DEFAULT NULL,
    "correct" INTEGER DEFAULT 0,
    "responses" JSON NULL DEFAULT NULL,
-   "video_views" INTEGER DEFAULT 0,
+   "total_views" INTEGER DEFAULT 0,
    "create_date" TIMESTAMP NULL,
    "update_date" TIMESTAMP NULL,
 
@@ -81,7 +81,7 @@ CREATE TABLE "history" (
    "history_id" VARCHAR(72) NOT NULL,
    "user_id" VARCHAR(36) NOT NULL,
    "video_id" VARCHAR(36) NOT NULL,
-   "history_views" INTEGER DEFAULT 1,
+   "total_views" INTEGER DEFAULT 1,
    "update_date" TIMESTAMP NULL,
 
    CONSTRAINT "history_history_id_PK" PRIMARY KEY ("history_id"),
