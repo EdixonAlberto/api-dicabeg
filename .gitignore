@@ -1,5 +1,9 @@
+# proyect
 .vscode
+.env
 /vendor
+
+# user
+sendgrid.env
 /developing
-/backend/v1/test.php;
-/backend/v1/test.phpsendgrid.env
+/backend/app.php
