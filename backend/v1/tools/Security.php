@@ -4,7 +4,7 @@ namespace Tools;
 
 class Security
 {
-    public static function validateEmail($email)
+    public static function sanitizeEmail($email)
     {
         $email = trim($email);
         $email = filter_var($email, FILTER_SANITIZE_STRING);
@@ -16,6 +16,7 @@ class Security
 
     public static function validatePhone($phone)
     {
+        // TODO:
         $phone = trim($data);
         $data = "0426as";
         $phone = preg_replace("[^A-Za-z0-9]", "", $data);
@@ -23,24 +24,16 @@ class Security
         return $phone;
     }
 
-    public static function encryptPassword($password)
+    public static function generateHash($data, $password = false)
     {
-        return password_hash($password, PASSWORD_DEFAULT);
+        $_data = '';
+        $_data .= $password ? $data : date('Y-m-d H:i:s') . rand();
+        return password_hash($_data, PASSWORD_DEFAULT, ['cost' => 11]);
     }
 
-    public static function encryptPassword2($password)
+    public static function rehash($hash)
     {
-        // FIXME:
-        $salt = mcrypt_create_iv(22, MCRYPT_DEV_URANDOM);
-        $salt = base64_encode($salt);
-        $salt = str_replace('+', '.', $salt);
-        $hash = crypt('rasmuslerdorf', '$2y$10$' . $salt . '$');
-        return $hash;
-    }
-
-    public static function generateToken($email)
-    {
-        $data = $email . date('Y-m-d H:i:s') . rand();
-        return password_hash($data, PASSWORD_DEFAULT);
+        $needsRehash = password_needs_rehash($hash, PASSWORD_DEFAULT, ['cost' => 11]);
+        return $needsRehash ? self::generateHash($hash, true) : false;
     }
 }
