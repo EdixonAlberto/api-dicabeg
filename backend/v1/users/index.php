@@ -9,13 +9,12 @@ use V1\Users\Users;
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
+$_GET ?? Validations::gui();
 
 try {
-    if ($method != 'POST' and $_GET['id'] != 'alls') {
-        Validations::gui();
+    if ($method != 'POST' or $_GET['id'] != 'alls') {
         Sessions::verifySession();
     }
-
     switch ($method) {
         case 'GET':
             ($_GET['id'] == 'alls') ?

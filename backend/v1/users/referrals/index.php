@@ -9,11 +9,10 @@ use V1\Users\Referrals\Referrals;
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
+$_GET ?? Validations::gui();
 
 try {
-    Validations::gui();
     Sessions::verifySession();
-
     switch ($method) {
         case 'GET':
             ($_GET['id_2'] == 'alls') ?
@@ -22,7 +21,6 @@ try {
             break;
 
         case 'DELETE':
-            // Validations::parameters('Referrals');
             Referrals::destroy();
             break;
     }

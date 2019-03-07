@@ -57,9 +57,9 @@ class Users extends Constants
             $user_id = $user->user_id;
         }
 
-        $id = Gui::generate('id');
+        $id = Security::generateID();
         $password = Security::generateHash();
-        $inviteCode = Gui::generate('code');
+        $inviteCode = Security::generateCode();
         $username = substr($email, 0, strpos($email, '@'));
 
         $_arrayUser = [

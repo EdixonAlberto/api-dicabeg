@@ -6,7 +6,6 @@ use Db\Querys;
 use Tools\Constants;
 use Tools\JsonResponse;
 use Tools\Security;
-use Tools\Validations;
 use V1\Options\Time;
 
 class Sessions extends Constants
@@ -99,7 +98,9 @@ class Sessions extends Constants
     {
         $sessionQuery = new Querys('sessions');
 
-        $token = Validations::token();
+        $token = $_SERVER['HTTP_API_TOKEN'] ?? false;
+        if ($token == false) throw new \Exception('not found token', 404);
+
         $session = $sessionQuery->select('api_token', $token, 'api_token, expiration_time');
         if ($session == false) throw new \Exception('token incorrect', 401);
 

@@ -10,7 +10,9 @@ $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
 
 try {
-    if ($method != 'GET' and $method != 'POST') Validations::token();
+    if ($method != 'GET' or $method != 'POST') {
+        Validations::token();
+    }
 
     switch ($method) {
         case 'GET':
