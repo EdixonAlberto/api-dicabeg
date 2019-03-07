@@ -40,5 +40,5 @@ EndPoint
     GET    | v1/users/id/history/
     GET    | v1/users/id/history/id/
     POST   | v1/users/id/history/id/
-    DELETE | v1/users/id/history/ TODO:
+    DELETE | v1/users/id/history/
     DELETE | v1/users/id/history/id/

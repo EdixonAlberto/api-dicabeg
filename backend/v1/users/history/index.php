@@ -5,28 +5,28 @@ require_once __DIR__ . '../../../../../vendor/autoload.php';
 use Tools\JsonResponse;
 use Tools\Validations;
 use V1\Sessions\Sessions;
-use V1\Users\History\HistoryController;
+use V1\Users\History\History;
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
+$_GET ?? Validations::gui();
 
 try {
-   Validations::gui();
-   Sessions::verifySession();
 
+   Sessions::verifySession();
    switch ($method) {
       case 'GET':
          ($_GET['id_2'] == 'alls') ?
-            HistoryController::index() :
-            HistoryController::show();
+            History::index() :
+            History::show();
          break;
 
       case 'POST':
-         HistoryController::store();
+         History::store();
          break;
 
       case 'DELETE':
-         HistoryController::destroy();
+         History::destroy();
          break;
    }
 } catch (Exception $error) {
