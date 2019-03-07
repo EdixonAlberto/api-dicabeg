@@ -7,6 +7,7 @@ use Tools\Constants;
 use Tools\Gui;
 use Tools\JsonResponse;
 use Tools\Security;
+use Tools\Validations;
 use V1\Options\Time;
 use V1\Users\Referrals\Referrals;
 
@@ -42,8 +43,11 @@ class Users extends Constants
         $userQuery = new Querys('users');
         $referredQuery = new Querys('referrals');
 
-        $user = $userQuery->select('email', $_REQUEST['email']);
-        if ($user) throw new \Exception('email exist', 400);
+        $email = Validations::email();
+        if ($email == false) throw new \Exception('email incorrect', 400);
+
+        $existEmail = $userQuery->select('email', $_REQUEST['email']);
+        if ($existEmail) throw new \Exception('email exist', 400);
 
         // validacion para el codigo de registro
         $registrationCode = $_REQUEST['invite_code'] ?? null;
@@ -54,8 +58,7 @@ class Users extends Constants
         }
 
         $id = Gui::generate('id');
-        $email = $_REQUEST['email'];
-        $password = Security::generateHash($_REQUEST['password'], true);
+        $password = Security::generateHash();
         $inviteCode = Gui::generate('code');
         $username = substr($email, 0, strpos($email, '@'));
 
@@ -98,8 +101,9 @@ class Users extends Constants
             foreach ($_REQUEST as $key => $value) {
                 if ($_key == $key) {
                     $_arrayUser[$_key] = ($key == 'password') ?
-                        Security::generateHash($_REQUEST['password'], true) :
-                        $value;
+                        Security::generateHash() : ($key == 'email') ?
+                        Validations::email() : ($key == 'phone') ?
+                        Validations::phone() : $value;
                     $_keyFound = true;
                 }
             }
