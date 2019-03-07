@@ -2,6 +2,8 @@
 
 namespace Tools;
 
+use Lib\Gui;
+
 class Security
 {
     private const ALGO = PASSWORD_DEFAULT;
@@ -19,5 +21,18 @@ class Security
     {
         $needsRehash = password_needs_rehash($hash, self::ALGO, self::OPTIONS);
         return $needsRehash ? self::generateHash($hash, true) : false;
+    }
+
+    public static function generateID()
+    {
+        $code = Gui::generate();
+        return trim($code, '{}');
+    }
+
+    public static function generateCode()
+    {
+        $code = Gui::generate();
+        $code = preg_replace('/-/', '', $code);
+        return substr($code, 0, 8);
     }
 }
