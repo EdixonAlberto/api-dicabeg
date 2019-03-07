@@ -1,6 +1,6 @@
 {
-    "name": "api_dicabeg/api_dicabeg",
-    "description": "API for app movie",
+    "name": "edixon/api_dicabeg",
+    "description": "API for app movile",
     "license": "GPL-3.0-only",
     "type": "API",
     "authors": [
@@ -13,6 +13,9 @@
     "require": {
         "php": "~7.3",
         "sendgrid/sendgrid": "~7"
+    },
+    "require-dev": {
+        "vlucas/phpdotenv": "^3.3"
     },
     "autoload": {
         "psr-4": {
