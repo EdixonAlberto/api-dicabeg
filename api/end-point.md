@@ -28,13 +28,6 @@ EndPoint
 
 ---
 
->VIDEOS
-
-    GET    | v1/videos/
-    GET    | v1/videos/id/
-
----
-
 >HISTORY
 
     GET    | v1/users/id/history/
@@ -42,3 +35,14 @@ EndPoint
     POST   | v1/users/id/history/id/
     DELETE | v1/users/id/history/
     DELETE | v1/users/id/history/id/
+---
+
+>VIDEOS
+
+    GET    | v1/videos/
+    GET    | v1/videos/id/
+
+>OPTIONS
+
+    GET    | v1/options/time/
+    POST   | v1/options/time/

@@ -15,7 +15,7 @@ class Sessions extends Constants
     {
         $sessionQuery = new Querys('sessions');
 
-        $arraySession = $sessionQuery->selectAll(self::SET_SESSION);
+        $arraySession = $sessionQuery->selectAll(self::SET_SESSIONS);
         if ($arraySession == false) throw new \Exception('not found resource', 404);
 
         JsonResponse::read('sessions', $arraySession);
@@ -26,8 +26,16 @@ class Sessions extends Constants
         $userQuery = new Querys('users');
         $sessionQuery = new Querys('sessions');
 
-        $user = $userQuery->select('email', $_REQUEST['email'], 'user_id, email, password');
-        if ($user == false) throw new \Exception('email not exist', 404);
+        $email = $_REQUEST['email'] ?? false;
+        $username = $_REQUEST['username'] ?? false;
+
+        if ($email) {
+            $user = $userQuery->select('email', $email, 'user_id, email, password');
+            if ($user == false) throw new \Exception('email not exist', 404);
+        } elseif ($username) {
+            $user = $userQuery->select('username', $username, 'user_id, email, password');
+            if ($user == false) throw new \Exception('username not exist', 404);
+        }
 
         $session = $sessionQuery->select('user_id', $user->user_id, 'api_token, expiration_time');
         if ($session) {
@@ -94,21 +102,7 @@ class Sessions extends Constants
         JsonResponse::removed();
     }
 
-    public static function verifySession()
-    {
-        $sessionQuery = new Querys('sessions');
-
-        $token = $_SERVER['HTTP_API_TOKEN'] ?? false;
-        if ($token == false) throw new \Exception('not found token', 404);
-
-        $session = $sessionQuery->select('api_token', $token, 'api_token, expiration_time');
-        if ($session == false) throw new \Exception('token incorrect', 401);
-
-        $activeSession = self::validateExpiration($session);
-        if ($activeSession == false) throw new \Exception('token expired', 401);
-    }
-
-    private static function validateExpiration($session)
+    public static function validateExpiration($session)
     {
         $sessionQuery = new Querys('sessions');
 

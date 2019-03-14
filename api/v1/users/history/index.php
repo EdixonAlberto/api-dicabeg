@@ -3,8 +3,8 @@
 require_once __DIR__ . '../../../../../vendor/autoload.php';
 
 use Tools\JsonResponse;
+use Tools\Security;
 use Tools\Validations;
-use V1\Sessions\Sessions;
 use V1\Users\History\History;
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -13,7 +13,7 @@ $_GET ?? Validations::gui();
 
 try {
 
-   Sessions::verifySession();
+   Security::verifySession();
    switch ($method) {
       case 'GET':
          ($_GET['id_2'] == 'alls') ?

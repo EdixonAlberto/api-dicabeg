@@ -19,10 +19,10 @@
     },
     "autoload": {
         "psr-4": {
-            "V1\\": "backend/v1/",
-            "Db\\": "backend/v1/db",
-            "Tools\\": "backend/v1/tools/",
-            "Lib\\": "backend/v1/lib/"
+            "V1\\": "api/v1/",
+            "Db\\": "api/v1/db",
+            "Tools\\": "api/v1/tools/",
+            "Lib\\": "api/v1/lib/"
         }
     }
 }

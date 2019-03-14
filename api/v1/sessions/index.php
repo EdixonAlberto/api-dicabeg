@@ -5,33 +5,28 @@ require_once __DIR__ . '../../../../vendor/autoload.php';
 use Tools\JsonResponse;
 use Tools\Validations;
 use V1\Sessions\Sessions;
-use V1\Users\Users;
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
-$_GET ?? Validations::gui();
 
 try {
-    if ($method != 'POST' or $_GET['id'] != 'alls') {
-        Sessions::verifySession();
-    }
+    if ($method != 'GET' and $method != 'POST') Validations::token();
+
     switch ($method) {
         case 'GET':
-            ($_GET['id'] == 'alls') ?
-                Users::index() :
-                Users::show();
+            Sessions::index();
             break;
 
         case 'POST':
-            Users::store();
+            Sessions::store();
             break;
 
         case 'PATCH':
-            Users::update();
+            Sessions::update();
             break;
 
         case 'DELETE':
-            Users::destroy();
+            Sessions::destroy();
             break;
     }
 } catch (Exception $error) {

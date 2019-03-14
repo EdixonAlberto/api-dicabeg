@@ -1,34 +1,27 @@
 <?php
 
-require_once __DIR__ . '../../../../vendor/autoload.php';
+require_once __DIR__ . '../../../../../vendor/autoload.php';
 
 use Tools\JsonResponse;
+use Tools\Security;
 use Tools\Validations;
-use V1\Sessions\Sessions;
+use V1\Users\Referrals\Referrals;
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
+$_GET ?? Validations::gui();
 
 try {
-    if ($method != 'GET' or $method != 'POST') {
-        Validations::token();
-    }
-
+    Security::verifySession();
     switch ($method) {
         case 'GET':
-            Sessions::index();
-            break;
-
-        case 'POST':
-            Sessions::store();
-            break;
-
-        case 'PATCH':
-            Sessions::update();
+            ($_GET['id_2'] == 'alls') ?
+                Referrals::index() :
+                Referrals::show();
             break;
 
         case 'DELETE':
-            Sessions::destroy();
+            Referrals::destroy();
             break;
     }
 } catch (Exception $error) {

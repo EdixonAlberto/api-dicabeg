@@ -4,18 +4,25 @@ namespace Tools;
 
 class Validations
 {
-    public static function gui()
+    public static function gui($gui)
     {
         // No se valida si los parametros en GET estan seteados,
         // porque apache se asegura de esto con las redirecciones
+        // foreach ($arr as $gui) {
+        // if ($gui == 'alls') continue;
+        if (!preg_match(
+            '/^([A-Z0-9]{8})((-)[A-Z0-9]{4}){3}(-)([A-Z0-9]{12})$/',
+            $gui
+        )) return null;
+        else return $gui;//throw new \Exception('id incorrect', 400);
+        // }
+    }
 
-        foreach ($_GET as $gui) {
-            if ($gui == 'alls') continue;
-            if (!preg_match(
-                '/^([A-Z0-9]{8})((-)[A-Z0-9]{4}){3}(-)([A-Z0-9]{12})$/',
-                $gui
-            )) throw new \Exception('id incorrect', 400);
-        }
+    public static function token()
+    {
+        $token = $_SERVER['HTTP_API_TOKEN'] ?? false;
+        if ($token == false) throw new \Exception('not found token', 404);
+        else return $token;
     }
 
     public static function email()

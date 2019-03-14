@@ -79,8 +79,6 @@ class Users extends Constants
             $info = Referrals::store();
         } else $info = null;
 
-        // TODO: enviar correo con token para _authentication_
-
         unset($_arrayUser['password']);
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v1/sessions/';
 
