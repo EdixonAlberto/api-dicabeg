@@ -2,17 +2,17 @@
 
 require_once __DIR__ . '../../../../vendor/autoload.php';
 
-use Tools\JsonResponse;
 use Tools\Security;
-use Tools\Validations;
 use V1\Users\Users;
+use Tools\Validations;
+use Tools\JsonResponse;
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);
 $_GET ?? Validations::gui();
 
 try {
-    if ($method != 'POST' or $_GET['id'] != 'alls') {
+    if ($method != 'POST' and $_GET['id'] != 'alls') {
         Security::verifySession();
     }
     switch ($method) {

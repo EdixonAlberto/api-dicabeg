@@ -4,7 +4,6 @@
 /vendor
 
 # user
-sendgrid.env
 /developing
 /api/app.php
 /api/v2

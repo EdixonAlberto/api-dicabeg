@@ -3,12 +3,12 @@
 namespace V1\Users;
 
 use Db\Querys;
-use Tools\Constants;
 use Tools\Gui;
-use Tools\JsonResponse;
 use Tools\Security;
-use Tools\Validations;
+use Tools\Constants;
 use V1\Options\Time;
+use Tools\Validations;
+use Tools\JsonResponse;
 use V1\Users\Referrals\Referrals;
 
 class Users extends Constants
@@ -118,15 +118,17 @@ class Users extends Constants
 
     public static function destroy()
     {
-        $sessionQuery = new Querys('sessions');
         $referredQuery = new Querys('referrals');
+        $historyQuery = new Querys('history');
+        $sessionQuery = new Querys('sessions');
         $userQuery = new Querys('users');
 
         $user = $userQuery->select('user_id', $_GET['id'], 'user_id');
         if ($user == false) throw new \Exception('not found user', 404);
 
-        $sessionQuery->delete('user_id', $_GET['id']);
         $referredQuery->delete('referred_id', $_GET['id']);
+        $historyQuery->delete('user_id', $_GET['id']);
+        $sessionQuery->delete('user_id', $_GET['id']);
         $userQuery->delete('user_id', $_GET['id']);
 
         JsonResponse::removed();
