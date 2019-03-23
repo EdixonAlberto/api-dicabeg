@@ -1,11 +1,11 @@
 {
-    "name": "edixon/api_dicabeg",
+    "name": "dicabeg/api-dicabeg",
     "description": "API for app movile",
     "license": "GPL-3.0-only",
     "type": "API",
     "authors": [
         {
-            "name": "Edixon_Alberto",
+            "name": "Edixon Alberto",
             "email": "edixonalbertto@gmail.com",
             "homepage": "http://linkedin/in/edixonalberto.com"
         }
