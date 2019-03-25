@@ -4,15 +4,17 @@ EndPoint
 >USERS
 
     GET    | v?/users
+    GET    | v?/users/group/nro    [NEW]
     GET    | v?/users/id
     POST   | v?/users
     PACTH  | v?/users/id
-    DELETE | v?/users/id?
+    DELETE | v?/users/id
 ---
 
 >REFERRALS
 
     GET    | v?/users/id/referrals/
+    GET    | v?/users/id/referrals/group/nro    [NEW]
     GET    | v?/users/id/referrals/id/
     DELETE | v?/users/id/referrals/id/
 
@@ -30,16 +32,20 @@ EndPoint
 >HISTORY
 
     GET    | v?/users/id/history/
+    GET    | v?/users/id/history/group/nro  [NEW]
     GET    | v?/users/id/history/id/
     POST   | v?/users/id/history/id/
-    DELETE | v?/users/id/history/
+    DELETE | v?/users/id/history/   [NEW]
     DELETE | v?/users/id/history/id/
---
+---
 
 >VIDEOS
 
     GET    | v?/videos/
+    GET    | v?/videos/group/nro    [NEW]
     GET    | v?/videos/id/
+
+---
 
 >OPTIONS
 

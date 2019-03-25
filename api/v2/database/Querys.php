@@ -23,6 +23,13 @@ class Querys extends Execute
         return $this;
     }
 
+    public function group(int $number)
+    {
+        $start = 10 * ($number - 1);
+        $this->sql .= " OFFSET {$start} LIMIT 10";
+        return $this;
+    }
+
     public function insert(array $arraySet)
     {
         $setInsert = $setValues = '';
