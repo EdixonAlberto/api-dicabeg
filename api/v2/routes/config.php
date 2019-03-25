@@ -1,23 +1,27 @@
 <?php
 
-/**
- * Setting routes
- */
-$arrayPattern = [
-    '/^\/([a-z]+)$/', // /route1
-    '/^\/([a-z]+)\/([A-Z0-9-]{36})$/', // route1/id1
-    '/^\/([a-z]+)\/([A-Z0-9-]*)\/([a-z]+)$/', // route1/id1/route2
-    '/^\/([a-z]+)\/([A-Z0-9-]{36})\/([a-z]+)\/([A-Z0-9-]{36})$/' // /route1/id1/route2/id2
-];
+namespace V2\Routes;
 
-/**
- * Setting resources
- */
+class Config
+{
+    protected $arrayRequest;
+    protected $arrayResource;
 
-$arrayResources = [
-    'users',
-    'history',
-    'referrals',
-    'sessions',
-    'videos'
-];
+    public function __construct()
+    {
+        $this->arrayRequest = [
+            '/^\/([a-z]+)$/', // /route1
+            '/^\/([a-z]+)\/([A-Z0-9-]{36})$/', // route1/id1
+            '/^\/([a-z]+)\/([A-Z0-9-]{36})\/([a-z]+)$/', // route1/id1/route2
+            '/^\/([a-z]+)\/([A-Z0-9-]{36})\/([a-z]+)\/([A-Z0-9-]{36})$/' // /route1/id1/route2/id2
+        ];
+
+        $this->arrayResource = [
+            'users',
+            'history',
+            'referrals',
+            'sessions',
+            'videos'
+        ];
+    }
+}

@@ -2,12 +2,18 @@
 
 namespace V2\Modules;
 
+use V2\Modules\Request;
+
 class Route
 {
     public static function get($route, $controller)
     {
         if (METHOD == 'GET') {
-            $controller::index();
+            if (REQUEST == $route) {
+                $existID = strrpos($route, 'id') > 0;
+                if ($existID) $controller::show();
+                else $controller::index();
+            }
         }
     }
 
