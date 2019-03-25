@@ -2,7 +2,7 @@
 
 namespace V2\Interfaces;
 
-class SetInterface
+interface SetInterface
 {
    const SET_USERS = '
       user_id, email, invite_code, registration_code,
