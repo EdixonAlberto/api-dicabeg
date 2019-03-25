@@ -9,8 +9,8 @@ class PhpDotEnv
    public static function load()
    {
       if (getenv('DATABASE_URL') == false) {
-         $path = __DIR__ . '../../../../';
-         $env = Dotenv::create($path);
+         var_dump('aqui');
+         $env = Dotenv::create(__DIR__ . '../../../../');
          $env->load();
       }
    }
