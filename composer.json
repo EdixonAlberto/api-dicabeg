@@ -2,17 +2,18 @@
     "name": "edixon/api_dicabeg",
     "description": "API for app movile",
     "license": "GPL-3.0-only",
-    "type": "API",
+    "type": "project",
     "authors": [
         {
-            "name": "Edixon_Alberto",
+            "name": "Edixon Alberto",
             "email": "edixonalbertto@gmail.com",
             "homepage": "http://linkedin/in/edixonalberto.com"
         }
     ],
     "require": {
         "php": "~7.3",
-        "sendgrid/sendgrid": "~7"
+        "sendgrid/sendgrid": "~7",
+        "firebase/php-jwt": "^5.0"
     },
     "require-dev": {
         "vlucas/phpdotenv": "^3.3"
