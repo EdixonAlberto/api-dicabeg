@@ -6,12 +6,12 @@ use Exception;
 use V2\Modules\Time;
 use V2\Database\Querys;
 use V2\Modules\Security;
-use V2\Modules\Validations;
+use V2\Modules\Validate;
 use V2\Modules\JsonResponse;
-use V2\Controller\ReferralsController;
+use V2\Interfaces\SetInterface;
 use V2\Interfaces\ControllerInterface;
 
-class UserController implements ControllerInterface, SetInterfaces
+class UserController implements ControllerInterface, SetInterface
 {
     public static function index()
     {
@@ -32,8 +32,8 @@ class UserController implements ControllerInterface, SetInterfaces
         $userQuery = new Querys('users');
 
         $user = $userQuery
-            ->select(self::USERS_SET)
-            ->where('users_id', USERS_ID)
+            ->select(self::SET_USERS)
+            ->where('user_id', ID1)
             ->get();
 
         if ($user == false) throw new Exception('not found user', 404);

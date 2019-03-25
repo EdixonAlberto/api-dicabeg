@@ -14,7 +14,7 @@ class JsonResponse
                 $content => $resource
             ]
         ];
-        self::send($response);
+        self::responsed($response);
     }
 
     public static function created($content, $resource, $path = null, $info = null)
@@ -29,7 +29,7 @@ class JsonResponse
             'path' => $path,
             'information' => $info
         ];
-        self::send($response, 201);
+        self::responsed($response, 201);
     }
 
     public static function updated($content, $resource, $info = null)
@@ -43,7 +43,7 @@ class JsonResponse
             ],
             'information' => $info
         ];
-        self::send($response);
+        self::responsed($response);
     }
 
     public static function removed()
@@ -53,7 +53,7 @@ class JsonResponse
             'response' => 'successful',
             'description' => 'deleted resource',
         ];
-        self::send($response);
+        self::responsed($response);
     }
 
     public static function error($description, $code)
@@ -63,13 +63,13 @@ class JsonResponse
             'response' => 'error',
             'description' => $description,
         ];
-        self::send($response, $code);
+        self::responsed($response, $code);
     }
 
-    public static function send($response, $code = 200)
+    public static function responsed($response, $code = 200)
     {
         header("Content-Type: application/json; charset=UTF-8");
         http_response_code($code);
-        echo json_encode($response);
+        die(json_encode($response));
     }
 }

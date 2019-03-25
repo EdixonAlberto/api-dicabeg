@@ -6,17 +6,12 @@ class Validate
 {
     public static function gui(string $gui)
     {
-        if (!preg_match(
-            '/^([A-Z0-9]{8})((-)[A-Z0-9]{4}){3}(-)([A-Z0-9]{12})$/',
+        var_dump($gui);
+        if (preg_match(
+            '/^[A-Z0-9]{8}(\-[A-Z0-9]{4}){3}\-[A-Z0-9]{12}$/',
             $gui
-        )) return null;
+        )) return true;
         else throw new \Exception('id incorrect', 400);
-    }
-
-    public static function resource(string $resource, array $arrayResources)
-    {
-        $existResource = in_array($resource, $arrayResources);
-        if ($existResource == false) throw new \Exception('not found resource', 404);
     }
 
     public static function token()
