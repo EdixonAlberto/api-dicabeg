@@ -1,17 +1,19 @@
 <?php
 
-require(__DIR__ . '../../../vendor/autoload.php');
-
-V2\Modules\Request::validate();
-// requireToken() ? : Sessions::verefit(); --> Modules\Auth::token(); TODO:
-
-define('METHOD', $_SERVER['REQUEST_METHOD']);
-define('REQUEST', $_SERVER['REQUEST_URI']);
+require __DIR__ . '../../../vendor/autoload.php';
 
 try {
-    require('./routes/' . RESOURCE . 'Route.php');
+    // requireToken() ? : Sessions::verefit(); --> Modules\Auth::token(); TODO:
+
+    //TODO: mejorar
+    V2\Modules\Request::validate();
+
+
+    require './routes/' . RESOURCE . 'Route.php';
+    throw new \Exception('route incorrect', 400);
+
 } catch (\Exception $error) {
-    Modules\JsonResponse::error(
+    V2\Modules\JsonResponse::error(
         $error->getMessage(),
         $error->getCode()
     );
