@@ -3,15 +3,16 @@
 namespace V2\Modules;
 
 use V2\Routes\Config;
+use V2\Modules\Validate;
 
 class Request extends Config
 {
     public static function validate()
     {
-        $config = new Config;
+        $routesConfig = new Config;
         $uri = preg_replace('/\/v2/', '', $_SERVER['REQUEST_URI']);
 
-        foreach ($config->arrayRequest as $request) {
+        foreach ($routesConfig->arrayRequest as $request) {
             $validate = preg_match(
                 $request,
                 $uri,
@@ -24,12 +25,12 @@ class Request extends Config
                 $i = 1;
                 foreach ($arrayRoute as $key => $route) {
                     if (strlen($route) == 36) {
+                        Validate::gui($route);
                         $idName = strtoupper($arrayRoute[$key - 1]) . '_ID';
                         define($idName, $route);
-                        define('ID' . $i++, $route);
                     } else {
                         $resource = $route;
-                        $existResource = in_array($resource, $config->arrayResource);
+                        $existResource = in_array($resource, $routesConfig->arrayResource);
                         if ($existResource == false) throw new \Exception('request incorrect', 400);
                     };
                 }
@@ -39,8 +40,7 @@ class Request extends Config
                 define('REQUEST', $request);
                 define('RESOURCE', $resource);
                 define('METHOD', $_SERVER['REQUEST_METHOD']);
-
-                // var_dump($uri, $resource, $request);
+                parse_str(file_get_contents('php://input'), $_REQUEST);
 
                 break;
             }

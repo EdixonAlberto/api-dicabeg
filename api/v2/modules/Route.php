@@ -2,8 +2,6 @@
 
 namespace V2\Modules;
 
-use V2\Modules\Request;
-
 class Route
 {
     public static function get($route, $controller)
