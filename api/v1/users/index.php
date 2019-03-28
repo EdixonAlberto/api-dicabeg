@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '../../../../vendor/autoload.php';
+\Lib\PhpDotEnv::load();
 
 use Tools\Security;
 use V1\Users\Users;

@@ -1,11 +1,12 @@
 <?php
 
 require_once __DIR__ . '../../../../vendor/autoload.php';
+\Lib\PhpDotEnv::load();
 
-use Tools\JsonResponse;
 use Tools\Security;
-use Tools\Validations;
 use V1\Videos\Videos;
+use Tools\Validations;
+use Tools\JsonResponse;
 
 $method = $_SERVER['REQUEST_METHOD'];
 parse_str(file_get_contents('php://input'), $_REQUEST);

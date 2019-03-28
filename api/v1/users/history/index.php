@@ -1,10 +1,11 @@
 <?php
 
 require_once __DIR__ . '../../../../../vendor/autoload.php';
+\Lib\PhpDotEnv::load();
 
-use Tools\JsonResponse;
 use Tools\Security;
 use Tools\Validations;
+use Tools\JsonResponse;
 use V1\Users\History\History;
 
 $method = $_SERVER['REQUEST_METHOD'];
