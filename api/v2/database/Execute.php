@@ -2,42 +2,58 @@
 
 namespace V2\Database;
 
-use V2\Database\PgSqlConnection;
-
-class Execute extends PgSqlConnection
+class Execute
 {
-    function get(int $cantidad = 0)
+    // TODO: devolver el numero de resultados obtenidos o restantes
+    public function get($callback = false)
     {
         $rows = self::execute($query);
-        if ($rows == false) return false;
+        $rows = ($rows < 1) ? false : true;
 
-        if ($cantidad > 0) {
-            $i = 0;
-            while ($i < $rows and $i++ < $cantidad) {
-                $arrayResponse[] = $query->fetch(\PDO::FETCH_OBJ);
+        $queryResult = false;
+        if ($rows) {
+            if (is_array($this->fields))
+                $queryResult = $query->fetch(\PDO::FETCH_OBJ);
+
+            else {
+                $property = $this->fields;
+                $queryResult = $query->fetch(\PDO::FETCH_OBJ)->$property;
             }
-            return $arrayResponse;
-        } else return $query->fetch(\PDO::FETCH_OBJ);
+        } elseif ($callback) $callback();
+
+        return $queryResult;
     }
 
-    function getAll()
+    public function getAll(bool $resul = null, $exception = null)
     {
         $rows = self::execute($query);
-        if ($rows == false) return false;
+        $rows = ($rows < 1) ? false : true;
 
-        $i = 0;
-        while ($i++ < $rows) {
-            $arrayResponse[] = $query->fetch(\PDO::FETCH_OBJ);
+        if ($rows === $resul) $exception();
+
+        if ($rows) {
+            for ($i = 0; $i < $rows; $i++)
+                $arrayResponse[] = $query->fetch(\PDO::FETCH_OBJ);
+            return $arrayResponse;
         }
-        return $arrayResponse;
     }
+
+    // // ADD: puede ser util un metodo para buscar resultados, por ahora se realiza con get
+    // public function field($found, $function)
+    // {
+    //     $rows = self::execute($query);
+
+    //     $rows = ($rows < 1) ? false : true;
+    //     if ($rows == $found) $function();
+    // }
 
     public function execute(string &$query = null)
     {
-        $query = self::connection()->prepare($this->sql);
+        $query = \V2\Database\PgSqlConnection::connection()->prepare($this->sql);
         $queryType = substr($this->sql, 0, 6);
 
-        // var_dump($this->sql, $queryType); // DEBUG:
+        // DEBUG:
+        // var_dump($this->sql, $this->arraySet);
 
         if ($queryType == 'INSERT' or $queryType == 'UPDATE') {
             $index = 1;
@@ -54,7 +70,9 @@ class Execute extends PgSqlConnection
         }
 
         $error = $query->errorInfo()[2];
-        if (is_null($error)) return $query->rowCount();
-        else throw new \Exception($error, 400);
+        if (is_null($error)) {
+            unset($this->value);
+            return $query->rowCount();
+        } else throw new \Exception($error, 400);
     }
 }

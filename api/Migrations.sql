@@ -2,6 +2,7 @@ DROP TABLE "history";
 DROP TABLE "videos";
 DROP TABLE "sessions";
 DROP TABLE "referrals";
+DROP TABLE "codes";
 DROP TABLE "users";
 
 
@@ -10,8 +11,8 @@ CREATE TABLE "users" (
    "user_id" VARCHAR(36) NOT NULL,
    "email" VARCHAR(40) NOT NULL,
    "password" VARCHAR(255) NOT NULL,
-   "authentication" BOOLEAN NOT NULL DEFAULT FALSE,
-   "invite_code" VARCHAR(36) NOT NULL,
+   "activated_account" BOOLEAN NOT NULL DEFAULT FALSE,
+   "invite_code" VARCHAR(36) NULL DEFAULT NULL, -- acepta null para que pueda funcionar la v1 y v2 juntas
    "registration_code" VARCHAR(36) NULL DEFAULT NULL,
    "username" VARCHAR(20) NOT NULL,
    "names" VARCHAR(20) NULL DEFAULT NULL,
@@ -56,6 +57,19 @@ CREATE TABLE "sessions" (
    CONSTRAINT "sessions_user_id_PK" PRIMARY KEY ("user_id"),
    CONSTRAINT "sessions_users_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id"),
    CONSTRAINT "sessions_token_UQ" UNIQUE ("api_token")
+);
+
+
+-- CODES
+CREATE TABLE "codes" (
+	"user_id" VARCHAR(36) NOT NULL,
+   "activation_code" VARCHAR(6) NULL DEFAULT NULL,
+   "invite_code" VARCHAR(36) NOT NULL,
+   "registration_code" VARCHAR(36) NULL DEFAULT NULL,
+
+   CONSTRAINT "codes_user_id_PK" PRIMARY KEY ("user_id"),
+   CONSTRAINT "codes_invite_code_UQ" UNIQUE ("invite_code"),
+   CONSTRAINT "codes_users_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id")
 );
 
 

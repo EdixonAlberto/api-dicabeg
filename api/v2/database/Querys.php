@@ -2,24 +2,30 @@
 
 namespace V2\Database;
 
-use V2\Database\Execute;
-
 class Querys extends Execute
 {
-    public function __construct()
-    {
-    }
-
     public static function table(string $table)
     {
-        $query = new Querys();
+        $query = new Querys;
         $query->table = $table;
         return $query;
     }
 
-    public function select(string $fields)
+    public function select($fields)
     {
-        $this->sql = "SELECT {$fields} FROM {$this->table}";
+        if (is_array($fields)) {
+            $_fields = '';
+            $fieldsNumber = count($fields);
+            $index = 1;
+
+            foreach ($fields as $field) {
+                if ($index++ == $fieldsNumber) $_fields .= $field;
+                else $_fields .= "{$field}, ";
+            }
+        } else $_fields = $fields;
+
+        $this->sql = "SELECT {$_fields} FROM {$this->table}";
+        $this->fields = $fields;
         return $this;
     }
 
@@ -33,11 +39,11 @@ class Querys extends Execute
     public function insert(array $arraySet)
     {
         $setInsert = $setValues = '';
-        $setLenght = count($arraySet);
+        $parametersNumber = count($arraySet);
         $index = 1;
 
         foreach ($arraySet as $set => $value) {
-            if ($index++ == $setLenght) {
+            if ($index++ == $parametersNumber) {
                 $setInsert .= $set;
                 $setValues .= '?';
             } else {
@@ -55,16 +61,12 @@ class Querys extends Execute
     public function update(array $arraySet)
     {
         $setUpdate = '';
-        $setLenght = count($arraySet);
-        $index = 1;
-
         foreach ($arraySet as $set => $value) {
-            if ($index++ == $setLenght) {
-                $setUpdate .= "{$set} = ?";
-            } else {
+            if (!is_null($value)) {
                 $setUpdate .= "{$set} = ?, ";
-            }
+            } else unset($arraySet[$set]);
         }
+        $setUpdate = substr($setUpdate, 0, strrpos($setUpdate, ',')); // ADD: STR_REPLACE
 
         $this->sql = "UPDATE {$this->table} SET {$setUpdate}";
         $this->arraySet = $arraySet;
@@ -77,6 +79,7 @@ class Querys extends Execute
         return $this;
     }
 
+    // ADD: aceptar parametros array para concatenar varias condiciones con AND
     public function where(string $column, string $value)
     {
         $this->sql .= " WHERE {$column} = ?";

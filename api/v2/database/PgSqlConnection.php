@@ -2,13 +2,11 @@
 
 namespace V2\Database;
 
-use V2\Database\DB;
-
 class PgSqlConnection extends DB
 {
-    protected static function connection()
+    public static function connection()
     {
-        $dataPostgre = new DB('pgsql', 'DATABASE_URL');
+        $dataPostgre = new DB('pgsql');
         return $dataPostgre->connect();
     }
 }

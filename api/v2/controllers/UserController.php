@@ -4,138 +4,145 @@ namespace V2\Controllers;
 
 use Exception;
 use V2\Modules\Time;
+use V2\Modules\Format;
 use V2\Database\Querys;
 use V2\Modules\Security;
-use V2\Modules\Validate;
+use V2\Modules\Diffusion;
+use V2\Libraries\SendGrid;
 use V2\Modules\JsonResponse;
-use V2\Interfaces\SetInterface;
-use V2\Interfaces\ControllerInterface;
+use V2\Modules\EmailTemplate;
+use V2\Interfaces\IController;
 
-class UserController implements ControllerInterface, SetInterface
+class UserController implements IController
 {
     public static function index()
     {
         $arrayUser = Querys::table('users')
-            ->select(self::SET_USERS)
-            ->getAll();
+            ->select(self::USERS_COLUMNS)
+            ->group(GROUP_NRO)
+            ->getAll(function () {
+                throw new Exception('not found users', 404);
+            });
 
-        if ($arrayUser == false) throw new Exception('not found users', 404);
-        foreach ($arrayUser as $user) {
-            $user->password = 'Estas loco!! si piensas que te voy a dar mi clave';
-            $_arrayUser[] = $user;
-        }
-        JsonResponse::read('users', $_arrayUser);
+        JsonResponse::read('users', $arrayUser);
     }
 
     public static function show()
     {
-        $userQuery = new Querys('users');
+        $user = Querys::table('users')
+            ->select(self::USERS_COLUMNS)
+            ->where('user_id', USERS_ID)
+            ->get(function () {
+                throw new Exception('not found user', 404);
+            });
 
-        $user = $userQuery
-            ->select(self::SET_USERS)
-            ->where('user_id', ID1)
-            ->get();
-
-        if ($user == false) throw new Exception('not found user', 404);
         JsonResponse::read('user', $user);
     }
 
-    public static function store()
+    public static function store($body)
     {
-        $userQuery = new Querys('users');
-
-        $email = Validations::email();
-        if ($email == false) throw new Exception('email incorrect', 400);
-
-        $existEmail = $userQuery
-            ->select('email')
-            ->where('email', $email)
-            ->get();
-        if ($existEmail) throw new Exception('email exist', 400);
-
-        // validacion para el codigo de registro
-        $registrationCode = $_REQUEST['invite_code'] ?? null;
-        if (!is_null($registrationCode)) {
-            $user = $userQuery
-                ->select('user_id')
-                ->where('invite_code', $registrationCode)
-                ->get();
-            if ($user == false) throw new Exception('invite code incorrect', 400);
-            $user_id = $user->user_id;
-        }
+        $userQuery = Querys::table('users');
 
         $id = Security::generateID();
-        $password = Security::generateHash();
-        $inviteCode = Security::generateCode();
-        $username = substr($email, 0, strpos($email, '@'));
-
-        $userQuery->insert([
+        $userQuery->insert($arrayUser = [
             'user_id' => $id,
-            'email' => $email,
-            'password' => $password,
-            'invite_code' => $inviteCode,
-            'registration_code' => $registrationCode,
-            'username' => $username,
-            'create_date' => Time::current('UTC')
-        ]);
+            'player_id' => '6E37C284-27A8-47C9-8B98-2600FD937BB9',
+            'email' => Format::email($body->email),
+            'password' => Security::generateHash($body->password),
+            'username' => substr($body->email, 0, strpos($body->email, '@')),
+            'create_date' => Time::current()->utc
+        ])
+            ->execute();
 
-        if (!is_null($registrationCode)) {
-            $_GET['id'] = $user_id;
-            $_GET['id_2'] = $id;
-            $info = ReferredController::store();
-        } else $info = null;
+        // ADD: Validar recurrencia de codigos,
+        // asegurar unicidad con generacion recursiva del mismo
+        $activationCode = Security::generateCode(6);
+        Querys::table('codes')->insert([
+            'user_id' => $id,
+            'activation_code' => $activationCode,
+            'invite_code' => Security::generateCode(8),
+            'registration_code' => $body->invite_code ?? null
+        ])
+            ->execute();
 
-        unset($_arrayUser['password']);
-        $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/sessions/';
 
-        JsonResponse::created('user', $_arrayUser, $path, $info);
+
+        /*
+        // validacion para el codigo de invitacion
+        if (isset($body->invite_code)) {
+            $user_id = $userQuery->select('user_id')
+                ->where('invite_code', $body->invite_code)
+                ->get(function () {
+                    throw new Exception('invite code incorrect', 400);
+                });
+            define('REFARRALS_ID', $user_id);
+        } else $body->invite_code = null;
+         */
+
+
+
+
+        // if (isset($body->invite_code)) { // TODO: migrar esto a la V2
+        //     define('USERS_ID', $arrayUser['user_id']);
+        //     $info = ReferredController::store();
+        // } else $info = null;
+
+        // Diffusion::sendNotification();
+
+
+
+        // TODO: El idioma debe ser determinado en el
+        // futuro mediante la config del usuario
+        // Diffusion::sendEmail(
+        //     $arrayUser['email'],
+        //     EmailTemplate::accountActivation($activationCode, 'spanish')
+        // );
+
+        // $info['email'] = $emailResult;
+
+
+        $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/users/login';
+        JsonResponse::created('user', $arrayUser, $path, $info = null);
     }
 
-    public static function update()
+    public static function update($body)
     {
-        $userQuery = new Querys('users');
+        Querys::table('users')->update($arrayUser = [
+            'email' => Format::email($body->email),
+            'password' => Security::generateHash($body->password),
+            'username' => $body->username,
+            'names' => $body->names,
+            'lastnames' => $body->lastnames,
+            'age' => $body->age,
+            'avatar' => $body->avatar,
+            'phone' => Format::phone($body->phone),
+            'points' => $body->points,
+            'money' => $body->money,
+            'update_date' => Time::current()->utc
+        ])->where('user_id', USERS_ID)->execute();
 
-        $user = (array)$userQuery
-            ->select(self::SET_USERS . ', password')
-            ->where('user_id', $_GET['id'])
-            ->get();
+        unset($arrayUser['password']);
 
-        // se descartan los codigos para referido
-        unset($user['invite_code'], $user['registration_code']);
-        foreach ($user as $_key => $_value) {
-            $_keyFound = false;
-            foreach ($_REQUEST as $key => $value) {
-                if ($_key == $key) {
-                    $_arrayUser[$_key] = ($key == 'password') ?
-                        Security::generateHash() : ($key == 'email') ?
-                        Validations::email() : ($key == 'phone') ?
-                        Validations::phone() : $value;
-                    $_keyFound = true;
-                }
-            }
-            if (!$_keyFound and $_key != 'user_id') {
-                $_arrayUser[$_key] = $_value;
-            }
-        }
-        $_arrayUser['update_date'] = Time::current('UTC');
-
-        $userQuery->update('user_id', $_GET['id'], $_arrayUser);
-
-        unset($_arrayUser['password']);
-        JsonResponse::updated('user', $_arrayUser);
+        JsonResponse::updated('user', $arrayUser);
     }
 
     public static function destroy()
     {
-        $user = Querys::table('users')
-            ->select('user_id')
-            ->where('user_id', $_GET['id'])
-            ->get();
-        if ($user == false) throw new Exception('not found user', 404);
+        Querys::table('codes')->delete('codes')
+            ->where('user_id', USERS_ID)
+            ->execute();
 
-        Querys::delete('sessions')->where('user_id', $_GET['id'])->execute();
-        Querys::delete('referrals')->where('referred_id', $_GET['id'])->execute();
-        Querys::delete('users')->where('user_id', $_GET['id'])->execute();
+        // Querys::table('referrals')->delete('referrals')
+        //     ->where('referred_id', USERS_ID)
+        //     ->execute();
+
+        // Querys::table('history')->delete('history')
+        //     ->where('user_id', USERS_ID)
+        //     ->execute();
+
+        Querys::table('users')->delete('users')
+            ->where('user_id', USERS_ID)
+            ->execute();
 
         JsonResponse::removed();
     }

@@ -10,9 +10,9 @@ class DB
     private $user;
     private $password;
 
-    public function __construct($engine, $environmentVariable)
+    public function __construct($engine)
     {
-        $url = $this->decomposeURL($environmentVariable);
+        $url = $this->decomposeURL(DATABASE_URL);
         $this->engine = $engine;
         $this->name = trim($url['path'], '/');
         $this->host = $url['host'];
@@ -28,7 +28,7 @@ class DB
 
     private function decomposeURL($url)
     {
-        $urlCorrect = getenv($url);
+        $urlCorrect = $url; // TODO: realizar un prematch, para validar la composicion de la URI
         if ($urlCorrect) return parse_url($urlCorrect);
         else throw new \Exception('Environment varable do not found', 500);
     }

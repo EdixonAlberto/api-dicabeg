@@ -3,35 +3,31 @@
 namespace V2\Modules;
 
 use V2\Database\Querys;
-use V2\Modules\JsonResponse;
 
 class Time
 {
-   public static function current($format = null)
+   public static function current()
    {
-      date_default_timezone_set('America/Caracas');
+      date_default_timezone_set('America/Caracas'); // ADD: Esta info debe ser proporcionada por el front
       $current = $_SERVER['REQUEST_TIME'];
 
-      $arrayCurrentTime = [
-         'UNIX' => $current,
-         'UTC' => date('Y-m-d H:i:s', $current)
+      $arrayCurrentTime = (object)[
+         'unix' => $current,
+         'utc' => date('Y-m-d H:i:s', $current)
       ];
-      return $arrayCurrentTime[$format] ??
-         $arrayCurrentTime;
+      return $arrayCurrentTime;
    }
 
-   public static function expiration($format = null)
+   public static function expiration()
    {
-      $optionQuery = new Querys('options');
+      $expiration_time = Querys::table('options')->select('expiration_time')->get();
+      $expiration = strtotime(self::current()->utc . '+' . $expiration_time);
 
-      $option = $optionQuery->selectAll('expiration_time')[0];
-      $expiration = strtotime(self::current('UTC') . "+ {$option->expiration_time}");
-
-      $arrayExpirationTime = [
-         'UNIX' => $expiration,
-         'UTC' => date('Y-m-d H:i:s', $expiration)
+      $arrayExpirationTime = (object)[
+         'unix' => $expiration,
+         'utc' => date('Y-m-d H:i:s', $expiration)
       ];
-      return $arrayExpirationTime[$format] ?? $arrayExpirationTime;
+      return $arrayExpirationTime;
    }
 
    public static function getExpiration()

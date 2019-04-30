@@ -3,51 +3,50 @@ EndPoint
 
 >USERS
 
-    GET    | v?/users
-    GET    | v?/users/group/nro    [NEW]
-    GET    | v?/users/id
-    POST   | v?/users
-    PACTH  | v?/users/id
-    DELETE | v?/users/id
+    GET    | v2/users/group/nro       [NEW]
+    GET    | v2/users
+    POST   | v2/users
+    PACTH  | v2/users
+    DELETE | v2/users
+
+---
+
+>ACCOUNT
+
+    POST   | v2/account/activation     [NEW]
+    POST   | v2/account/login          [NEW]
+    POST   | v2/account/recovery
+
 ---
 
 >REFERRALS
 
-    GET    | v?/users/id/referrals/
-    GET    | v?/users/id/referrals/group/nro    [NEW]
-    GET    | v?/users/id/referrals/id/
-    DELETE | v?/users/id/referrals/id/
+    GET    | v2/referrals/group/nro    [NEW]
+    GET    | v2/referrals/id
+    POST   | v2/referrals
+    DELETE | v2/referrals/id
 
 ---
 
->SESSIONS
+<!-- >HISTORY
 
-    GET    | v?/sessions/
-    POST   | v?/sessions/
-    PACTH  | v?/sessions/
-    DELETE | v?/sessions/
-
----
-
->HISTORY
-
-    GET    | v?/users/id/history/
-    GET    | v?/users/id/history/group/nro  [NEW]
-    GET    | v?/users/id/history/id/
-    POST   | v?/users/id/history/id/
-    DELETE | v?/users/id/history/   [NEW]
-    DELETE | v?/users/id/history/id/
+    GET    | v?/users/history/
+    GET    | v?/users/history/group/nro  [NEW]
+    GET    | v?/users/history/id/
+    POST   | v?/users/history/id/
+    DELETE | v?/users/history/   [NEW]
+    DELETE | v?/users/history/id/
 ---
 
 >VIDEOS
 
-    GET    | v?/videos/
+    GET    | v?/videos
     GET    | v?/videos/group/nro    [NEW]
-    GET    | v?/videos/id/
+    GET    | v?/videos/id
 
 ---
 
 >OPTIONS
 
     GET    | v?/options/time/
-    POST   | v?/options/time/
+    POST   | v?/options/time/ -->

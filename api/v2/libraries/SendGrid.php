@@ -1,6 +1,6 @@
 <?php
 
-namespace Lib;
+namespace V2\Libraries;
 
 use SendGrid\Mail\Mail;
 
@@ -15,25 +15,33 @@ class SendGrid
    // which is included in the download:
    // https://github.com/sendgrid/sendgrid-php/releases
 
-    protected static function generateEmail($from, $to, $subject, $contentHTML)
+    public static function generateEmail($from, $subject, $to, $htmlContent)
     {
         $email = new Mail();
-        $email->setFrom($from, 'DICABEG'); // Remitente
-        $email->setSubject($subject); // Asunto
-        $email->addTo($to); // Para
-        $email->addContent("text/plain", "and easy to do anywhere, even with PHP"); //?
-        $email->addContent( // Plantilla
+        $email->setFrom($from, 'DICABEG');  // Remitente
+        $email->setSubject($subject);       // Asunto
+        $email->addTo($to);                 // Para
+        // $email->addContent("text/plain", "and easy to do anywhere, even with PHP"); //?
+        $email->addContent(
             "text/html",
-            $contentHTML // ejemp: "<strong>and easy to do anywhere, even with PHP</strong>"
+            $htmlContent                    // Plantilla html
         );
+        $sendgrid = new \V2\Libraries\SendGrid;
+        $sendgrid->email = $email;
+        return $sendgrid;
+    }
+
+    public function send()
+    {
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
-        try {
-            $response = $sendgrid->send($email);
-            print $response->statusCode() . "\n";
-            print_r($response->headers());
-            print $response->body() . "\n";
-        } catch (\Exception $e) {
-            echo 'Caught exception: ' . $e->getMessage() . "\n";
-        }
+        $response = $sendgrid->send($this->email);
+
+        $result = [
+            'statusCode' => $response->statusCode(),
+            'headers' => $response->headers(),
+            'body' => $response->body()
+        ];
+
+        return $result;
     }
 }
