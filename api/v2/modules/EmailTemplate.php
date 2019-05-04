@@ -19,7 +19,7 @@ class EmailTemplate extends Languages
         self::$code = $_code;
 
         $html = self::generateEmail(
-            '../../email/templates/accountActivationEmail.min.html'
+            '../email/templates/accountActivationEmail.min.html'
         );
 
         $template = new EmailTemplate;
@@ -39,7 +39,7 @@ class EmailTemplate extends Languages
         self::$code = $_code;
 
         $html = self::generateEmail(
-            '../../email/templates/recoveryPasswordEmail.min.html'
+            '../email/templates/recoveryPasswordEmail.min.html'
         );
 
         $template = new EmailTemplate;

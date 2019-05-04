@@ -7,11 +7,8 @@ use V2\Modules\EmailTemplate;
 
 class Diffusion
 {
-    public function sendEmail(string $email, EmailTemplate $template)
+    public static function sendEmail(string $email, EmailTemplate $template)
     {
-        echo 'Email enviado';
-        return;
-
         return SendGrid::generateEmail(
             $template::APP_EMAIL,
             $template->subject,

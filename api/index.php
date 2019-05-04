@@ -3,15 +3,26 @@
 require '../vendor/autoload.php';
 
 use V2\Database\Querys;
-// use V2\Libraries\OneSignal;
+use V2\Modules\Security;
+use V2\Modules\Diffusion;
 use V2\Libraries\PhpDotEnv;
-use NNV\OneSignal\OneSignal;
-use NNV\OneSignal\API\Player;
+use V2\Modules\EmailTemplate;
 
 PhpDotEnv::load();
 
+Diffusion::sendEmail(
+  'edixonalbertto@gmail.com',
+  $email = EmailTemplate::accountActivation(
+    'ABC',
+    'spanish'
+  )
+);
 
-// GET PLAYER
+echo $email->html;
+
+die;
+
+// TODO: GET PLAYER
 
 // $oneSignal = new OneSignal(
 //     ONESIGNAL_USER_AUTH_KEY,
@@ -30,15 +41,9 @@ PhpDotEnv::load();
 // foreach ($players->response->players as $player) {
 //     var_dump($player);
 // }
-$continent = geoip_continent_code_by_name('186.185.50.109');
+// die;
 
-if ($continent) {
-    echo 'Este sitio web está localizado en: ' . $continent;
-}
-
-die;
-
-// CREATE NOTIFICATION
+// TODO: CREATE NOTIFICATION
 
 // $os = new OneSignal;
 
@@ -48,6 +53,13 @@ die;
 
 // die;
 
+
+// TODO: GEOLOCALIZACION
+// $continent = geoip_continent_code_by_name('186.185.50.109');
+
+// if ($continent) {
+//   echo 'Este sitio web está localizado en: ' . $continent;
+// }
 
 /*
 
