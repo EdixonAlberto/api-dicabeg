@@ -6,8 +6,9 @@ use V2\Modules\Requests;
 use V2\Libraries\PhpDotEnv;
 use V2\Modules\JsonResponse;
 
+new PhpDotEnv;
+
 try {
-    new PhpDotEnv;
     $request = new Requests;
 
     require 'routes/' . RESOURCE . 'Route.php';
