@@ -1,15 +1,14 @@
 <?php
 
-require __DIR__ . '../../../vendor/autoload.php';
+require '../../../vendor/autoload.php';
 
 use V2\Modules\Requests;
 use V2\Libraries\PhpDotEnv;
 use V2\Modules\JsonResponse;
 
-$request = new Requests;
-new PhpDotEnv;
-
 try {
+    new PhpDotEnv;
+    $request = new Requests;
 
     require 'routes/' . RESOURCE . 'Route.php';
     throw new Exception('route incorrect', 400);
