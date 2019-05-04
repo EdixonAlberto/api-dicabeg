@@ -10,7 +10,7 @@ try {
     PhpDotEnv::loadEnviroment();
     $request = new Requests;
 
-    require 'routes/' . $request->resource . 'Route.php';
+    require 'routes/' . RESOURCE . 'Route.php';
     throw new Exception('route incorrect', 400);
 
 } catch (Exception $error) {

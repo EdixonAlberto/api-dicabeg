@@ -13,15 +13,13 @@ class Querys extends Execute
 
     public function select($fields)
     {
+        $_fields = '';
         if (is_array($fields)) {
-            $_fields = '';
-            $fieldsNumber = count($fields);
-            $index = 1;
-
             foreach ($fields as $field) {
-                if ($index++ == $fieldsNumber) $_fields .= $field;
-                else $_fields .= "{$field}, ";
+                $_fields .= "{$field}, ";
             }
+            $_fields = self::cleanCadena($_fields);
+
         } else $_fields = $fields;
 
         $this->sql = "SELECT {$_fields} FROM {$this->table}";
@@ -66,7 +64,8 @@ class Querys extends Execute
                 $setUpdate .= "{$set} = ?, ";
             } else unset($arraySet[$set]);
         }
-        $setUpdate = substr($setUpdate, 0, strrpos($setUpdate, ',')); // ADD: STR_REPLACE
+
+        $setUpdate = self::cleanCadena($setUpdate);
 
         $this->sql = "UPDATE {$this->table} SET {$setUpdate}";
         $this->arraySet = $arraySet;
@@ -85,5 +84,10 @@ class Querys extends Execute
         $this->sql .= " WHERE {$column} = ?";
         $this->value = $value;
         return $this;
+    }
+
+    private static function cleanCadena($sets)
+    {
+        return substr($sets, 0, strrpos($sets, ','));
     }
 }

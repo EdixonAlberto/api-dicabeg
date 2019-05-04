@@ -2,38 +2,41 @@
 
 namespace V2\Database;
 
+use PDO;
+use Exception;
+use V2\Database\PgSqlConnection;
+
 class Execute
 {
     // TODO: devolver el numero de resultados obtenidos o restantes
     public function get($callback = false)
     {
-        $rows = self::execute($query);
-        $rows = ($rows < 1) ? false : true;
+        $result = self::execute($callback);
 
-        $queryResult = false;
-        if ($rows) {
+        if ($result) {
             if (is_array($this->fields))
-                $queryResult = $query->fetch(\PDO::FETCH_OBJ);
+                $queryResult = $this->query->fetch(PDO::FETCH_OBJ);
 
             else {
                 $property = $this->fields;
-                $queryResult = $query->fetch(\PDO::FETCH_OBJ)->$property;
+                $queryResult = $this->query
+                    ->fetch(PDO::FETCH_OBJ)->$property;
             }
-        } elseif ($callback) $callback();
+        } else return false;
 
         return $queryResult;
     }
 
     public function getAll(bool $resul = null, $exception = null)
     {
-        $rows = self::execute($query);
+        $rows = self::execute();
         $rows = ($rows < 1) ? false : true;
 
         if ($rows === $resul) $exception();
 
         if ($rows) {
             for ($i = 0; $i < $rows; $i++)
-                $arrayResponse[] = $query->fetch(\PDO::FETCH_OBJ);
+                $arrayResponse[] = $query->fetch(PDO::FETCH_OBJ);
             return $arrayResponse;
         }
     }
@@ -47,13 +50,10 @@ class Execute
     //     if ($rows == $found) $function();
     // }
 
-    public function execute(string &$query = null)
+    public function execute($callback = false)
     {
-        $query = \V2\Database\PgSqlConnection::connection()->prepare($this->sql);
+        $query = PgSqlConnection::connection()->prepare($this->sql);
         $queryType = substr($this->sql, 0, 6);
-
-        // DEBUG:
-        // var_dump($this->sql, $this->arraySet);
 
         if ($queryType == 'INSERT' or $queryType == 'UPDATE') {
             $index = 1;
@@ -70,9 +70,20 @@ class Execute
         }
 
         $error = $query->errorInfo()[2];
+
         if (is_null($error)) {
             unset($this->value);
-            return $query->rowCount();
-        } else throw new \Exception($error, 400);
+
+            $rows = $query->rowCount();
+            if ($rows > 0) {
+                $this->query = $query;
+                return true;
+
+            } else {
+                if ($callback) $callback();
+                else return false;
+            }
+
+        } else throw new Exception($error, 500);
     }
 }

@@ -20,9 +20,8 @@ class Route
 
         if (METHOD == 'POST') {
             if (ROUTE == $route) {
-                $resource = $request->resource;
-                if ($resource != 'users' and $resource != 'accounts')
-                    Auth::verific();
+                if (RESOURCE != 'users' and RESOURCE != 'accounts')
+                    Middleware::authetication();
                 $controller($request);
             }
         }

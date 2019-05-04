@@ -5,20 +5,8 @@ namespace V2\Interfaces;
 interface IResource
 {
    const USERS_COLUMNS = [
-      'email',
-      'username',
-      'names',
-      'lastnames',
-      'age',
-      'avatar',
-      'phone',
-      'points',
-      'money',
-      'create_date',
-      'update_date'
-   ];
-
-   const USERS_PASS_COLUMNS = [
+      'user_id',
+      'player_id',
       'email',
       'password',
       'username',
@@ -33,8 +21,8 @@ interface IResource
       'update_date'
    ];
 
-   const CODES_COLUMNS = [
-      'activation_code',
+   const ACCOUNTS_COLUMNS = [
+      'temporal_code',
       'invite_code',
       'registration_code'
    ];

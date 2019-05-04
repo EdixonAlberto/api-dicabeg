@@ -50,20 +50,23 @@ class Requests
                         $resource = $arrayRequest[$index];
                 }
                 if (in_array($resource, self::RESOURCES)) {
-                    $this->resource = $resource;
-
-                    parse_str(file_get_contents('php://input'), $body);
-                    $this->body = (object)$body;
 
                     if (isset($idName))
                         $route = preg_replace('/[A-Z0-9-]{36}/', 'id', $url);
                     else $route = preg_replace('/[0-9]{1,}/', 'nro', $url);
 
+                    define('RESOURCE', $resource);
                     define('ROUTE', $route);
                     define('METHOD', $_SERVER['REQUEST_METHOD']);
 
+                    parse_str(file_get_contents('php://input'), $_body);
+                    $this->body = (object)$_body;
                     break;
-                } else $validated = false;
+
+                } else {
+                    $validated = true;
+                    break;
+                }
             }
         }
         if (!$validated) throw new Exception('request incorrect', 400);

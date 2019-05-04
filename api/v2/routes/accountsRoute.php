@@ -1,6 +1,7 @@
 <?php
 
 use V2\Modules\Route;
+use V2\Modules\Middleware;
 use V2\Controllers\AccountController as Controller;
 
 Route::post('/accounts/activation', function ($req) {

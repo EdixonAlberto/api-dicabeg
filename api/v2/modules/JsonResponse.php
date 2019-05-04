@@ -18,8 +18,8 @@ class JsonResponse
     }
 
     public static function created(
-        string $content,
-        $resource,
+        string $title,
+        $content,
         string $path = null,
         array $info = null
     ) {
@@ -28,7 +28,7 @@ class JsonResponse
             'response' => 'successful',
             'description' => 'created resource',
             'resource' => [
-                $content => Middleware::output((object)$resource)
+                $title => Middleware::output($content)
             ],
             'path' => $path,
             'information' => $info
@@ -37,16 +37,17 @@ class JsonResponse
     }
 
     public static function updated(
-        string $content,
-        $resource,
+        string $title,
+        $content,
         string $info = null
     ) {
+
         $response = [
             'status' => 200,
             'response' => 'successful',
             'description' => 'updated resource',
             'resource' => [
-                $content => $resource
+                $title => Middleware::output($content)
             ],
             'information' => $info
         ];
@@ -63,7 +64,7 @@ class JsonResponse
         self::send($response);
     }
 
-    public static function OK(string $description)
+    public static function OK($description)
     {
         $response = [
             'status' => 200,

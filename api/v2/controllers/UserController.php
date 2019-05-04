@@ -33,7 +33,7 @@ class UserController implements IController
             ->select(self::USERS_COLUMNS)
             ->where('user_id', USERS_ID)
             ->get(function () {
-                throw new Exception('not found user', 404);
+                throw new Exception('user not found', 404);
             });
 
         JsonResponse::read('user', $user);
@@ -43,29 +43,27 @@ class UserController implements IController
     {
         $userQuery = Querys::table('users');
 
-        $id = Security::generateID();
         $userQuery->insert($arrayUser = [
-            'user_id' => $id,
+            'user_id' => Security::generateID(),
             'player_id' => '6E37C284-27A8-47C9-8B98-2600FD937BB9',
             'email' => Format::email($body->email),
             'password' => Security::generateHash($body->password),
             'username' => substr($body->email, 0, strpos($body->email, '@')),
             'create_date' => Time::current()->utc
-        ])
-            ->execute();
+        ])->execute();
 
         // ADD: Validar recurrencia de codigos,
         // asegurar unicidad con generacion recursiva del mismo
-        $activationCode = Security::generateCode(6);
-        Querys::table('codes')->insert([
-            'user_id' => $id,
-            'activation_code' => $activationCode,
+        // TODO: si se general de forma temporal, con timer triger,
+        // entonces no hara falta validar unicidad
+        $code = Security::generateCode(6);
+
+        Querys::table('accounts')->insert([
+            'user_id' => $arrayUser['user_id'],
+            'temporal_code' => $code,
             'invite_code' => Security::generateCode(8),
             'registration_code' => $body->invite_code ?? null
-        ])
-            ->execute();
-
-
+        ])->execute();
 
         /*
         // validacion para el codigo de invitacion
@@ -80,8 +78,6 @@ class UserController implements IController
          */
 
 
-
-
         // if (isset($body->invite_code)) { // TODO: migrar esto a la V2
         //     define('USERS_ID', $arrayUser['user_id']);
         //     $info = ReferredController::store();
@@ -93,42 +89,46 @@ class UserController implements IController
 
         // TODO: El idioma debe ser determinado en el
         // futuro mediante la config del usuario
-        // Diffusion::sendEmail(
-        //     $arrayUser['email'],
-        //     EmailTemplate::accountActivation($activationCode, 'spanish')
-        // );
+        Diffusion::sendEmail(
+            $arrayUser['email'],
+            EmailTemplate::accountActivation($code, 'spanish')
+        );
 
         // $info['email'] = $emailResult;
 
-
-        $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/users/login';
-        JsonResponse::created('user', $arrayUser, $path, $info = null);
+        $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/accounts/activation';
+        JsonResponse::created('user', (object)$arrayUser, $path, $info = null);
     }
 
     public static function update($body)
     {
         Querys::table('users')->update($arrayUser = [
-            'email' => Format::email($body->email),
-            'password' => Security::generateHash($body->password),
-            'username' => $body->username,
-            'names' => $body->names,
-            'lastnames' => $body->lastnames,
-            'age' => $body->age,
-            'avatar' => $body->avatar,
-            'phone' => Format::phone($body->phone),
-            'points' => $body->points,
-            'money' => $body->money,
+            'email' => isset($body->email) ?
+                Format::email($body->email) : null,
+
+            'password' => isset($body->password) ?
+                Security::generateHash($body->password) : null,
+
+            'phone' => isset($body->phone) ?
+                Format::phone($body->phone) : null,
+
+            'username' => $body->username ?? null,
+            'names' => $body->names ?? null,
+            'lastnames' => $body->lastnames ?? null,
+            'age' => $body->age ?? null,
+            'avatar' => $body->avatar ?? null,
+            'points' => $body->points ?? null,
+            'money' => $body->money ?? null,
+
             'update_date' => Time::current()->utc
         ])->where('user_id', USERS_ID)->execute();
 
-        unset($arrayUser['password']);
-
-        JsonResponse::updated('user', $arrayUser);
+        JsonResponse::updated('user', (object)$arrayUser);
     }
 
     public static function destroy()
     {
-        Querys::table('codes')->delete('codes')
+        Querys::table('accounts')->delete()
             ->where('user_id', USERS_ID)
             ->execute();
 
@@ -138,9 +138,11 @@ class UserController implements IController
 
         // Querys::table('history')->delete('history')
         //     ->where('user_id', USERS_ID)
-        //     ->execute();
+        //     ->execute(function(){
+        // throw new Exception("Error deleted", 500);
+        // });
 
-        Querys::table('users')->delete('users')
+        Querys::table('users')->delete()
             ->where('user_id', USERS_ID)
             ->execute();
 

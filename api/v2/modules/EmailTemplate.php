@@ -6,20 +6,20 @@ class EmailTemplate extends Languages
 {
     public const APP_EMAIL = 'support@dicabeg.com';
     private const PRIVACY_POLICY_LINK = '*';
-    private static $activationCode;
+    private static $code;
 
     public static function accountActivation(
-        string $_activationCode,
+        string $_code,
         string $_language
     ) {
         global $templateType, $language;
 
         $templateType = 'account_activation';
         $language = $_language;
-        self::$activationCode = $_activationCode;
+        self::$code = $_code;
 
         $html = self::generateEmail(
-            '../api/email/templates/accountActivationEmail.min.html'
+            '../../email/templates/accountActivationEmail.min.html'
         );
 
         $template = new EmailTemplate;
@@ -29,17 +29,17 @@ class EmailTemplate extends Languages
     }
 
     public static function passwordRecovery(
-        string $_activationCode,
-        string $language
+        string $_code,
+        string $_language
     ) {
-        global $templateType, $language;
+        global $templateType, $_language;
 
         $templateType = 'password_recovery';
         $language = $_language;
-        self::$activationCode = $_activationCode;
+        self::$code = $_code;
 
         $html = self::generateEmail(
-            '../api/email/templates/recoveryPasswordEmail.min.html'
+            '../../email/templates/recoveryPasswordEmail.min.html'
         );
 
         $template = new EmailTemplate;
@@ -58,7 +58,7 @@ class EmailTemplate extends Languages
         $html = preg_replace('|text3|', self::text(3), $html);
         $html = preg_replace('|text4|', self::text(4), $html);
 
-        $html = preg_replace('|ACTIVATION_CODE|', self::$activationCode, $html);
+        $html = preg_replace('|CODE|', self::$code, $html);
         $html = preg_replace('|APP_EMAIL|', self::APP_EMAIL, $html);
         $html = preg_replace(
             '|PRIVACY_POLICY_LINK|',

@@ -3,7 +3,7 @@ EndPoint
 
 >USERS
 
-    GET    | v2/users/group/nro       [NEW]
+    GET    | v2/users/group/nro
     GET    | v2/users
     POST   | v2/users
     PACTH  | v2/users
@@ -13,20 +13,20 @@ EndPoint
 
 >ACCOUNT
 
-    POST   | v2/account/activation     [NEW]
-    POST   | v2/account/login          [NEW]
-    POST   | v2/account/recovery
+    POST   | v2/accounts/activation
+    POST   | v2/accounts/login
+    POST   | v2/accounts/recovery
 
 ---
 
->REFERRALS
+<!-- >REFERRALS
 
     GET    | v2/referrals/group/nro    [NEW]
     GET    | v2/referrals/id
     POST   | v2/referrals
     DELETE | v2/referrals/id
 
----
+--- -->
 
 <!-- >HISTORY
 

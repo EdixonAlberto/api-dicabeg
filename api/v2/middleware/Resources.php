@@ -5,7 +5,7 @@ namespace V2\Middleware;
 use Exception;
 use V2\Database\Querys;
 
-class ResourceValidate
+class Resources
 {
     public function __callStatic($name, $resource)
     {
