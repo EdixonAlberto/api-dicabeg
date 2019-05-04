@@ -2,12 +2,14 @@
 
 namespace V2\Libraries;
 
+use Dotenv\Dotenv;
+
 class PhpDotEnv
 {
-   public static function __callStatic($name, $arguments)
+   public function __construct()
    {
       if (getenv('DATABASE_URL') == false) {
-         $environment = \Dotenv\Dotenv::create(__DIR__ . '../../../../');
+         $environment = Dotenv::create(__DIR__ . '../../../../');
          $environment->load();
       }
 

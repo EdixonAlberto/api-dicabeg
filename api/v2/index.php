@@ -1,13 +1,13 @@
 <?php
 
-require '../../vendor/autoload.php';
+require __DIR__ . '../../../vendor/autoload.php';
 
 use V2\Modules\Requests;
 use V2\Libraries\PhpDotEnv;
 use V2\Modules\JsonResponse;
 
 try {
-    PhpDotEnv::loadEnviroment();
+    new PhpDotEnv;
     $request = new Requests;
 
     require 'routes/' . RESOURCE . 'Route.php';
