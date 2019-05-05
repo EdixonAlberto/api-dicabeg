@@ -45,7 +45,6 @@ class UserController implements IController
 
         $userQuery->insert($arrayUser = [
             'user_id' => Security::generateID(),
-            'player_id' => '6E37C284-27A8-47C9-8B98-2600FD937BB9',
             'email' => Format::email($body->email),
             'password' => Security::generateHash($body->password),
             'username' => substr($body->email, 0, strpos($body->email, '@')),
