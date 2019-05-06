@@ -41,6 +41,8 @@ class UserController implements IController
 
     public static function store($body)
     {
+        Middleware::input($body);
+
         $userQuery = Querys::table('users');
 
         $userQuery->insert($arrayUser = [
@@ -99,6 +101,8 @@ class UserController implements IController
 
     public static function update($body)
     {
+        Middleware::input($body);
+
         Querys::table('users')->update($arrayUser = [
             'email' => isset($body->email) ?
                 Format::email($body->email) : null,
