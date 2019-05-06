@@ -10,7 +10,7 @@ class Gui
     public static function generate()
     {
         $code = sprintf(
-            '%04X%04X-%04X-%04X-%04X-%04X%04X%04X',
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             mt_rand(0, 65535),
             mt_rand(0, 65535),
             mt_rand(0, 65535),

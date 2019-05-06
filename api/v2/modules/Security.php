@@ -32,6 +32,7 @@ class Security
     {
         $code = Gui::generate();
         $code = preg_replace('|-|', '', $code);
+        $code = strtoupper($code);
         return substr($code, 0, $codeLength);
     }
 }
