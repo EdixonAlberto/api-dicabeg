@@ -28,7 +28,7 @@ class Security
         return trim($code, '{}');
     }
 
-    public static function generateCode(int $codeLength)
+    public static function generateCode(int $codeLength) : string
     {
         $code = Gui::generate();
         $code = preg_replace('|-|', '', $code);
