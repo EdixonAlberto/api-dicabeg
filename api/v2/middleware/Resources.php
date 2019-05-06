@@ -7,9 +7,9 @@ use V2\Database\Querys;
 
 class Resources
 {
-    public function __callStatic($name, $resource)
+    public function validate()
     {
-        switch ($resource) {
+        switch (RESOURCE) {
 
             case 'users':
                 Querys::table('users')

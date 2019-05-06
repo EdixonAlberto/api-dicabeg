@@ -3,26 +3,25 @@
 namespace V2\Middleware;
 
 use Exception;
-use V2\Interfaces\IResource;
 
-class InputData implements IResource
+class InputData
 {
-    public function __callStatic($name, $request)
+    public function validate($body, array $arrayColumns)
     {
-        $arrayBody = (array)$request[0]->body;
+        $arrayBody = (array)$body;
 
         if (!empty($arrayBody)) {
             foreach ($arrayBody as $key => $value) {
-                if (!in_array($key, self::$request->resource . _PASS_COLUMNS)
-                    and !in_array($key, self::CODES_PASS_COLUMNS))
+
+                if (!in_array($key, $arrayColumns))
                     throw new Exception(
-                    "attribute [{$key}] not validat",
+                    "attribute [{$key}] in body not validat",
                     400
                 );
 
                 if (is_null($value) or empty($value))
                     throw new Exception(
-                    "attribute [{$key}] is null or is empty",
+                    "attribute [{$key}] in body is null or is empty",
                     400
                 );
             }
