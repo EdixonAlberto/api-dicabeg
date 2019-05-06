@@ -7,6 +7,7 @@ use V2\Libraries\Jwt;
 use V2\Database\Querys;
 use V2\Modules\Security;
 use V2\Modules\Diffusion;
+use V2\Modules\Middleware;
 use V2\Email\EmailTemplate;
 use V2\Modules\JsonResponse;
 
@@ -22,6 +23,7 @@ class AccountController
                 ->execute(function () {
                     throw new Exception('code invalid or used', 400);
                 });
+
         } else throw new Exception('code is not set', 400);
 
         JsonResponse::OK('activated account');
@@ -49,13 +51,7 @@ class AccountController
             400
         );
 
-        $activatedAccount = Querys::table('accounts')
-            ->select('activated_account')
-            ->where('user_id', $user->user_id)
-            ->get();
-
-        if ($activatedAccount == false)
-            throw new Exception('disabled account', 403);
+        Middleware::activation($user->user_id);
 
         self::passwordValidate($body, $user);
 
@@ -68,23 +64,31 @@ class AccountController
     public static function passwordRecovery($body)
     {
         if (isset($body->email)) {
+            $user_id = Querys::table('users')
+                ->select('user_id')
+                ->where('email', $body->email)
+                ->get(function () {
+                    throw new Exception('email not found', 404);
+                });
+
+            Middleware::activation($user_id);
+
             $code = Security::generateCode(6);
 
             Querys::table('accounts')->update([
                 'temporal_code' => $code
-            ])->where('email', $body->email)->execute();
+            ])->where('user_id', $user_id)->execute();
 
-            Diffusion::sendEmail(
+            $emailStatus = Diffusion::sendEmail(
                 $body->email,
                 EmailTemplate::passwordRecovery($code, 'spanish')
             );
 
-            JsonResponse::OK($code); // ERROR: Se muestra code solo para test
+            JsonResponse::OK($emailStatus);
 
-        // TODO: discutir si es mejor validar codigo en el mismo proceso de update pass
         } elseif (isset($body->temporal_code)) {
-            $email = Querys::table('accounts')
-                ->select('email')
+            $user_id = Querys::table('accounts')
+                ->select('user_id')
                 ->where('temporal_code', $body->temporal_code)
                 ->get(function () {
                     throw new Exception('code incorrect or used', 400);
@@ -92,13 +96,14 @@ class AccountController
 
             Querys::table('users')->update([
                 'password' => Security::generateHash($body->password)
-            ])->where('email', $email)->execute(function () {
-                throw new Exception('error updated password', 500);
-            });
+            ])->where('user_id', $user_id)
+                ->execute(function () {
+                    throw new Exception('error updated password', 500);
+                });
 
             Querys::table('accounts')->update([
                 'temporal_code' => ''
-            ])->where('temporal_code', $body->temporal_code)->execute();
+            ])->where('user_id', $user_id)->execute();
 
             JsonResponse::OK('recovery successful, password updated');
         }
