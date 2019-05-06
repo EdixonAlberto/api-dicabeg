@@ -14,13 +14,15 @@ class AccountController
 {
     public static function activateAccount($body)
     {
-        Querys::table('accounts')->update([
-            'activated_account' => 'true',
-            'temporal_code' => ''
-        ])->where('temporal_code', $body->temporal_code)
-            ->execute(function () {
-                throw new Exception('code invalid or used', 400);
-            });
+        if (isset($body->temporal_code)) {
+            Querys::table('accounts')->update([
+                'activated_account' => 'true',
+                'temporal_code' => ''
+            ])->where('temporal_code', $body->temporal_code)
+                ->execute(function () {
+                    throw new Exception('code invalid or used', 400);
+                });
+        } else throw new Exception('code is not set', 400);
 
         JsonResponse::OK('activated account');
     }
