@@ -7,8 +7,8 @@ use V2\Libraries\Jwt;
 use V2\Database\Querys;
 use V2\Modules\Security;
 use V2\Modules\Diffusion;
+use V2\Email\EmailTemplate;
 use V2\Modules\JsonResponse;
-use V2\Modules\EmailTemplate;
 
 class AccountController
 {

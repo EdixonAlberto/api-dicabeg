@@ -1,6 +1,6 @@
 <?php
 
-namespace V2\Modules;
+namespace V2\Email;
 
 class Languages
 {
