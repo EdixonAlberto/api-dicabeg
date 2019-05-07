@@ -8,5 +8,5 @@ class Constants
    protected const SET_SESSIONS = 'user_id, api_token, expiration_time, create_date, update_date';
    protected const SET_REFERRALS = 'referred_id, create_date';
    protected const SET_HISTORY = 'history_id, user_id, video_id, history_views, update_date';
-   protected const SET_VIDEOS = 'video_id, name, link, provider_logo, question, correct, responses, video_views, create_date, update_date';
+   protected const SET_VIDEOS = 'video_id, name, link, provider_logo, question, correct, responses, total_views, create_date, update_date';
 }
