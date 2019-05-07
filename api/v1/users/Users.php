@@ -22,7 +22,7 @@ class Users extends Constants
         if ($arrayUser == false) throw new \Exception('not found users', 404);
 
         foreach ($arrayUser as $user) {
-            $user->password = 'Estas loco!! si piensas que te voy a dar mi clave';
+            $user->password = '****';
             $_arrayUser[] = $user;
         }
         JsonResponse::read('users', $_arrayUser);
@@ -64,11 +64,12 @@ class Users extends Constants
 
         $_arrayUser = [
             'user_id' => $id,
+            'player_id' => $_REQUEST['player_id'] ?? null,
             'email' => $email,
             'password' => $password,
+            'username' => $username,
             'invite_code' => $inviteCode,
             'registration_code' => $registrationCode,
-            'username' => $username,
             'create_date' => Time::current('UTC')
         ];
         $userQuery->insert($_arrayUser);
@@ -89,30 +90,28 @@ class Users extends Constants
     {
         $userQuery = new Querys('users');
 
-        $user = (array)$userQuery->select('user_id', $_GET['id'], self::SET_USERS . ', password');
-
-        // se descartan los codigos para referido
-        unset($user['invite_code'], $user['registration_code']);
-
-        foreach ($user as $_key => $_value) {
-            $_keyFound = false;
-            foreach ($_REQUEST as $key => $value) {
-                if ($_key == $key) {
-                    $_arrayUser[$_key] = ($key == 'password') ?
-                        Security::generateHash() : ($key == 'email') ?
-                        Validations::email() : ($key == 'phone') ?
-                        Validations::phone() : $value;
-                    $_keyFound = true;
-                }
+        foreach ($_REQUEST as $key => $value) {
+            switch ($key) {
+                case 'password':
+                    $_value = Security::generateHash();
+                    break;
+                case 'email':
+                    $_value = Validations::email();
+                    break;
+                case 'phone':
+                    $_value = Validations::phone();
+                    break;
+                default:
+                    $_value = $value;
+                    break;
             }
-            if (!$_keyFound and $_key != 'user_id') {
-                $_arrayUser[$_key] = $_value;
-            }
+            $_arrayUser[$key] = $_value;
         }
         $_arrayUser['update_date'] = Time::current('UTC');
 
         $userQuery->update('user_id', $_GET['id'], $_arrayUser);
-        unset($_arrayUser['password']);
+
+        $_arrayUser['password'] = '****';
         JsonResponse::updated('user', $_arrayUser);
     }
 
