@@ -15,20 +15,21 @@ EndPoint
 
     POST   | v2/accounts/activation
     POST   | v2/accounts/login
+    POST   | v2/accounts/login/refresh
     POST   | v2/accounts/recovery
 
 ---
 
-<!-- >REFERRALS
+<!--
+
+>REFERRALS
 
     GET    | v2/referrals/group/nro    [NEW]
     GET    | v2/referrals/id
     POST   | v2/referrals
     DELETE | v2/referrals/id
 
---- -->
-
-<!-- >HISTORY
+>HISTORY
 
     GET    | v?/users/history/
     GET    | v?/users/history/group/nro  [NEW]
@@ -49,4 +50,6 @@ EndPoint
 >OPTIONS
 
     GET    | v?/options/time/
-    POST   | v?/options/time/ -->
+    POST   | v?/options/time/
+
+-->

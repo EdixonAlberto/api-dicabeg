@@ -60,7 +60,8 @@ class Users extends Constants
         $id = Security::generateID();
         $password = Security::generateHash();
         $inviteCode = Security::generateCode();
-        $username = substr($email, 0, strpos($email, '@'));
+        $username = $_REQUEST['username'] ??
+            substr($email, 0, strpos($email, '@'));
 
         $_arrayUser = [
             'user_id' => $id,
