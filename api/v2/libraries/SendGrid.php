@@ -3,6 +3,7 @@
 namespace V2\Libraries;
 
 use SendGrid\Mail\Mail;
+use SendGrid as ApiSendGrid;
 
 class SendGrid
 {
@@ -15,33 +16,52 @@ class SendGrid
    // which is included in the download:
    // https://github.com/sendgrid/sendgrid-php/releases
 
-    public static function generateEmail($from, $subject, $to, $htmlContent)
-    {
+    public static function generateEmail(
+        $from,
+        $subject,
+        $to,
+        $htmlContent
+    ) : SendGrid {
+
         $email = new Mail();
         $email->setFrom($from, 'DICABEG');  // Remitente
         $email->setSubject($subject);       // Asunto
         $email->addTo($to);                 // Para
-        // $email->addContent("text/plain", "and easy to do anywhere, even with PHP"); //?
+        // $email->addContent("text/plain", "and easy to do anywhere, even with PHP"); // TODO:?
         $email->addContent(
             "text/html",
             $htmlContent                    // Plantilla html
         );
-        $sendgrid = new \V2\Libraries\SendGrid;
+        $sendgrid = new SendGrid;
         $sendgrid->email = $email;
         return $sendgrid;
     }
 
-    public function send()
+    public function send() : object
     {
-        $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+        $sendgrid = new ApiSendGrid(SENDGRID_API_KEY);
         $response = $sendgrid->send($this->email);
 
-        $result = [
-            'statusCode' => $response->statusCode(),
-            'headers' => $response->headers(),
-            'body' => $response->body()
-        ];
+        if ($response->statusCode() != 0) {
+            $description = $response->headers()[2];
 
-        return $result;
+            $result = [
+                'status' => $response->statusCode(),
+                'response' => substr(
+                    $description,
+                    strrpos($description, ' ') + 1,
+                    strlen($description)
+                )
+            ];
+
+        } else {
+            $result = [
+                'status' => 500,
+                'response' => 'error: email not sent',
+                'description' => 'failed the connection to the internet'
+            ];
+        }
+
+        return (object)$result;
     }
 }
