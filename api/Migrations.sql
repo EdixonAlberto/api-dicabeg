@@ -10,7 +10,7 @@ DROP TABLE "users";
 -- USUARIOS
 CREATE TABLE "users" (
 	"user_id" VARCHAR(36) NOT NULL,
-	"player_id" VARCHAR(36) NOT NULL,
+	"player_id" VARCHAR(36) NULL DEFAULT NULL,
 	"email" VARCHAR(40) NOT NULL,
 	"password" VARCHAR(255) NOT NULL,
 	"invite_code" VARCHAR(36) NULL DEFAULT NULL, -- acepta null para que pueda funcionar la v1 y v2 juntas

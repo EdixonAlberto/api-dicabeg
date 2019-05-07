@@ -4,8 +4,8 @@ namespace V1\Users\Referrals;
 
 use Db\Querys;
 use Tools\Constants;
-use Tools\JsonResponse;
 use V1\Options\Time;
+use Tools\JsonResponse;
 
 class Referrals extends Constants
 {
@@ -64,7 +64,11 @@ class Referrals extends Constants
     {
         $userQuery = new Querys('users');
 
-        $user = $userQuery->select('user_id', $referred->referred_id, 'user_id, email, username, avatar, phone');
+        $user = $userQuery->select(
+            'user_id',
+            $referred->referred_id,
+            'user_id, email, username, avatar, phone'
+        );
         $user->create_date = $referred->create_date;
         return $user;
     }
