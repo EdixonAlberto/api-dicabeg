@@ -2,15 +2,14 @@
 
 namespace V2\Middleware;
 
-class FilterOutput
+class Output
 {
     private static $denials = [
         'user_id',
-        'player_id',
         'password'
     ];
 
-    public static function process($response)
+    public static function filter($response)
     {
         foreach (self::$denials as $denied) {
             unset($response->$denied);

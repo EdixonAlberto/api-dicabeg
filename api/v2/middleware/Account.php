@@ -5,9 +5,9 @@ namespace V2\Middleware;
 use Exception;
 use V2\Database\Querys;
 
-class ActivatedAccount
+class Account
 {
-    public static function verific($user_id)
+    public static function activationVerific($user_id)
     {
         $activatedAccount = Querys::table('accounts')
             ->select('activated_account')

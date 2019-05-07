@@ -4,7 +4,7 @@ namespace V2\Middleware;
 
 use Exception;
 
-class InputData
+class Input
 {
     public function validate($body, array $arrayColumns)
     {

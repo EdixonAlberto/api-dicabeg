@@ -4,11 +4,10 @@ namespace V2\Modules;
 
 use Exception;
 use V2\Middleware\Auth;
+use V2\Middleware\Input;
+use V2\Middleware\Output;
+use V2\Middleware\Account;
 use V2\Interfaces\IResource;
-use V2\Middleware\InputData;
-use V2\Middleware\Resources;
-use V2\Middleware\FilterOutput;
-use V2\Middleware\ActivatedAccount;
 
 class Middleware implements IResource
 {
@@ -16,11 +15,11 @@ class Middleware implements IResource
     {
         switch (RESOURCE) {
             case 'users':
-                InputData::validate($body, self::USERS_COLUMNS);
+                Input::validate($body, self::USERS_COLUMNS);
                 break;
 
             case 'videos':
-                InputData::validate($body, self::VIDEOS_COLUMNS);
+                Input::validate($body, self::VIDEOS_COLUMNS);
                 break;
         }
     }
@@ -29,11 +28,11 @@ class Middleware implements IResource
     {
         if (is_array($response)) {
             foreach ($response as $key => $resp) {
-                $newResponse[$key] = FilterOutput::process($resp);
+                $newResponse[$key] = Output::filter($resp);
             }
 
         } elseif (is_object($response))
-            $newResponse = FilterOutput::process($response);
+            $newResponse = Output::filter($response);
 
         else return $response;
 
@@ -53,6 +52,6 @@ class Middleware implements IResource
 
     public static function activation($user_id)
     {
-        ActivatedAccount::verific($user_id);
+        Account::activationVerific($user_id);
     }
 }
