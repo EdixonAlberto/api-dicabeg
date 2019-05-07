@@ -10,15 +10,16 @@ class Diffusion
     public static function sendEmail(
         string $email,
         EmailTemplate $template
-    ) : int {
-        $arrayStatus = SendGrid::generateEmail(
+    ) : object {
+
+        $status = SendGrid::generateEmail(
             $template::APP_EMAIL,
             $template->subject,
             $email,
             $template->html
         )->send();
 
-        return $arrayStatus['statusCode'];
+        return $status;
     }
 
     public function sendNotification()
