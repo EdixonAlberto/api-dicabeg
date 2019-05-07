@@ -9,7 +9,7 @@ class Jwt
 {
     private static $alg = array('HS256');
 
-    public static function create(string $data)
+    public function __construct(string $data)
     {
         $token = array(
             'sub' => $data,                     // sujeto: datos del usuario
@@ -18,7 +18,11 @@ class Jwt
             'iat' => Time::current()->unix,     // tiempo de creacion en UNIX
             'exp' => Time::expiration()->unix   // tiempo de expiracion en UNIX
         );
-        return JwtToken::encode($token, SECRET_KEY);
+
+        $this->api_token = JwtToken::encode($token, SECRET_KEY);
+        $this->expiration_time = $token['exp'];
+
+        return $this;
     }
 
     public static function process(string $token)

@@ -47,7 +47,7 @@ class AccountController
                 });
 
         } else throw new Exception(
-            'enter email or username to authenticate',
+            'enter email or username to login',
             400
         );
 
@@ -55,10 +55,19 @@ class AccountController
 
         self::passwordValidate($body, $user);
 
-        $token = Jwt::create($user->user_id);
+        $jwt = new Jwt($user->user_id);
 
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/users';
-        JsonResponse::created('api_token', $token, $path);
+        JsonResponse::created('token', $jwt, $path);
+    }
+
+    public static function refreshLogin()
+    {
+        Middleware::authetication();
+
+        $jwt = new Jwt(USERS_ID);
+
+        JsonResponse::OK($jwt);
     }
 
     public static function passwordRecovery($body)
