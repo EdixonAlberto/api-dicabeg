@@ -74,7 +74,7 @@ class JsonResponse
         self::send($response);
     }
 
-    public static function error(string $description, int $code)
+    public static function error($description, int $code)
     {
         $response = [
             'status' => $code,

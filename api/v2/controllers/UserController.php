@@ -9,13 +9,14 @@ use V2\Database\Querys;
 use V2\Modules\Security;
 use V2\Modules\Diffusion;
 use V2\Libraries\SendGrid;
+use V2\Modules\Middleware;
 use V2\Email\EmailTemplate;
 use V2\Modules\JsonResponse;
 use V2\Interfaces\IController;
 
 class UserController implements IController
 {
-    public static function index()
+    public static function index() : void
     {
         $arrayUser = Querys::table('users')
             ->select(self::USERS_COLUMNS)
@@ -27,7 +28,7 @@ class UserController implements IController
         JsonResponse::read('users', $arrayUser);
     }
 
-    public static function show()
+    public static function show() : void
     {
         $user = Querys::table('users')
             ->select(self::USERS_COLUMNS)
@@ -39,7 +40,7 @@ class UserController implements IController
         JsonResponse::read('user', $user);
     }
 
-    public static function store($body)
+    public static function store($body) : void
     {
         Middleware::input($body);
 
@@ -50,8 +51,7 @@ class UserController implements IController
             'player_id' => $body->player_id,
             'email' => Format::email($body->email),
             'password' => Security::generateHash($body->password),
-            'username' => $body->username ??
-                substr($body->email, 0, strpos($body->email, '@')),
+            'username' => self::getUsername($body),
             'create_date' => Time::current()->utc
         ])->execute();
         $user = (object)$arrayUser;
@@ -90,7 +90,7 @@ class UserController implements IController
 
         // TODO: El idioma debe ser determinado en el
         // futuro mediante la config del usuario
-        $info['email-status'] = Diffusion::sendEmail(
+        $info['email'] = Diffusion::sendEmail(
             $user->email,
             EmailTemplate::accountActivation($code, 'spanish')
         );
@@ -99,11 +99,14 @@ class UserController implements IController
         JsonResponse::created('user', $user, $path, $info);
     }
 
-    public static function update($body)
+    public static function update($body) : void
     {
         Middleware::input($body);
 
         Querys::table('users')->update($arrayUser = [
+            'username' => isset($body->username) ?
+                self::getUsername($body) : null,
+
             'email' => isset($body->email) ?
                 Format::email($body->email) : null,
 
@@ -113,7 +116,7 @@ class UserController implements IController
             'phone' => isset($body->phone) ?
                 Format::phone($body->phone) : null,
 
-            'username' => $body->username ?? null,
+            'player_id' => $body->player_id ?? null,
             'names' => $body->names ?? null,
             'lastnames' => $body->lastnames ?? null,
             'age' => $body->age ?? null,
@@ -127,7 +130,7 @@ class UserController implements IController
         JsonResponse::updated('user', (object)$arrayUser);
     }
 
-    public static function destroy()
+    public static function destroy() : void
     {
         Querys::table('accounts')->delete()
             ->where('user_id', USERS_ID)
@@ -148,5 +151,42 @@ class UserController implements IController
             ->execute();
 
         JsonResponse::removed();
+    }
+
+    private static function getUsername($body) : string
+    {
+        if (isset($body->username)) {
+            $username = Querys::table('users')
+                ->select('username')
+                ->where('username', $body->username)
+                ->get();
+
+            if ($username) self::sendUsername($username);
+            else return $body->username;
+
+        } else return substr($body->email, 0, strpos($body->email, '@'));
+    }
+
+    private static function sendUsername(string $username) : void
+    {
+        global $newUsername;
+
+        $existUsername = Querys::table('users')
+            ->select('username')
+            ->where('username', $username)->get();
+
+        if ($existUsername) {
+            $newUsername = substr($username, 0, (strpos($username, '_') > 0) ?
+                strpos($username, '_') : strlen($username));
+            $newUsername .= '_' . Security::generateCode(4);
+
+            self::sendUsername($newUsername);
+
+        } else {
+            JsonResponse::error([
+                'message' => 'username exist',
+                'suggested-username' => $newUsername
+            ], 400);
+        }
     }
 }
