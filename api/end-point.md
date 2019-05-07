@@ -15,6 +15,7 @@ EndPoint
 
     POST   | v2/accounts/activation
     POST   | v2/accounts/login
+    POST   | v2/accounts/login/refresh
     POST   | v2/accounts/recovery
 
 ---

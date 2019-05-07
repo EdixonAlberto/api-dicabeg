@@ -185,7 +185,7 @@ class UserController implements IController
         } else {
             JsonResponse::error([
                 'message' => 'username exist',
-                'suggested-username' => $newUsername
+                'suggested_username' => $newUsername
             ], 400);
         }
     }
