@@ -8,14 +8,16 @@ class Time
 {
    public static function current()
    {
-      date_default_timezone_set('America/Caracas'); // ADD: Esta info debe ser proporcionada por el front
+      // ADD: Esta info debe ser proporcionada por el front
+      date_default_timezone_set('America/Caracas');
       $current = $_SERVER['REQUEST_TIME'];
 
-      $arrayCurrentTime = (object)[
+      $currentTime = (object)[
          'unix' => $current,
          'utc' => date('Y-m-d H:i:s', $current)
       ];
-      return $arrayCurrentTime;
+
+      return $currentTime;
    }
 
    public static function expiration()
@@ -23,11 +25,12 @@ class Time
       $expiration_time = Querys::table('options')->select('expiration_time')->get();
       $expiration = strtotime(self::current()->utc . '+' . $expiration_time);
 
-      $arrayExpirationTime = (object)[
+      $expirationTime = (object)[
          'unix' => $expiration,
          'utc' => date('Y-m-d H:i:s', $expiration)
       ];
-      return $arrayExpirationTime;
+
+      return $expirationTime;
    }
 
    public static function getExpiration()
@@ -36,6 +39,7 @@ class Time
 
       $option = $optionQuery->selectAll('expiration_time')[0];
       $expiration = $option->expiration_time;
+
       JsonResponse::read('expiration_time', $expiration);
    }
 
@@ -45,6 +49,7 @@ class Time
 
       $arrayOption['expiration_time'] = $_REQUEST['time'] . ' minute';
       $optionQuery->update(false, false, $arrayOption);
+
       JsonResponse::updated('options', $arrayOption);
    }
 }

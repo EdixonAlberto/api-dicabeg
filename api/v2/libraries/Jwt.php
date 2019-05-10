@@ -19,8 +19,8 @@ class Jwt
             'exp' => Time::expiration()->unix   // tiempo de expiracion en UNIX
         );
 
-        $this->api_token = JwtToken::encode($token, SECRET_KEY);
-        $this->expiration_time = $token['exp'];
+        $this->token = JwtToken::encode($token, SECRET_KEY);
+        $this->expiration_date = $token['exp'];
 
         return $this;
     }

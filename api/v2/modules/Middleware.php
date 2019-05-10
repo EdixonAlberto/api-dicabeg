@@ -7,6 +7,7 @@ use V2\Middleware\Auth;
 use V2\Middleware\Input;
 use V2\Middleware\Output;
 use V2\Middleware\Account;
+use V2\Middleware\Resource;
 use V2\Interfaces\IResource;
 
 class Middleware implements IResource
@@ -24,19 +25,22 @@ class Middleware implements IResource
         }
     }
 
-    public static function output($response)
+    public static function output($responses)
     {
-        if (is_array($response)) {
-            foreach ($response as $key => $resp) {
-                $newResponse[$key] = Output::filter($resp);
-            }
+        foreach ($responses as $title => $content) {
+            if (is_array($content)) {
+                foreach ($content as $key => $value) {
+                    $newResp[$key] = Output::filter($value);
+                }
+                $newResponse[$title] = $newResp;
 
-        } elseif (is_object($response))
-            $newResponse = Output::filter($response);
+            } elseif (is_object($content))
+                $newResponse[$title] = Output::filter($content);
 
-        else return $response;
+            else return $responses;
 
-        return $newResponse;
+            return $newResponse;
+        }
     }
 
     public static function authetication()
@@ -53,5 +57,10 @@ class Middleware implements IResource
     public static function activation($user_id)
     {
         Account::activationVerific($user_id);
+    }
+
+    public static function field($condition, $value) : value
+    {
+        return Resource::validate($condition, $value);
     }
 }

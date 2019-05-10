@@ -4,20 +4,22 @@ namespace V2\Modules;
 
 use Exception;
 use V2\Libraries\Gui;
+use V1\Users\Referrals\Referrals;
 
 class Requests
 {
     private const RESOURCES = [
         'users',
         'accounts',
+        'referrals'
     ];
 
     private const PATTERNS = [
-        '|/([a-z]+)/([A-Z0-9-]{36})/([a-z]+)/([A-Z0-9-]{36})|',  // /route1/id1/route2/id2
-        '|/([a-z]+)/([A-Z0-9-]{36})/([a-z]+)|',                  // /route1/id1/route2
+        '|/([a-z]+)/([a-z0-9-]{36})/([a-z]+)/([a-z0-9-]{36})|',  // /route1/id1/route2/id2
+        '|/([a-z]+)/([a-z0-9-]{36})/([a-z]+)|',                  // /route1/id1/route2
         '|/([a-z]+)/group/([0-9]{1,})|',                         // /route1/group/nro
         '|/([a-z]+)/([a-z]+)|',                                  // /route1/route2
-        '|/([a-z]+)/([A-Z0-9-]{36})|',                           // /route1/id1
+        '|/([a-z]+)/([a-z0-9-]{36})|',                           // /route1/id1
         '|/([a-z]+)|',                                           // /route1
     ];
 
@@ -50,9 +52,8 @@ class Requests
                         $resource = $arrayRequest[$index];
                 }
                 if (in_array($resource, self::RESOURCES)) {
-
                     if (isset($idName))
-                        $route = preg_replace('/[A-Z0-9-]{36}/', 'id', $url);
+                        $route = preg_replace('/[a-z0-9-]{36}/', 'id', $url);
                     else $route = preg_replace('/[0-9]{1,}/', 'nro', $url);
 
                     define('RESOURCE', $resource);
@@ -64,7 +65,7 @@ class Requests
                     break;
 
                 } else {
-                    $validated = true;
+                    $validated = false;
                     break;
                 }
             }

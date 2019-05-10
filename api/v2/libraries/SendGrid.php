@@ -51,7 +51,8 @@ class SendGrid
                     $description,
                     strrpos($description, ' ') + 1,
                     strlen($description)
-                )
+                ),
+                'description' => "email enviado al correo {{$this->email}}"
             ];
 
         } else {

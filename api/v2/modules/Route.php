@@ -4,17 +4,17 @@ namespace V2\Modules;
 
 class Route
 {
-    public static function get(string $route, $controller)
+    public static function get(string $route, $callback) : void
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        if (METHOD == 'GET') {
             if (ROUTE == $route) {
                 Middleware::authetication();
-                $controller();
+                $callback();
             }
         }
     }
 
-    public static function post(string $route, $controller)
+    public static function post(string $route, $callback)
     {
         global $request;
 
@@ -22,29 +22,29 @@ class Route
             if (ROUTE == $route) {
                 if (RESOURCE != 'users' and RESOURCE != 'accounts')
                     Middleware::authetication();
-                $controller($request);
+                $callback($request);
             }
         }
     }
 
-    public static function patch(string $route, $controller)
+    public static function patch(string $route, $callback)
     {
         global $request;
 
         if (METHOD == 'PATCH') {
             if (ROUTE == $route) {
                 Middleware::authetication();
-                $controller($request);
+                $callback($request);
             }
         }
     }
 
-    public static function delete(string $route, $controller)
+    public static function delete(string $route, $callback)
     {
         if (METHOD == 'DELETE') {
             if (ROUTE == $route) {
                 Middleware::authetication();
-                $controller();
+                $callback();
             }
         }
     }

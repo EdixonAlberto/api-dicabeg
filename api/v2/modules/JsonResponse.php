@@ -4,34 +4,30 @@ namespace V2\Modules;
 
 class JsonResponse
 {
-    public static function read(string $content, $resource)
+    public static function read($content) : void
     {
         $response = [
             'status' => 200,
             'response' => 'successful',
             'description' => 'found resource',
-            'resource' => [
-                $content => Middleware::output($resource)
-            ]
+            'resource' => Middleware::output($content)
         ];
         self::send($response);
     }
 
     public static function created(
-        string $title,
         $content,
         string $path = null,
-        array $info = null
-    ) {
+        $info = null
+    ) : void {
+
         $response = [
             'status' => 201,
             'response' => 'successful',
             'description' => 'created resource',
-            'resource' => [
-                $title => Middleware::output($content)
-            ],
+            'resource' => Middleware::output($content),
             'path' => $path,
-            'information' => $info
+            'information' => Middleware::output($info)
         ];
         self::send($response, 201);
     }
@@ -40,7 +36,7 @@ class JsonResponse
         string $title,
         $content,
         string $info = null
-    ) {
+    ) : void {
 
         $response = [
             'status' => 200,
@@ -54,7 +50,7 @@ class JsonResponse
         self::send($response);
     }
 
-    public static function removed()
+    public static function removed() : void
     {
         $response = [
             'status' => 200,
@@ -64,27 +60,27 @@ class JsonResponse
         self::send($response);
     }
 
-    public static function OK($description)
+    public static function OK($content) : void
     {
         $response = [
             'status' => 200,
             'response' => 'successful',
-            'description' => $description
+            'description' => $content
         ];
         self::send($response);
     }
 
-    public static function error($description, int $code)
+    public static function error($content, int $code) : void
     {
         $response = [
             'status' => $code,
             'response' => 'error',
-            'description' => $description,
+            'description' => $content,
         ];
         self::send($response, $code);
     }
 
-    private static function send(array $response, int $code = 200)
+    private static function send(array $response, int $code = 200) : void
     {
         header("Content-Type: application/json; charset=UTF-8");
         http_response_code($code);

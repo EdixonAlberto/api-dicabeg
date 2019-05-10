@@ -2,12 +2,14 @@
 
 namespace V2\Libraries;
 
+use Exception;
+
 class Gui
 {
     /**
         GUI v4
      */
-    public static function generate()
+    public static function generate() : string
     {
         $code = sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
@@ -23,12 +25,12 @@ class Gui
         return $code;
     }
 
-    public static function validate(string $gui)
+    public static function validate(string $gui) : bool
     {
         if (preg_match(
-            '/^[A-Z0-9]{8}(\-[A-Z0-9]{4}){3}\-[A-Z0-9]{12}$/',
+            '/^[a-z0-9]{8}(\-[a-z0-9]{4}){3}\-[a-z0-9]{12}$/',
             $gui
         )) return true;
-        else throw new \Exception('id incorrect', 400);
+        else throw new Exception('id incorrect', 400);
     }
 }
