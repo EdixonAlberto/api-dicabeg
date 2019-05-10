@@ -3,7 +3,6 @@ DROP TABLE "videos";
 DROP TABLE "sessions";
 DROP TABLE "referrals";
 DROP TABLE "accounts";
-DROP TABLE "codes";
 DROP TABLE "users";
 
 
@@ -49,16 +48,14 @@ CREATE TABLE "accounts" (
 );
 
 
--- REFERIDOS
+-- REFERRALS
 CREATE TABLE "referrals" (
-	"referrals_id" VARCHAR(72) NOT NULL,
 	"user_id" VARCHAR(36) NOT NULL,
 	"referred_id" VARCHAR(36) NOT NULL,
 	"create_date" TIMESTAMP NULL,
 
-	CONSTRAINT "referrals_referrals_id_PK" PRIMARY KEY ("referrals_id"),
 	CONSTRAINT "referrals_user_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id"),
-	CONSTRAINT "referrals_referred_id_UQ" UNIQUE ("referred_id")
+	CONSTRAINT "referrals_referred_id_FK" FOREIGN KEY("referred_id") REFERENCES users("user_id")
 );
 
 
@@ -70,7 +67,6 @@ CREATE TABLE "sessions" (
 	"create_date" TIMESTAMP NULL,
 	"update_date" TIMESTAMP NULL,
 
-	CONSTRAINT "sessions_user_id_PK" PRIMARY KEY ("user_id"),
 	CONSTRAINT "sessions_users_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id"),
 	CONSTRAINT "sessions_token_UQ" UNIQUE ("api_token")
 );

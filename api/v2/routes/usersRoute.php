@@ -8,7 +8,6 @@ Route::get('/users', function () {
 });
 
 Route::post('/users', function ($req) {
-
     Controller::store($req->body);
 });
 

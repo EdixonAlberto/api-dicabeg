@@ -9,9 +9,10 @@ use V2\Modules\Security;
 use V2\Modules\Diffusion;
 use V2\Modules\Middleware;
 use V2\Email\EmailTemplate;
+use V2\Interfaces\IResource;
 use V2\Modules\JsonResponse;
 
-class AccountController
+class AccountController implements IResource
 {
     public static function activateAccount($body)
     {
@@ -32,7 +33,7 @@ class AccountController
     public static function userLogin($body)
     {
         $userQuery = Querys::table('users')
-            ->select(['user_id', 'password']);
+            ->select(self::USERS_COLUMNS);
 
         if (isset($body->email)) {
             $user = $userQuery->where('email', $body->email)
@@ -55,10 +56,11 @@ class AccountController
 
         self::passwordValidate($body, $user);
 
-        $jwt = new Jwt($user->user_id);
-
+        $jwt['api_token'] = new Jwt($user->user_id);
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/users';
-        JsonResponse::created('token', $jwt, $path);
+        $info['user'] = $user;
+
+        JsonResponse::created($jwt, $path, $info);
     }
 
     public static function refreshLogin()
