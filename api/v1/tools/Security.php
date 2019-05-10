@@ -2,8 +2,9 @@
 
 namespace Tools;
 
-use Db\Querys;
 use Lib\Gui;
+use Db\Querys;
+use Exception;
 use Tools\Validations;
 use V1\Sessions\Sessions;
 
@@ -46,9 +47,9 @@ class Security
         $token = Validations::token();
 
         $session = $sessionQuery->select('api_token', $token, 'api_token, expiration_time');
-        if ($session == false) throw new \Exception('token incorrect', 401);
+        if ($session == false) throw new Exception('token incorrect', 401);
 
         $activeSession = Sessions::validateExpiration($session);
-        if ($activeSession == false) throw new \Exception('token expired', 401);
+        if ($activeSession == false) throw new Exception('token expired', 401);
     }
 }
