@@ -3,8 +3,9 @@
 namespace V2\Middleware;
 
 use Exception;
+use v2\Interfaces\IResource;
 
-class Input
+class Input implements IResource
 {
     public function validate($body, array $arrayColumns)
     {
@@ -13,15 +14,16 @@ class Input
         if (!empty($arrayBody)) {
             foreach ($arrayBody as $key => $value) {
 
-                if (!in_array($key, $arrayColumns))
+                if (!in_array($key, $arrayColumns) and
+                    !in_array($key, self::ACCOUNTS_COLUMNS))
                     throw new Exception(
-                    "attribute [{$key}] in body not validat",
+                    "attribute {{$key}} in body not validat",
                     400
                 );
 
                 if (is_null($value) or empty($value))
                     throw new Exception(
-                    "attribute [{$key}] in body is null or is empty",
+                    "attribute {{$key}} in body is null or is empty",
                     400
                 );
             }

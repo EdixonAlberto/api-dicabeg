@@ -27,9 +27,10 @@ interface IResource
       'registration_code'
    ];
 
-   // const REFERRALS_COLUMNS = '
-   //    referred_id, create_date
-   // ';
+   const REFERRALS_COLUMNS = [
+      'referred_id',
+      'create_date'
+   ];
 
    // const HISTORY_COLUMNS = '
    //    history_id, user_id, video_id, history_views,

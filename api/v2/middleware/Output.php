@@ -11,16 +11,16 @@ class Output
 
     public static function filter($response)
     {
+        $arrayResp = (array)$response;
+
         foreach (self::$denials as $denied) {
-            unset($response->$denied);
+            unset($arrayResp[$denied]);
         }
 
-        $arrayResp = (array)$response;
         foreach ($arrayResp as $key => $value) {
             if (is_null($arrayResp[$key])) unset($arrayResp[$key]);
         }
-        $response = (object)$arrayResp;
 
-        return $response;
+        return $arrayResp;
     }
 }
