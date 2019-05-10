@@ -20,13 +20,10 @@ EndPoint
 
 ---
 
-<!--
-
 >REFERRALS
 
-    GET    | v2/referrals/group/nro    [NEW]
+    GET    | v2/referrals/group/nro
     GET    | v2/referrals/id
-    POST   | v2/referrals
     DELETE | v2/referrals/id
 
 >HISTORY
@@ -51,5 +48,3 @@ EndPoint
 
     GET    | v?/options/time/
     POST   | v?/options/time/
-
--->
