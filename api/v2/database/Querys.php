@@ -4,21 +4,21 @@ namespace V2\Database;
 
 class Querys extends Execute
 {
-    public static function table(string $table)
+    public static function table(string $table) : Querys
     {
         $query = new Querys;
         $query->table = $table;
         return $query;
     }
 
-    public function select($fields)
+    public function select($fields) : Querys
     {
         $_fields = '';
         if (is_array($fields)) {
             foreach ($fields as $field) {
                 $_fields .= "{$field}, ";
             }
-            $_fields = self::cleanCadena($_fields);
+            $_fields = substr($_fields, 0, strrpos($_fields, ','));
 
         } else $_fields = $fields;
 
@@ -34,7 +34,8 @@ class Querys extends Execute
         return $this;
     }
 
-    public function insert(array $arraySet)
+    // TODO: modificar este metodo
+    public function insert(array $arraySet) : Querys
     {
         $setInsert = $setValues = '';
         $parametersNumber = count($arraySet);
@@ -44,6 +45,7 @@ class Querys extends Execute
             if ($index++ == $parametersNumber) {
                 $setInsert .= $set;
                 $setValues .= '?';
+
             } else {
                 $setInsert .= "{$set}, ";
                 $setValues .= '?, ';
@@ -62,10 +64,11 @@ class Querys extends Execute
         foreach ($arraySet as $set => $value) {
             if (!is_null($value)) {
                 $setUpdate .= "{$set} = ?, ";
+
             } else unset($arraySet[$set]);
         }
 
-        $setUpdate = self::cleanCadena($setUpdate);
+        $setUpdate = substr($setUpdate, 0, strrpos($setUpdate, ','));
 
         $this->sql = "UPDATE {$this->table} SET {$setUpdate}";
         $this->arraySet = $arraySet;
@@ -78,16 +81,25 @@ class Querys extends Execute
         return $this;
     }
 
-    // ADD: aceptar parametros array para concatenar varias condiciones con AND
-    public function where(string $column, string $value)
+    public function where($column, string $value = null) : Querys
     {
-        $this->sql .= " WHERE {$column} = ?";
-        $this->value = $value;
-        return $this;
-    }
+        $_column = '';
+        if (is_array($column)) {
+            foreach ($column as $key => $value) {
+                $_column .= "{$key} = ? and ";
+                $_value[] = $value;
+            }
 
-    private static function cleanCadena($sets)
-    {
-        return substr($sets, 0, strrpos($sets, ','));
+            $_column = substr($_column, 0, strrpos($_column, 'and') - 1);
+            $this->sql .= " WHERE {$_column}";
+            $this->value = $_value;
+
+        } else {
+            $_column = $column;
+            $this->sql .= " WHERE {$_column} = ?";
+            $this->value = $value;
+        }
+
+        return $this;
     }
 }

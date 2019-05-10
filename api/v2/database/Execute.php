@@ -27,18 +27,16 @@ class Execute
         return $queryResult;
     }
 
-    public function getAll(bool $resul = null, $exception = null)
+    public function getAll($callback = false)
     {
-        $rows = self::execute();
-        $rows = ($rows < 1) ? false : true;
+        $result = self::execute($callback);
 
-        if ($rows === $resul) $exception();
+        if ($result) {
+            for ($i = 0; $i < $result; $i++)
+                $arrayQuery[] = $this->query->fetch(PDO::FETCH_OBJ);
+            return $arrayQuery;
 
-        if ($rows) {
-            for ($i = 0; $i < $rows; $i++)
-                $arrayResponse[] = $query->fetch(PDO::FETCH_OBJ);
-            return $arrayResponse;
-        }
+        } else return false;
     }
 
     // // ADD: puede ser util un metodo para buscar resultados, por ahora se realiza con get
@@ -55,19 +53,26 @@ class Execute
         $query = PgSqlConnection::connection()->prepare($this->sql);
         $queryType = substr($this->sql, 0, 6);
 
+        $index = 1;
         if ($queryType == 'INSERT' or $queryType == 'UPDATE') {
-            $index = 1;
             foreach ($this->arraySet as $value) $query->bindValue($index++, $value);
-            if (isset($this->value)) $query->bindValue($index, $this->value);
-            $query->execute();
+
+            if (isset($this->value)) {
+                if (is_array($this->value)) {
+                    foreach ($this->value as $value) $query->bindValue($index++, $value);
+
+                } else $query->bindValue($index, $this->value);
+            }
 
         } elseif ($queryType == 'SELECT' or $queryType == 'DELETE') {
             if (isset($this->value)) {
-                $query->execute([
-                    $this->value
-                ]);
-            } else $query->execute();
+                if (is_array($this->value)) {
+                    foreach ($this->value as $value) $query->bindValue($index++, $value);
+
+                } else $query->execute([$this->value]);
+            }
         }
+        $query->execute();
 
         $error = $query->errorInfo()[2];
 
@@ -77,7 +82,7 @@ class Execute
             $rows = $query->rowCount();
             if ($rows > 0) {
                 $this->query = $query;
-                return true;
+                return $rows;
 
             } else {
                 if ($callback) $callback();
