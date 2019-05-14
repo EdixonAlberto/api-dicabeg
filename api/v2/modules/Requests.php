@@ -11,15 +11,16 @@ class Requests
     private const RESOURCES = [
         'users',
         'accounts',
-        'referrals'
+        'referrals',
+        'videos',
+        'history'
     ];
 
     private const PATTERNS = [
-        '|/([a-z]+)/([a-z0-9-]{36})/([a-z]+)/([a-z0-9-]{36})|',  // /route1/id1/route2/id2
-        '|/([a-z]+)/([a-z0-9-]{36})/([a-z]+)|',                  // /route1/id1/route2
+        '|/([a-z]+)/(.*)/([a-z]+)/(.*)|',  // /route1/id1/route2/id2
+        '|/([a-z]+)/(.*)/([a-z]+)|',                  // /route1/id1/route2
         '|/([a-z]+)/group/([0-9]{1,})|',                         // /route1/group/nro
-        '|/([a-z]+)/([a-z]+)|',                                  // /route1/route2
-        '|/([a-z]+)/([a-z0-9-]{36})|',                           // /route1/id1
+        '|/([a-z]+)/(.*)|',                           // /route1/id1
         '|/([a-z]+)|',                                           // /route1
     ];
 
@@ -34,30 +35,37 @@ class Requests
                 $arrayRequest
             );
 
+            // var_dump($arrayRequest);
+
             if ($validated) {
                 array_shift($arrayRequest);
 
                 foreach ($arrayRequest as $index => $request) {
                     if (strlen($request) == 36) {
                         Gui::validate($request);
+
                         $idName = strtoupper($resource) . '_ID';
                         define($idName, $request);
+
                         $resource = $arrayRequest[$index - 1];
+                        $route = preg_replace('/[a-z0-9-]{36}/', 'id', $url);
 
                     } elseif (is_numeric($request)) {
                         define('GROUP_NRO', $request);
                         $resource = $arrayRequest[$index - 1];
+                        $route = preg_replace('/[0-9]{1,}/', 'nro', $url);
 
                     } elseif (empty($resource))
                         $resource = $arrayRequest[$index];
                 }
-                if (in_array($resource, self::RESOURCES)) {
-                    if (isset($idName))
-                        $route = preg_replace('/[a-z0-9-]{36}/', 'id', $url);
-                    else $route = preg_replace('/[0-9]{1,}/', 'nro', $url);
 
+                // var_dump($resource);
+                if (in_array($resource, self::RESOURCES)) {
                     define('RESOURCE', $resource);
-                    define('ROUTE', $route);
+
+                    if (isset($route)) define('ROUTE', $route);
+                    else define('ROUTE', $url);
+
                     define('METHOD', $_SERVER['REQUEST_METHOD']);
 
                     parse_str(file_get_contents('php://input'), $_body);

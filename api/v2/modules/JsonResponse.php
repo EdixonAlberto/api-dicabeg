@@ -33,7 +33,6 @@ class JsonResponse
     }
 
     public static function updated(
-        string $title,
         $content,
         string $info = null
     ) : void {
@@ -42,9 +41,7 @@ class JsonResponse
             'status' => 200,
             'response' => 'successful',
             'description' => 'updated resource',
-            'resource' => [
-                $title => Middleware::output($content)
-            ],
+            'resource' => Middleware::output($content),
             'information' => $info
         ];
         self::send($response);

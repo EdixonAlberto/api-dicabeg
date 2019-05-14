@@ -25,22 +25,18 @@ class Middleware implements IResource
         }
     }
 
-    public static function output($responses)
+    public static function output(array $response = null)
     {
-        foreach ($responses as $title => $content) {
-            if (is_array($content)) {
-                foreach ($content as $key => $value) {
-                    $newResp[$key] = Output::filter($value);
+        if (is_array($response)) {
+            if (isset($response[0])) {
+                foreach ($response as $key => $value) {
+                    $newResponse[$key] = Output::filter($value);
                 }
-                $newResponse[$title] = $newResp;
+            } else $newResponse = Output::filter($response);
 
-            } elseif (is_object($content))
-                $newResponse[$title] = Output::filter($content);
+        } else return $response;
 
-            else return $responses;
-
-            return $newResponse;
-        }
+        return $newResponse;
     }
 
     public static function authetication()
@@ -48,7 +44,8 @@ class Middleware implements IResource
         $token = $_SERVER['HTTP_API_TOKEN'] ?? false;
 
         if ($token == false) throw new Exception(
-            'header [api_token] is not set',
+            'requires a token to access this resource',
+            // 'header [api_token] is not set',
             400
         );
         new Auth($token);

@@ -2,6 +2,7 @@
 
 namespace V2\Libraries;
 
+use NNV\OneSignal\API\Player;
 use NNV\OneSignal\OneSignal as OS;
 use NNV\OneSignal\API\Notification;
 
@@ -16,6 +17,7 @@ class OneSignal
             ONESIGNAL_APP_ID,
             ONESIGNAL_REST_API_KEY
         );
+        return $this->oneSignal;
     }
 
     public function addDevice()
@@ -29,6 +31,17 @@ class OneSignal
         ];
 
         $player->create(DeviceTypes::CHROME_WEBSITE, $playerData);
+    }
+
+    public function viewDevices()
+    {
+        $player = new Player(
+            $this->oneSignal,
+            ONESIGNAL_APP_ID,
+            ONESIGNAL_REST_API_KEY
+        );
+
+        return $player->all();
     }
 
     public function createNotifi($playerID)

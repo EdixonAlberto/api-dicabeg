@@ -9,18 +9,16 @@ class Output
         'password'
     ];
 
-    public static function filter($response)
+    public static function filter(array $response) : array
     {
-        $arrayResp = (array)$response;
-
         foreach (self::$denials as $denied) {
-            unset($arrayResp[$denied]);
+            unset($response[$denied]);
         }
 
-        foreach ($arrayResp as $key => $value) {
-            if (is_null($arrayResp[$key])) unset($arrayResp[$key]);
+        foreach ($response as $key => $value) {
+            if (is_null($value)) unset($response[$key]);
         }
 
-        return $arrayResp;
+        return $response;
     }
 }
