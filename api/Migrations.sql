@@ -12,7 +12,7 @@ CREATE TABLE "users" (
 	"player_id" VARCHAR(36) NULL DEFAULT NULL,
 	"email" VARCHAR(40) NOT NULL,
 	"password" VARCHAR(255) NOT NULL,
-	"invite_code" VARCHAR(36) NULL DEFAULT NULL, -- acepta null para que pueda funcionar la v1 y v2 juntas
+	"invite_code" VARCHAR(36) NOT NULL, -- colocar null para que funcione en la v1 y v2 juntas
 	"registration_code" VARCHAR(36) NULL DEFAULT NULL,
 	"username" VARCHAR(20) NOT NULL,
 	"names" VARCHAR(20) NULL DEFAULT NULL,
@@ -33,6 +33,7 @@ CREATE TABLE "users" (
 	CONSTRAINT "users_username_UQ" UNIQUE ("username")
 );
 
+-- TODO: Agregar campo para guardar el TZ del user | pensar donde guardar, en accounts? o options?
 
 -- ACCOUNTS
 CREATE TABLE "accounts" (
@@ -50,10 +51,12 @@ CREATE TABLE "accounts" (
 
 -- REFERRALS
 CREATE TABLE "referrals" (
+	"referrals_id" VARCHAR(72) NULL DEFAULT NULL, -- solo para la v1
 	"user_id" VARCHAR(36) NOT NULL,
 	"referred_id" VARCHAR(36) NOT NULL,
 	"create_date" TIMESTAMP NULL,
 
+	CONSTRAINT "referrals_referrals_id_UQ" UNIQUE ("referrals_id"),
 	CONSTRAINT "referrals_user_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id"),
 	CONSTRAINT "referrals_referred_id_FK" FOREIGN KEY("referred_id") REFERENCES users("user_id")
 );
@@ -89,14 +92,15 @@ CREATE TABLE "videos" (
 );
 
 
--- HISTORIAL
+-- HISTORY
 CREATE TABLE "history" (
-	"history_id" VARCHAR(72) NOT NULL,
+	"history_id" VARCHAR(72) NULL DEFAULT NULL, -- solo para la v1
 	"user_id" VARCHAR(36) NOT NULL,
 	"video_id" VARCHAR(36) NOT NULL,
-	"total_views" INTEGER DEFAULT 1,
+	"total_views" INTEGER DEFAULT 0,
 	"update_date" TIMESTAMP NULL,
 
-	CONSTRAINT "history_history_id_PK" PRIMARY KEY ("history_id"),
-	CONSTRAINT "history_user_id_FK" FOREIGN KEY ("user_id") REFERENCES users("user_id")
+	CONSTRAINT "history_history_id_UQ" UNIQUE ("history_id"),
+	CONSTRAINT "history_user_id_FK" FOREIGN KEY ("user_id") REFERENCES users("user_id"),
+	CONSTRAINT "history_video_id_FK" FOREIGN KEY ("video_id") REFERENCES videos("video_id")
 );

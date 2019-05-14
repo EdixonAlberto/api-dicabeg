@@ -11,7 +11,7 @@ EndPoint
 
 ---
 
->ACCOUNT
+>ACCOUNTS
 
     POST   | v2/accounts/activation
     POST   | v2/accounts/login
@@ -26,25 +26,21 @@ EndPoint
     GET    | v2/referrals/id
     DELETE | v2/referrals/id
 
+---
+
 >HISTORY
 
-    GET    | v?/users/history/
-    GET    | v?/users/history/group/nro  [NEW]
-    GET    | v?/users/history/id/
-    POST   | v?/users/history/id/
-    DELETE | v?/users/history/   [NEW]
-    DELETE | v?/users/history/id/
+    GET    | v2/history/group/nro
+    GET    | v2/history/id
+    POST   | v2/history/id
+    DELETE | v2/history/id
+    DELETE | v2/history
+
 ---
 
 >VIDEOS
 
-    GET    | v?/videos
-    GET    | v?/videos/group/nro    [NEW]
-    GET    | v?/videos/id
+    GET    | v2/videos/group/nro
+    GET    | v2/videos/id
 
 ---
-
->OPTIONS
-
-    GET    | v?/options/time/
-    POST   | v?/options/time/
