@@ -2,6 +2,7 @@
 
 namespace V2\Controllers;
 
+use Exception;
 use V2\Modules\Time;
 use V2\Database\Querys;
 use V2\Modules\JsonResponse;
@@ -24,24 +25,26 @@ class ReferredController implements IController
                 ->select(['email', 'username', 'avatar', 'phone'])
                 ->where('user_id', $referred->referred_id)->get();
         }
-        $referrals['referrals'] = $arrayReferrals;
 
-        JsonResponse::read($referrals);
+        JsonResponse::read($arrayReferrals);
     }
 
     public static function show() : void
     {
-        $referred['referred'] = Querys::table('users')
-            ->select(['email', 'username', 'avatar', 'phone'])
+        Querys::table('referrals')
+            ->select('referred_id')
             ->where([
-                'user_id' => REFERRALS_ID,
-                ''
-            ])
-            ->get(function () {
+                'user_id' => USERS_ID,
+                'referred_id' => REFERRALS_ID
+            ])->get(function () {
                 throw new Exception('referred not found', 404);
             });
 
-        JsonResponse::read($referred);
+        $referred = Querys::table('users')
+            ->select(['email', 'username', 'avatar', 'phone'])
+            ->where('user_id', REFERRALS_ID)->get();
+
+        JsonResponse::read((array)$referred);
     }
 
     public static function store($body) : void
@@ -55,11 +58,20 @@ class ReferredController implements IController
 
     public static function update($body) : void
     {
-
     }
 
     public static function destroy() : void
     {
+        Querys::table('referrals')->delete()
+            ->where([
+                'user_id' => USERS_ID,
+                'referred_id' => REFERRALS_ID
+            ])->execute(function () {
+                throw new Exception('referred not found', 404);
+            });
 
+        Querys::table('accounts')->update(['registration_code' => 'deleted'])
+            ->where('user_id', REFERRALS_ID)
+            ->execute();
     }
 }

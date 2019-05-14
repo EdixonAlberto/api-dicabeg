@@ -19,7 +19,7 @@ class AccountController implements IResource
         if (isset($body->temporal_code)) {
             Querys::table('accounts')->update([
                 'activated_account' => 'true',
-                'temporal_code' => ''
+                'temporal_code' => 'used'
             ])->where('temporal_code', $body->temporal_code)
                 ->execute(function () {
                     throw new Exception('code invalid or used', 400);
@@ -56,11 +56,10 @@ class AccountController implements IResource
 
         self::passwordValidate($body, $user);
 
-        $jwt['api_token'] = new Jwt($user->user_id);
+        $jwt = new Jwt($user->user_id);
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/users';
-        $info['user'] = $user;
 
-        JsonResponse::created($jwt, $path, $info);
+        JsonResponse::created((array)$jwt, $path, (array)$user);
     }
 
     public static function refreshLogin()

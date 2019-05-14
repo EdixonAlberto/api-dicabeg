@@ -10,3 +10,7 @@ Route::get('/referrals/id', function () {
 Route::get('/referrals/group/nro', function () {
     Controller::index();
 });
+
+Route::delete('/referrals/id', function () {
+    Controller::destroy();
+});
