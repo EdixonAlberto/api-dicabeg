@@ -63,12 +63,14 @@ class UserController implements IController
                 ->where('user_id', $user_id)->get();
         }
 
+        $invite_code = Security::generateCode(8);
+
         $userQuery->insert($user = [
             'user_id' => $id = Security::generateID(),
             'email' => Format::email($body->email),
             'password' => Security::generateHash($body->password),
             'username' => self::getUsername($body),
-            'invite_code' => Security::generateCode(8),
+            'invite_code' => $invite_code,
             'create_date' => Time::current()->utc
         ])->execute();
 
@@ -79,7 +81,7 @@ class UserController implements IController
         Querys::table('accounts')->insert([
             'user_id' => $id,
             'temporal_code' => $code,
-            'invite_code' => Security::generateCode(8),
+            'invite_code' => $invite_code,
             'registration_code' => $username ?? null
         ])->execute();
 
