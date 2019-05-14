@@ -68,6 +68,7 @@ class UserController implements IController
             'email' => Format::email($body->email),
             'password' => Security::generateHash($body->password),
             'username' => self::getUsername($body),
+            'invite_code' => Security::generateCode(8),
             'create_date' => Time::current()->utc
         ])->execute();
 
@@ -79,7 +80,7 @@ class UserController implements IController
             'user_id' => $id,
             'temporal_code' => $code,
             'invite_code' => Security::generateCode(8),
-            'registration_code' => $username
+            'registration_code' => $username ?? null
         ])->execute();
 
         // TODO: El idioma debe ser determinado en el
