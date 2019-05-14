@@ -19,7 +19,7 @@ class UserController implements IController
 {
     public static function index() : void
     {
-        $arrayUser['user'] = Querys::table('users')
+        $arrayUser = Querys::table('users')
             ->select(self::USERS_COLUMNS)
             ->group(GROUP_NRO)
             ->getAll(function () {
@@ -31,14 +31,14 @@ class UserController implements IController
 
     public static function show() : void
     {
-        $user['user'] = Querys::table('users')
+        $user = Querys::table('users')
             ->select(self::USERS_COLUMNS)
             ->where('user_id', USERS_ID)
             ->get(function () {
                 throw new Exception('user not found', 404);
             });
 
-        JsonResponse::read($user);
+        JsonResponse::read((array)$user);
     }
 
     public static function store($body) : void
@@ -63,7 +63,7 @@ class UserController implements IController
                 ->where('user_id', $user_id)->get();
         }
 
-        $userQuery->insert($arrayUser = [
+        $userQuery->insert($user = [
             'user_id' => $id = Security::generateID(),
             'email' => Format::email($body->email),
             'password' => Security::generateHash($body->password),
@@ -79,15 +79,13 @@ class UserController implements IController
             'user_id' => $id,
             'temporal_code' => $code,
             'invite_code' => Security::generateCode(8),
-            'registration_code' => $body->invite_code ?? null
+            'registration_code' => $username
         ])->execute();
-
 
         // TODO: El idioma debe ser determinado en el
         // futuro mediante la config del usuario
 
-        $info = (object)[];
-        // $info->email = Diffusion::sendEmail(
+        // $info['email'] = Diffusion::sendEmail(
         //     $user->email,
         //     EmailTemplate::accountActivation($code, 'spanish')
         // );
@@ -97,7 +95,7 @@ class UserController implements IController
                 'user_id' => $user_id,
                 'referred_id' => $id
             ]);
-            $info->referred = "agregado como referido del usuario {{$username}}";
+            $info['referred'] = "agregado como referido del usuario {{$username}}";
 
             // $info->notification = Diffusion::sendNotification(
             //     $body->player_id,
@@ -105,17 +103,16 @@ class UserController implements IController
             // );
         }
 
-        $user['user'] = (object)$arrayUser;
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/accounts/activation';
 
-        JsonResponse::created($user, $path, $info);
+        JsonResponse::created((array)$user, $path);
     }
 
     public static function update($body) : void
     {
         Middleware::input($body);
 
-        Querys::table('users')->update($arrayUser['user'] = [
+        Querys::table('users')->update($user = [
             'username' => isset($body->username) ?
                 self::getUsername($body) : null,
 
@@ -139,12 +136,12 @@ class UserController implements IController
             'update_date' => Time::current()->utc
         ])->where('user_id', USERS_ID)->execute();
 
-        JsonResponse::updated($arrayUser);
+        JsonResponse::updated($user);
     }
 
     public static function destroy() : void
     {
-        Querys::table('accounts')->delete()
+        Querys::table('history')->delete()
             ->where('user_id', USERS_ID)
             ->execute();
 
@@ -152,11 +149,9 @@ class UserController implements IController
             ->where('user_id', USERS_ID)
             ->execute();
 
-        // Querys::table('history')->delete('history')
-        //     ->where('user_id', USERS_ID)
-        //     ->execute(function(){
-        // throw new Exception("Error deleted", 500);
-        // });
+        Querys::table('accounts')->delete()
+            ->where('user_id', USERS_ID)
+            ->execute();
 
         Querys::table('users')->delete()
             ->where('user_id', USERS_ID)
