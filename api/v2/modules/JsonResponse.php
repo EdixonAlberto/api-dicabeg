@@ -72,7 +72,7 @@ class JsonResponse
         $response = [
             'status' => $code,
             'response' => 'error',
-            'description' => $content,
+            'description' => utf8_decode($content)
         ];
         self::send($response, $code);
     }

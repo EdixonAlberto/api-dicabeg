@@ -2,6 +2,9 @@
 
 namespace V2\Database;
 
+use PDO;
+use Exception;
+
 class DB
 {
     private $engine;
@@ -22,14 +25,16 @@ class DB
 
     protected function connect()
     {
-        $connection = $this->engine . ':dbname=' . $this->name . ';host=' . $this->host;
-        return new \PDO($connection, $this->user, $this->password);
+        $connection = "{$this->engine}:dbname={$this->name} host={$this->host}";
+        return new PDO($connection, $this->user, $this->password);
     }
 
     private function decomposeURL($url)
     {
-        $urlCorrect = $url; // TODO: realizar un prematch, para validar la composicion de la URI
-        if ($urlCorrect) return parse_url($urlCorrect);
-        else throw new \Exception('Environment varable do not found', 500);
+        $pattern = '|([a-z]+)://([a-z0-9]+):(.*)@(.*):([0-9]+)/([a-z0-9]+)|';
+        $urlCorrect = preg_match($pattern, $url);
+
+        if ($urlCorrect) return parse_url($url);
+        else throw new Exception('incorrect coneccion string', 500);
     }
 }
