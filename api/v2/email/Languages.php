@@ -19,7 +19,7 @@ class Languages
                     case 3:
                         return 'Le damos la bienvenida a la comunidad.';
                     case 4:
-                        return '[ El equipo de Dicabeg ]';
+                        return '[El equipo de Dicabeg]';
                 }
             } else if ($language == 'english') {
                 switch ($numeric) {
@@ -39,10 +39,10 @@ class Languages
                 case 1:
                     return 'Ahora podras recuperar tu cuenta Dicabeg';
                 case 2:
-                    return 'Dentro de la app, ingresa este codigo
-                    para reetablecer tu contraseña.';
+                    return 'Dentro de la app, ingresa este código
+                    para reestablecer tu contraseña.';
                 case 3:
-                    return 'Su cuenta será reestablecida de inmediato.';
+                    return 'En seguida podrá usar su cuenta nuevamente.';
                 case 4:
                     return '[El equipo de Dicabeg]';
             }
