@@ -47,9 +47,13 @@ class UserController implements IController
 
         $userQuery = Querys::table('users');
 
-        $email = $userQuery->select('email')
-            ->WHERE('email', $body->email)->get();
-        if ($email) throw new Exception("email {{$email}} exist", 404);
+        if (isset($body->email)) {
+            $email = $userQuery->select('email')
+                ->WHERE('email', $body->email)->get();
+            if ($email) throw new Exception("email {{$email}} exist", 404);
+
+        } else throw new Exception('email is not set', 400);
+
 
         if (isset($body->invite_code)) {
             $user_id = Querys::table('accounts')
@@ -88,25 +92,27 @@ class UserController implements IController
         // TODO: El idioma debe ser determinado en el
         // futuro mediante la config del usuario
 
-        // $info['email'] = Diffusion::sendEmail(
-        //     $user->email,
-        //     EmailTemplate::accountActivation($code, 'spanish')
-        // );
+        $info['email'] = Diffusion::sendEmail(
+            $user->email,
+            EmailTemplate::accountActivation($code, 'spanish')
+        );
 
         if (isset($body->invite_code)) {
             ReferredController::store((object)[
                 'user_id' => $user_id,
                 'referred_id' => $id
             ]);
-            $info['referred'] = "agregado como referido del usuario {{$username}}";
+            $info['referred'] =
+                "added as a referral from the user: {$username}";
 
-            // $info->notification = Diffusion::sendNotification(
+                // TODO: NOTIFICACIONES
+            // $info['notification'] = Diffusion::sendNotification(
             //     $body->player_id,
-            //     NotificationTemplate::type()
+            //     '' // TODO: Colocar contenido para la notificacion
             // );
         }
 
-        $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/accounts/activation';
+        $path = "https://{$_SERVER['SERVER_NAME']}/v2/accounts/activation";
 
         JsonResponse::created((array)$user, $path);
     }
