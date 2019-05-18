@@ -37,7 +37,7 @@ class SendGrid
         return $sendgrid;
     }
 
-    public function send() : object
+    public function send() : array
     {
         $sendgrid = new ApiSendGrid(SENDGRID_API_KEY);
         $response = $sendgrid->send($this->email);
@@ -52,17 +52,16 @@ class SendGrid
                     strrpos($description, ' ') + 1,
                     strlen($description)
                 ),
-                'description' => "email enviado al correo {{$this->email}}"
+                'description' => "email sent to: {{$this->email}}"
             ];
 
         } else {
             $result = [
                 'status' => 500,
-                'response' => 'error: email not sent',
-                'description' => 'failed the connection to the internet'
+                'response' => 'error',
+                'description' => 'the email could not be sent'
             ];
         }
-
-        return (object)$result;
+        return $result;
     }
 }
