@@ -24,7 +24,8 @@ interface IResource
    const ACCOUNTS_COLUMNS = [
       'temporal_code',
       'invite_code',
-      'registration_code'
+      'registration_code',
+      'time_zone'
    ];
 
    const REFERRALS_COLUMNS = [

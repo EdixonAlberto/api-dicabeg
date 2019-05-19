@@ -1,3 +1,5 @@
+DROP TABLE "options";
+DROP TABLE "transfers";
 DROP TABLE "history";
 DROP TABLE "videos";
 DROP TABLE "sessions";
@@ -10,11 +12,11 @@ DROP TABLE "users";
 CREATE TABLE "users" (
 	"user_id" VARCHAR(36) NOT NULL,
 	"player_id" VARCHAR(36) NULL DEFAULT NULL,
+	"username" VARCHAR(20) NOT NULL,
 	"email" VARCHAR(40) NOT NULL,
 	"password" VARCHAR(255) NOT NULL,
 	"invite_code" VARCHAR(36) NOT NULL, -- colocar null para que funcione en la v1 y v2 juntas
 	"registration_code" VARCHAR(36) NULL DEFAULT NULL,
-	"username" VARCHAR(20) NOT NULL,
 	"names" VARCHAR(20) NULL DEFAULT NULL,
 	"lastnames" VARCHAR(20) NULL DEFAULT NULL,
 	"age" INTEGER NULL DEFAULT NULL,
@@ -33,19 +35,32 @@ CREATE TABLE "users" (
 	CONSTRAINT "users_username_UQ" UNIQUE ("username")
 );
 
--- TODO: Agregar campo para guardar el TZ del user | pensar donde guardar, en accounts? o options?
 
 -- ACCOUNTS
 CREATE TABLE "accounts" (
-	"user_id" VARCHAR(40) NOT NULL,
+	"user_id" VARCHAR(36) NOT NULL,
 	"activated_account" BOOLEAN NOT NULL DEFAULT FALSE,
 	"temporal_code" VARCHAR(6) NULL DEFAULT NULL,
 	"invite_code" VARCHAR(8) NOT NULL,
 	"registration_code" VARCHAR(8) NULL DEFAULT NULL,
+	"time_zone" VARCHAR NOT NULL,
 
 	CONSTRAINT "accounts_user_id_PK" PRIMARY KEY ("user_id"),
 	CONSTRAINT "account_user_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id"),
 	CONSTRAINT "accounts_invite_code_UQ" UNIQUE ("invite_code")
+);
+
+
+-- TRANSFERS
+CREATE TABLE "transfers" (
+	"user_id" VARCHAR(36) NOT NULL,
+	"username" VARCHAR(20) NOT null,
+	"amount" NUMERIC DEFAULT 0.00,
+	"total" NUMERIC DEFAULT 0.00,
+	"create_date" TIMESTAMP NULL,
+
+	CONSTRAINT "transfers_user_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id"),
+	CONSTRAINT "transfers_username_FK" FOREIGN KEY("username") REFERENCES users("username")
 );
 
 
@@ -103,4 +118,9 @@ CREATE TABLE "history" (
 	CONSTRAINT "history_history_id_UQ" UNIQUE ("history_id"),
 	CONSTRAINT "history_user_id_FK" FOREIGN KEY ("user_id") REFERENCES users("user_id"),
 	CONSTRAINT "history_video_id_FK" FOREIGN KEY ("video_id") REFERENCES videos("video_id")
+);
+
+-- OPTIONS
+CREATE TABLE "options" (
+	"expiration_time" VARCHAR NOT NULL
 );
