@@ -38,7 +38,7 @@ class UserController implements IController
                 throw new Exception('user not found', 404);
             });
 
-        JsonResponse::read((array)$user);
+        JsonResponse::read($user);
     }
 
     public static function store($body) : void
@@ -72,10 +72,10 @@ class UserController implements IController
         $userQuery->insert($user = [
             'user_id' => $id = Security::generateID(),
             'email' => Format::email($body->email),
-            'password' => Security::generateHash($body->password),
             'username' => self::getUsername($body),
+            'password' => Security::generateHash($body->password),
             'invite_code' => $invite_code,
-            'create_date' => Time::current()->utc
+            'create_date' => Time::current($body->time_zone)->utc
         ])->execute();
 
         // ADD: Validar recurrencia de codigos,
@@ -86,14 +86,15 @@ class UserController implements IController
             'user_id' => $id,
             'temporal_code' => $code,
             'invite_code' => $invite_code,
-            'registration_code' => $username ?? null
+            'registration_code' => $username ?? null,
+            'time_zone' => $body->time_zone
         ])->execute();
 
         // TODO: El idioma debe ser determinado en el
         // futuro mediante la config del usuario
 
         $info['email'] = Diffusion::sendEmail(
-            $user->email,
+            $user['email'],
             EmailTemplate::accountActivation($code, 'spanish')
         );
 
@@ -105,16 +106,22 @@ class UserController implements IController
             $info['referred'] =
                 "added as a referral from the user: {$username}";
 
-                // TODO: NOTIFICACIONES
-            // $info['notification'] = Diffusion::sendNotification(
-            //     $body->player_id,
-            //     '' // TODO: Colocar contenido para la notificacion
-            // );
+            $player_id = Querys::table('users')
+                ->select('player_id')
+                ->where('username', $username)->get();
+
+            // TODO: crear modelos de contenido para las notificaciones
+            // ademas de tener el contenido en varios idiomas
+            if ($player_id) {
+                $info['notification'] = Diffusion::sendNotification(
+                    $player_id,
+                    "El usuario: {$user['username']} se ha registrado como su referido"
+                );
+            }
         }
 
-        $path = "https://{$_SERVER['SERVER_NAME']}/v2/accounts/activation";
-
-        JsonResponse::created((array)$user, $path);
+        $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/accounts/activation';
+        JsonResponse::created((object)$user, $path, $info);
     }
 
     public static function update($body) : void
@@ -145,7 +152,7 @@ class UserController implements IController
             'update_date' => Time::current()->utc
         ])->where('user_id', USERS_ID)->execute();
 
-        JsonResponse::updated($user);
+        JsonResponse::updated((object)$user);
     }
 
     public static function destroy() : void
