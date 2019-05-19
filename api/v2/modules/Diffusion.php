@@ -4,6 +4,7 @@ namespace V2\Modules;
 
 use V2\Libraries\SendGrid;
 use V2\Email\EmailTemplate;
+use V2\Libraries\OneSignal;
 
 class Diffusion
 {
@@ -17,13 +18,21 @@ class Diffusion
             $template->subject,
             $email,
             $template->html
-        )->send();
-
+        )->send($email);
         return $status;
     }
 
-    public function sendNotification()
-    {
+    public function sendNotification(
+        string $playerId,
+        string $content
+    ) {
 
+        $os = new OneSignal;
+
+        $status = $os->createNotific(
+            $playerId,
+            $content
+        );
+        return $status;
     }
 }

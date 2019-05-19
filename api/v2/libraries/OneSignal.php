@@ -17,20 +17,19 @@ class OneSignal
             ONESIGNAL_APP_ID,
             ONESIGNAL_REST_API_KEY
         );
-        return $this->oneSignal;
     }
 
-    public function addDevice()
+    public static function addDevice()
     {
         $playerData = [
-            'language' => 'en',
+            'language' => 'es',
             'tags' => [
                 'for' => 'bar',
                 'this' => 'that'
             ]
         ];
 
-        $player->create(DeviceTypes::CHROME_WEBSITE, $playerData);
+        // $player->create(DeviceTypes::CHROME_WEBSITE, $playerData);
     }
 
     public function viewDevices()
@@ -44,8 +43,12 @@ class OneSignal
         return $player->all();
     }
 
-    public function createNotifi($playerID)
-    {
+    public function createNotifi(
+        array $playerId,
+        string $header,
+        string $content
+    ) : array {
+
         $notification = new Notification(
             $this->oneSignal,
             ONESIGNAL_APP_ID,
@@ -53,14 +56,16 @@ class OneSignal
         );
 
         $notificationData = [
-            // 'included_segments' => ['All'],
-            'include_player_ids' => [$playerID],
-            'contents' => [
-                'en' => 'Hello, world',
-            ],
+            'include_player_ids' => $playerId,
+
             'headings' => [
-                'en' => 'Hello',
+                'es' => 'Dicabeg'
             ],
+
+            'contents' => [
+                'en' => $content
+            ],
+
             'buttons' => [
                 [
                     'id' => 'button_id',
@@ -68,18 +73,33 @@ class OneSignal
                     'icon' => 'button_icon',
                 ],
             ],
-            'filters' => [
-                [
-                    'field' => 'tag',
-                    'key' => 'level',
-                    'relation' => '>',
-                    'value' => '10',
-                ],
-            ],
-            // 'send_after' => 'Sep 24 2017 14:00:00 GMT-0700',
-            'isChromeWeb' => false,
         ];
 
-        $notification->create($notificationData);
+        $response = $notification
+            ->create($notificationData)
+            ->response;
+
+        if (!isset($response->errors)) {
+            $result = [
+                'status' => 200,
+                'response' => 'successful',
+                'description' =>
+                    "notification {$response->id} sended to the user"
+            ];
+
+        } elseif (!isset($response->errors)) {
+            $result = [
+                'status' => 500,
+                'response' => 'error',
+                'description' => $response->warnings
+            ];
+
+        } else {
+            $result = [
+                'status' => 500,
+                'response' => 'error',
+                'description' => 'unknown error'
+            ];
+        }
     }
 }

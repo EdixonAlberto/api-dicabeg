@@ -23,24 +23,24 @@ class SendGrid
         $htmlContent
     ) : SendGrid {
 
-        $email = new Mail();
-        $email->setFrom($from, 'DICABEG');  // Remitente
-        $email->setSubject($subject);       // Asunto
-        $email->addTo($to);                 // Para
+        $mail = new Mail();
+        $mail->setFrom($from, 'DICABEG');  // Remitente
+        $mail->setSubject($subject);       // Asunto
+        $mail->addTo($to);                 // Para
         // $email->addContent("text/plain", "and easy to do anywhere, even with PHP"); // TODO:?
-        $email->addContent(
+        $mail->addContent(
             "text/html",
             $htmlContent                    // Plantilla html
         );
         $sendgrid = new SendGrid;
-        $sendgrid->email = $email;
+        $sendgrid->mail = $mail;
         return $sendgrid;
     }
 
-    public function send() : array
+    public function send($email) : object
     {
         $sendgrid = new ApiSendGrid(SENDGRID_API_KEY);
-        $response = $sendgrid->send($this->email);
+        $response = $sendgrid->send($this->mail);
 
         if ($response->statusCode() != 0) {
             $description = $response->headers()[2];
@@ -52,7 +52,7 @@ class SendGrid
                     strrpos($description, ' ') + 1,
                     strlen($description)
                 ),
-                'description' => "email sent to: {{$this->email}}"
+                'description' => "email sent to: {{$email}}"
             ];
 
         } else {
@@ -62,6 +62,6 @@ class SendGrid
                 'description' => 'the email could not be sent'
             ];
         }
-        return $result;
+        return (object)$result;
     }
 }
