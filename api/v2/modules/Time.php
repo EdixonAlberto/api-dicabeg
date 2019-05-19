@@ -6,50 +6,65 @@ use V2\Database\Querys;
 
 class Time
 {
-   public static function current()
+   public static function current(string $tz = null) : object
    {
-      // ADD: Esta info debe ser proporcionada por el front
-      date_default_timezone_set('America/Caracas');
+      self::setTimeZone($tz);
       $current = $_SERVER['REQUEST_TIME'];
 
       $currentTime = (object)[
          'unix' => $current,
          'utc' => date('Y-m-d H:i:s', $current)
       ];
-
       return $currentTime;
    }
 
    public static function expiration()
    {
-      $expiration_time = Querys::table('options')->select('expiration_time')->get();
+      $expiration_time = Querys::table('options')
+         ->select('expiration_time')->get();
       $expiration = strtotime(self::current()->utc . '+' . $expiration_time);
 
       $expirationTime = (object)[
          'unix' => $expiration,
          'utc' => date('Y-m-d H:i:s', $expiration)
       ];
-
       return $expirationTime;
    }
 
-   public static function getExpiration()
+   public static function setTimeZone(string $tz = null) : void
    {
-      $optionQuery = new Querys('options');
+      global $timeZone;
 
-      $option = $optionQuery->selectAll('expiration_time')[0];
-      $expiration = $option->expiration_time;
+      if (!is_null($tz)) {
+         $timeZone = $tz;
+         date_default_timezone_set($timeZone);
 
-      JsonResponse::read('expiration_time', $expiration);
+      } elseif (!isset($timeZone)) {
+         $timeZone = Querys::table('accounts')
+            ->select('time_zone')
+            ->where('user_id', USERS_ID)->get();
+
+         date_default_timezone_set($timeZone);
+      }
    }
 
-   public static function setExpiration()
-   {
-      $optionQuery = new Querys('options');
+   // public static function getExpiration()
+   // {
+   //    $optionQuery = new Querys('options');
 
-      $arrayOption['expiration_time'] = $_REQUEST['time'] . ' minute';
-      $optionQuery->update(false, false, $arrayOption);
+   //    $option = $optionQuery->selectAll('expiration_time')[0];
+   //    $expiration = $option->expiration_time;
 
-      JsonResponse::updated('options', $arrayOption);
-   }
+   //    JsonResponse::read('expiration_time', $expiration);
+   // }
+
+   // public static function setExpiration()
+   // {
+   //    $optionQuery = new Querys('options');
+
+   //    $arrayOption['expiration_time'] = $_REQUEST['time'] . ' minute';
+   //    $optionQuery->update(false, false, $arrayOption);
+
+   //    JsonResponse::updated('options', $arrayOption);
+   // }
 }
