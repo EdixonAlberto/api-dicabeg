@@ -7,9 +7,11 @@ use Firebase\JWT\JWT as JwtToken;
 
 class Jwt
 {
-    private static $alg = array('HS256');
+    public $token;
+    public $expiration_date;
+    private const ALG = array('HS256');
 
-    public function __construct(string $data)
+    public function __construct(string $data, string $key = ACCESS_KEY)
     {
         $token = array(
             'sub' => $data,                     // sujeto: datos del usuario
@@ -19,14 +21,12 @@ class Jwt
             'exp' => Time::expiration()->unix   // tiempo de expiracion en UNIX
         );
 
-        $this->api_token = JwtToken::encode($token, SECRET_KEY);
+        $this->token = JwtToken::encode($token, $key);
         $this->expiration_date = $token['exp'];
-
-        return $this;
     }
 
-    public static function process(string $token)
+    public static function verific(string $token, string $key) : object
     {
-        return JwtToken::decode($token, SECRET_KEY, self::$alg);
+        return JwtToken::decode($token, $key, self::ALG);
     }
 }

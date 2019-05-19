@@ -25,30 +25,38 @@ class Middleware implements IResource
         }
     }
 
-    public static function output(array $response = null)
+    public static function output($response = null)
     {
         if (is_array($response)) {
-            if (isset($response[0])) {
-                foreach ($response as $key => $value) {
-                    $newResponse[$key] = Output::filter($value);
-                }
-            } else $newResponse = Output::filter($response);
+            foreach ($response as $key => $value) {
+                $newResponse[$key] = is_object($value) ?
+                    Output::filter($value) : $value;
+            }
 
-        } else return $response;
+        } elseif (is_object($response))
+            $newResponse = Output::filter($response);
+
+        else return $response;
 
         return $newResponse;
     }
 
-    public static function authetication()
+    public static function authetication() : void
     {
-        $token = $_SERVER['HTTP_API_TOKEN'] ?? false;
+        if ($_SERVER['HTTP_ACCESS_TOKEN'] ?? false) {
+            $token = $_SERVER['HTTP_ACCESS_TOKEN'];
+            $key = ACCESS_KEY;
+
+        } elseif ($_SERVER['HTTP_REFRESH_TOKEN'] ?? false) {
+            $token = $_SERVER['HTTP_REFRESH_TOKEN'];
+            $key = REFRESH_KEY;
+        }
 
         if ($token == false) throw new Exception(
             'requires a token to access this resource',
-            // 'header [api_token] is not set',
             400
         );
-        new Auth($token);
+        new Auth($token, $key);
     }
 
     public static function activation($user_id)
@@ -56,7 +64,7 @@ class Middleware implements IResource
         Account::activationVerific($user_id);
     }
 
-    public static function field($condition, $value) : value
+    public static function field($condition, $value) : bool
     {
         return Resource::validate($condition, $value);
     }

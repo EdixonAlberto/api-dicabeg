@@ -3,6 +3,7 @@
 namespace V2\Controllers;
 
 use Exception;
+use V2\Modules\Time;
 use V2\Libraries\Jwt;
 use V2\Database\Querys;
 use V2\Modules\Security;
@@ -56,19 +57,25 @@ class AccountController implements IResource
 
         self::passwordValidate($body, $user);
 
-        $jwt = new Jwt($user->user_id);
-        $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/users';
+        define('USERS_ID', $user->user_id);
 
-        JsonResponse::created((array)$jwt, $path, (array)$user);
+        JsonResponse::created(
+            self::getAccess(USERS_ID),
+            'https://' . $_SERVER['SERVER_NAME'] . '/v2/users',
+            $user
+        );
     }
 
-    public static function refreshLogin()
+    public static function oauthLogin() : void
+    {
+
+    }
+
+    public static function refreshLogin() : void
     {
         Middleware::authetication();
 
-        $jwt = new Jwt(USERS_ID);
-
-        JsonResponse::OK($jwt);
+        JsonResponse::OK(self::getAccess(USERS_ID));
     }
 
     public static function passwordRecovery($body)
@@ -117,6 +124,21 @@ class AccountController implements IResource
 
             JsonResponse::OK('recovery successful, password updated');
         }
+    }
+
+    private function getAccess(string $id) : object
+    {
+        global $timeZone;
+
+        $access = new Jwt($id, ACCESS_KEY);
+        $refresh = new Jwt($id, REFRESH_KEY);
+
+        return (object)[
+            'access_token' => $access->token,
+            'refresh_token' => $refresh->token,
+            'expiration_date' => $access->expiration_date,
+            'time_zone' => $timeZone
+        ];
     }
 
     private static function passwordValidate($body, $user)

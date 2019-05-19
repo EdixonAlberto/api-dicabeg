@@ -14,7 +14,9 @@ class PhpDotEnv
       }
 
       define('DATABASE_URL', getenv('DATABASE_URL'));
-      define('SECRET_KEY', getenv('SECRET_KEY'));
+      define('ACCESS_KEY', getenv('ACCESS_KEY'));
+      define('REFRESH_KEY', getenv('REFRESH_KEY'));
+
       define('SENDGRID_API_KEY', getenv('SENDGRID_API_KEY'));
 
       define('ONESIGNAL_USER_AUTH_KEY', getenv('ONESIGNAL_USER_AUTH_KEY'));

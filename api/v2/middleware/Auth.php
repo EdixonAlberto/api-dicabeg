@@ -8,9 +8,9 @@ use V2\Database\Querys;
 
 class Auth
 {
-    public function __construct($token)
+    public function __construct(string $token, string $key)
     {
-        $payload = Jwt::process($token);
+        $payload = Jwt::verific($token, $key);
 
         $user_id = Querys::table('users')
             ->select('user_id')
