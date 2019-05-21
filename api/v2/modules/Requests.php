@@ -13,7 +13,8 @@ class Requests
         'accounts',
         'referrals',
         'videos',
-        'history'
+        'history',
+        'transfers'
     ];
 
     private const PATTERNS = [
@@ -41,14 +42,17 @@ class Requests
                 array_shift($arrayRequest);
 
                 foreach ($arrayRequest as $index => $request) {
-                    if (strlen($request) == 36) {
-                        Gui::validate($request);
+                    if (strlen($request) == 36 or strlen($request) == 14) {
+                        if (strlen($request) == 36) {
+                            Gui::validate($request);
+                            $route = preg_replace('/[a-z0-9-]{36}/', 'id', $url);
+
+                        } else $route = preg_replace('/[A-Z0-9]{14}/', 'id', $url);
 
                         $idName = strtoupper($resource) . '_ID';
                         define($idName, $request);
 
                         $resource = $arrayRequest[$index - 1];
-                        $route = preg_replace('/[a-z0-9-]{36}/', 'id', $url);
 
                     } elseif (is_numeric($request)) {
                         define('GROUP_NRO', $request);
@@ -59,7 +63,7 @@ class Requests
                         $resource = $arrayRequest[$index];
                 }
 
-                // var_dump($resource);
+                // var_dump($resource, $route);
                 if (in_array($resource, self::RESOURCES)) {
                     define('RESOURCE', $resource);
 

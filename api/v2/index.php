@@ -11,7 +11,7 @@ try {
     $request = new Requests;
 
     require 'routes/' . RESOURCE . 'Route.php';
-    throw new Exception('route incorrect', 400);
+    throw new Exception('the route does not exist', 400);
 
 } catch (Exception $error) {
     JsonResponse::error(
