@@ -3,8 +3,12 @@
 use V2\Modules\Route;
 use V2\Controllers\AccountController as Controller;
 
-Route::post('/accounts/login/refresh', function ($req) {
+Route::post('/accounts/login/refresh', function () {
     Controller::refreshLogin();
+});
+
+Route::post('/accounts/login/oauth2', function () {
+    Controller::oauthLogin();
 });
 
 Route::post('/accounts/login', function ($req) {
