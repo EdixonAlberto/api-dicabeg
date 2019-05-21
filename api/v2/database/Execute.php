@@ -19,8 +19,8 @@ class Execute
 
             else {
                 $property = $this->fields;
-                $queryResult = $this->query
-                    ->fetch(PDO::FETCH_OBJ)->$property;
+                $queryResult = $this->query->fetch(PDO::FETCH_OBJ)->$property;
+                if (is_null($queryResult) or $queryResult == '') $callback();
             }
         } else return false;
 

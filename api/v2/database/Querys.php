@@ -34,23 +34,15 @@ class Querys extends Execute
         return $this;
     }
 
-    // TODO: modificar este metodo
-    public function insert(array $arraySet) : Querys
+    public function insert($arraySet) : Querys
     {
         $setInsert = $setValues = '';
-        $parametersNumber = count($arraySet);
-        $index = 1;
-
         foreach ($arraySet as $set => $value) {
-            if ($index++ == $parametersNumber) {
-                $setInsert .= $set;
-                $setValues .= '?';
-
-            } else {
-                $setInsert .= "{$set}, ";
-                $setValues .= '?, ';
-            }
+            $setInsert .= "{$set}, ";
+            $setValues .= '?, ';
         }
+        $setInsert = substr($setInsert, 0, strrpos($setInsert, ','));
+        $setValues = substr($setValues, 0, strrpos($setValues, ','));
 
         $this->sql = "INSERT INTO {$this->table} ({$setInsert})
                         VALUES ({$setValues})";
@@ -58,7 +50,7 @@ class Querys extends Execute
         return $this;
     }
 
-    public function update(array $arraySet)
+    public function update($arraySet)
     {
         $setUpdate = '';
         foreach ($arraySet as $set => $value) {
