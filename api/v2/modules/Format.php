@@ -26,4 +26,16 @@ class Format
         // TODO: Para dar formato: +([0-9]{?})([0-9]{3})-([0-9]{4})-([0-9]{4})
         return $phone;
     }
+
+    public static function number($number)
+    {
+        if (is_numeric($number)) {
+            $isFloat = preg_match('|^\\d+\\.\\d+$|', $number);
+            $number = $isFloat ?
+                (float)number_format($number, 2, '.', '-') : (int)$number;
+
+        } else throw new Exception("the number: {$number} is incorrect", 400);
+
+        return $number;
+    }
 }
