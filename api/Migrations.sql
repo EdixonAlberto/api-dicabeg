@@ -53,12 +53,14 @@ CREATE TABLE "accounts" (
 
 -- TRANSFERS
 CREATE TABLE "transfers" (
+	"transfer_nro" VARCHAR(14) NOT NULL,
 	"user_id" VARCHAR(36) NOT NULL,
-	"username" VARCHAR(20) NOT null,
+	"username" VARCHAR(20) NOT NULL,
 	"amount" NUMERIC DEFAULT 0.00,
 	"total" NUMERIC DEFAULT 0.00,
 	"create_date" TIMESTAMP NULL,
 
+	CONSTRAINT "transfers_transfer_nro_PK" PRIMARY KEY ("transfer_nro"),
 	CONSTRAINT "transfers_user_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id"),
 	CONSTRAINT "transfers_username_FK" FOREIGN KEY("username") REFERENCES users("username")
 );
