@@ -4,6 +4,7 @@ namespace V2\Database;
 
 use PDO;
 use Exception;
+use PDOException;
 
 class DB
 {
@@ -25,8 +26,14 @@ class DB
 
     protected function connect()
     {
-        $connection = "{$this->engine}:dbname={$this->name} host={$this->host}";
-        return new PDO($connection, $this->user, $this->password);
+        try {
+            $connection = "{$this->engine}:dbname={$this->name} host={$this->host}";
+            return new PDO($connection, $this->user, $this->password);
+
+        } catch (PDOException $error) {
+            $err = utf8_decode($error->getMessage());
+            throw new Exception($err, 500);
+        }
     }
 
     private function decomposeURL($url)
