@@ -9,7 +9,7 @@ class Output
         'password'
     ];
 
-    public static function filter(object $response) : object
+    public static function filter($response) : object
     {
         foreach (self::$denials as $denied) {
             unset($response->$denied);

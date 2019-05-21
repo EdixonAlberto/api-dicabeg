@@ -69,7 +69,7 @@ class UserController implements IController
 
         $invite_code = Security::generateCode(8);
 
-        $userQuery->insert($user = [
+        $userQuery->insert($user = (object)[
             'user_id' => $id = Security::generateID(),
             'email' => Format::email($body->email),
             'username' => self::getUsername($body),
@@ -94,7 +94,7 @@ class UserController implements IController
         // futuro mediante la config del usuario
 
         $info['email'] = Diffusion::sendEmail(
-            $user['email'],
+            $user->email,
             EmailTemplate::accountActivation($code, 'spanish')
         );
 
@@ -115,20 +115,20 @@ class UserController implements IController
             if ($player_id) {
                 $info['notification'] = Diffusion::sendNotification(
                     $player_id,
-                    "El usuario: {$user['username']} se ha registrado como su referido"
+                    "El usuario: {$user->username} se ha registrado como su referido"
                 );
             }
         }
 
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/accounts/activation';
-        JsonResponse::created((object)$user, $path, $info);
+        JsonResponse::created($user, $path, $info);
     }
 
     public static function update($body) : void
     {
         Middleware::input($body);
 
-        Querys::table('users')->update($user = [
+        Querys::table('users')->update($user = (object)[
             'username' => isset($body->username) ?
                 self::getUsername($body) : null,
 
@@ -152,7 +152,7 @@ class UserController implements IController
             'update_date' => Time::current()->utc
         ])->where('user_id', USERS_ID)->execute();
 
-        JsonResponse::updated((object)$user);
+        JsonResponse::updated($user);
     }
 
     public static function destroy() : void

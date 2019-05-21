@@ -2,6 +2,7 @@
 
 namespace V2\Modules;
 
+use Exception;
 use V2\Database\Querys;
 
 class Time
@@ -21,7 +22,12 @@ class Time
    public static function expiration()
    {
       $expiration_time = Querys::table('options')
-         ->select('expiration_time')->get();
+         ->select('expiration_time')
+         ->get(function () {
+            $error = 'expiration time not configured in the database';
+            throw new Exception($error, 500);
+         });
+
       $expiration = strtotime(self::current()->utc . '+' . $expiration_time);
 
       $expirationTime = (object)[
