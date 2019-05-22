@@ -10,7 +10,9 @@ class JsonResponse
             'status' => 200,
             'response' => 'successful',
             'description' => 'found resource',
-            'resource' => Middleware::output($content)
+            'resource' => [
+                RESOURCE => Middleware::output($content)
+            ],
         ];
         self::send($response);
     }
@@ -25,7 +27,9 @@ class JsonResponse
             'status' => 201,
             'response' => 'successful',
             'description' => 'created resource',
-            'resource' => Middleware::output($content),
+            'resource' => [
+                RESOURCE => Middleware::output($content)
+            ],
             'path' => $path,
             'information' => Middleware::output($info)
         ];
@@ -41,7 +45,9 @@ class JsonResponse
             'status' => 200,
             'response' => 'successful',
             'description' => 'updated resource',
-            'resource' => Middleware::output($content),
+            'resource' => [
+                RESOURCE => Middleware::output($content)
+            ],
             'information' => $info
         ];
         self::send($response);
