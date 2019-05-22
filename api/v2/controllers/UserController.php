@@ -128,7 +128,9 @@ class UserController implements IController
     {
         Middleware::input($body);
 
-        Querys::table('users')->update($user = (object)[
+        $result = Querys::table('users')->update($user = (object)[
+            'player_id' => $body->player_id ?? null,
+
             'username' => isset($body->username) ?
                 self::getUsername($body) : null,
 
@@ -138,19 +140,26 @@ class UserController implements IController
             'password' => isset($body->password) ?
                 Security::generateHash($body->password) : null,
 
+            'names' => $body->names ?? null,
+            'lastnames' => $body->lastnames ?? null,
+
+            'age' => isset($body->age) ?
+                Format::number($body->age) : null,
+
+            'avatar' => $body->avatar ?? null,
+
             'phone' => isset($body->phone) ?
                 Format::phone($body->phone) : null,
 
-            'player_id' => $body->player_id ?? null,
-            'names' => $body->names ?? null,
-            'lastnames' => $body->lastnames ?? null,
-            'age' => $body->age ?? null,
-            'avatar' => $body->avatar ?? null,
-            'points' => $body->points ?? null,
-            'money' => $body->money ?? null,
+            'points' => isset($body->points) ?
+                Format::number($body->points) : null,
+
+            'money' => isset($body->money) ?
+                Format::number($body->money) : null,
 
             'update_date' => Time::current()->utc
-        ])->where('user_id', USERS_ID)->execute();
+        ])->where('user_id', USERS_ID)
+            ->execute();
 
         JsonResponse::updated($user);
     }
