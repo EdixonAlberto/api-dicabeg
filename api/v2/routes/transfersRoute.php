@@ -8,9 +8,15 @@ Route::post('/transfers', function ($req) {
 });
 
 Route::get('/transfers/group/nro', function () {
+    Middleware::authetication();
     Controller::index();
 });
 
 Route::get('/transfers/id', function () {
+    Middleware::authetication();
     Controller::show();
+});
+
+Route::get('/transfers', function () {
+    Controller::info();
 });

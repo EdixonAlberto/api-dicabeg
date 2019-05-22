@@ -13,6 +13,20 @@ use V2\Interfaces\IController;
 
 class TransferController implements IController
 {
+    public static function info() : void
+    {
+        $routeServer = 'https://' . $_SERVER['SERVER_NAME'];
+        JsonResponse::OK(
+            [
+                'routes' => [
+                    "GET: {$routeServer}/transfers/group/nro",
+                    "GET: {$routeServer}/transfers/id",
+                    "POST: {$routeServer}/transfers"
+                ]
+            ]
+        );
+    }
+
     public static function index() : void
     {
         $arrayTransfers = Querys::table('transfers')

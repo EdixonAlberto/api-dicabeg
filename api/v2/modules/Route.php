@@ -8,7 +8,6 @@ class Route
     {
         if (METHOD == 'GET') {
             if (ROUTE == $route) {
-                Middleware::authetication();
                 $callback();
             }
         }
@@ -20,8 +19,6 @@ class Route
 
         if (METHOD == 'POST') {
             if (ROUTE == $route) {
-                if (RESOURCE != 'users' and RESOURCE != 'accounts')
-                    Middleware::authetication();
                 $callback($request);
             }
         }
@@ -33,7 +30,6 @@ class Route
 
         if (METHOD == 'PATCH') {
             if (ROUTE == $route) {
-                Middleware::authetication();
                 $callback($request);
             }
         }
@@ -43,7 +39,6 @@ class Route
     {
         if (METHOD == 'DELETE') {
             if (ROUTE == $route) {
-                Middleware::authetication();
                 $callback();
             }
         }

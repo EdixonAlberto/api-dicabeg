@@ -7,9 +7,9 @@ interface IResource
    const USERS_COLUMNS = [
       'user_id',
       'player_id',
+      'username',
       'email',
       'password',
-      'username',
       'names',
       'lastnames',
       'age',

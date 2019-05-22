@@ -1,9 +1,11 @@
 <?php
 
 use V2\Modules\Route;
+use V2\Modules\Middleware;
 use V2\Controllers\AccountController as Controller;
 
 Route::post('/accounts/login/refresh', function () {
+    Middleware::authetication();
     Controller::refreshLogin();
 });
 
