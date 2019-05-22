@@ -50,12 +50,12 @@ class Middleware implements IResource
         } elseif ($_SERVER['HTTP_REFRESH_TOKEN'] ?? false) {
             $token = $_SERVER['HTTP_REFRESH_TOKEN'];
             $key = REFRESH_KEY;
-        }
 
-        if ($token == false) throw new Exception(
+        } else throw new Exception(
             'requires a token to access this resource',
             400
         );
+
         new Auth($token, $key);
     }
 
