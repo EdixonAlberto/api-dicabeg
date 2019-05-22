@@ -57,7 +57,10 @@ class Querys extends Execute
             if (!is_null($value)) {
                 $setUpdate .= "{$set} = ?, ";
 
-            } else unset($arraySet[$set]);
+            } else {
+                if (is_array($arraySet)) unset($arraySet[$set]);
+                else unset($arraySet->$set);
+            }
         }
 
         $setUpdate = substr($setUpdate, 0, strrpos($setUpdate, ','));
