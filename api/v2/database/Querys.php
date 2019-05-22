@@ -34,10 +34,10 @@ class Querys extends Execute
         return $this;
     }
 
-    public function insert($arraySet) : Querys
+    public function insert($Sets) : Querys
     {
         $setInsert = $setValues = '';
-        foreach ($arraySet as $set => $value) {
+        foreach ($Sets as $set => $value) {
             $setInsert .= "{$set}, ";
             $setValues .= '?, ';
         }
@@ -46,27 +46,27 @@ class Querys extends Execute
 
         $this->sql = "INSERT INTO {$this->table} ({$setInsert})
                         VALUES ({$setValues})";
-        $this->arraySet = $arraySet;
+        $this->Sets = $Sets;
         return $this;
     }
 
-    public function update($arraySet)
+    public function update($Sets)
     {
         $setUpdate = '';
-        foreach ($arraySet as $set => $value) {
+        foreach ($Sets as $set => $value) {
             if (!is_null($value)) {
                 $setUpdate .= "{$set} = ?, ";
 
             } else {
-                if (is_array($arraySet)) unset($arraySet[$set]);
-                else unset($arraySet->$set);
+                if (is_array($Sets)) unset($Sets[$set]);
+                else unset($Sets->$set);
             }
         }
 
         $setUpdate = substr($setUpdate, 0, strrpos($setUpdate, ','));
 
         $this->sql = "UPDATE {$this->table} SET {$setUpdate}";
-        $this->arraySet = $arraySet;
+        $this->Sets = $Sets;
         return $this;
     }
 
