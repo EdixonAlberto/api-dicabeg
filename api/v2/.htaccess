@@ -2,5 +2,6 @@ RewriteEngine On
 RewriteBase /v2
 RewriteCond %{SCRIPT_FILENAME} !-d
 RewriteCond %{SCRIPT_FILENAME} !-f
+AddDefaultCharset utf-8
 
 RewriteRule ^ index.php [L]
