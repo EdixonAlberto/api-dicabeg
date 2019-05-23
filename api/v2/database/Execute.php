@@ -20,7 +20,7 @@ class Execute
             else {
                 $property = $this->fields;
                 $queryResult = $this->query->fetch(PDO::FETCH_OBJ)->$property;
-                if (is_null($queryResult) or $queryResult == '') $callback();
+                if ($queryResult === '') $callback();
             }
         } else return false;
 
@@ -55,7 +55,7 @@ class Execute
 
         $index = 1;
         if ($queryType == 'INSERT' or $queryType == 'UPDATE') {
-            foreach ($this->arraySet as $value) $query->bindValue($index++, $value);
+            foreach ($this->Sets as $value) $query->bindValue($index++, $value);
 
             if (isset($this->value)) {
                 if (is_array($this->value)) {
