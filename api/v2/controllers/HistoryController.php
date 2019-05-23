@@ -59,7 +59,7 @@ class HistoryController implements IController
             ])->get();
 
         if ($total_views !== false) {
-            $historyQuery->update($history = [
+            $historyQuery->update($history = (object)[
                 'total_views' => ++$total_views,
                 'update_date' => Time::current()->utc
             ])->where([
@@ -68,7 +68,7 @@ class HistoryController implements IController
             ])->execute();
 
         } else {
-            $historyQuery->insert($history = [
+            $historyQuery->insert($history = (object)[
                 'user_id' => USERS_ID,
                 'video_id' => HISTORY_ID,
                 'total_views' => 1,
@@ -93,7 +93,7 @@ class HistoryController implements IController
     {
     }
 
-    public static function destroy() : void // ERROR: sin respuesta al borrar todo
+    public static function destroy() : void
     {
         $historyQuery = Querys::table('history');
 
