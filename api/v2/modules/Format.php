@@ -2,40 +2,40 @@
 
 namespace V2\Modules;
 
+use Exception;
+
 class Format
 {
-    public static function email(string $email)
+    public static function email(string $email) : string
     {
         $email = filter_var($email, FILTER_SANITIZE_STRING);
         $email = trim($email);
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
         $email = filter_var($email, FILTER_VALIDATE_EMAIL);
+        $emailFormat = '/^[a-z_.]+\@[a-z]+\.com$/';
 
-        if ($email == false) throw new Exception('email incorrect', 400);
-        else return $email;
+        if ($result = preg_match($emailFormat, $email)) return $email;
+        else throw new Exception('format the email incorrect', 400);
     }
 
-    public static function phone(string $phone)
+    public static function phone(string $phone) : string
     {
         $phone = filter_var($phone, FILTER_SANITIZE_STRING);
         $phone = trim($phone);
-        $arraySimbols = ['-', '+', '/', '(', ')', '.'];
-        foreach ($arraySimbols as $simbol) {
-            $phone = preg_replace("/\\{$simbol}/", '', $phone); // TODO: usar expresiones regulares
-        }
-        // TODO: Para dar formato: +([0-9]{?})([0-9]{3})-([0-9]{4})-([0-9]{4})
-        return $phone;
+        $phoneFormat = '/^[0-9]{3}\-[0-9]{3}\.[0-9]{2}\.[0-9]{2}$/';
+
+        if (preg_match($phoneFormat, $phone)) return $phone;
+        else throw new Exception('format the phone incorrect', 400);
     }
 
-    public static function number($number)
+    public static function number($number) : numeric
     {
         if (is_numeric($number)) {
             $isFloat = preg_match('|^\\d+\\.\\d+$|', $number);
             $number = $isFloat ?
                 (float)number_format($number, 2, '.', '-') : (int)$number;
+            return $number;
 
         } else throw new Exception("the number: {$number} is incorrect", 400);
-
-        return $number;
     }
 }
