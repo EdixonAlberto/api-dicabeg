@@ -73,8 +73,6 @@ class AccountController implements IResource
 
     public static function refreshLogin() : void
     {
-        Middleware::authetication();
-
         JsonResponse::OK(self::getAccess(USERS_ID));
     }
 
