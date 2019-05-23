@@ -1,6 +1,7 @@
 <?php
 
 use V2\Modules\Route;
+use V2\Modules\Middleware;
 use V2\Controllers\UserController as Controller;
 
 Route::post('/users', function ($req) {
@@ -20,4 +21,9 @@ Route::delete('/users', function () {
 Route::get('/users/group/nro', function () {
     Middleware::authetication();
     Controller::index();
+});
+
+Route::get('/users', function () {
+    Middleware::authetication();
+    Controller::show();
 });
