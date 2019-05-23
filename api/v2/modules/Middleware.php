@@ -53,7 +53,7 @@ class Middleware implements IResource
 
         } else throw new Exception(
             'requires a token to access this resource',
-            400
+            401
         );
 
         new Auth($token, $key);
