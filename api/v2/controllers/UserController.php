@@ -137,9 +137,6 @@ class UserController implements IController
             'email' => isset($body->email) ?
                 Format::email($body->email) : null,
 
-            'password' => isset($body->password) ?
-                Security::generateHash($body->password) : null,
-
             'names' => $body->names ?? null,
             'lastnames' => $body->lastnames ?? null,
 
@@ -154,8 +151,8 @@ class UserController implements IController
             'points' => isset($body->points) ?
                 Format::number($body->points) : null,
 
-            'money' => isset($body->money) ?
-                Format::number($body->money) : null,
+            'balance' => isset($body->balance) ?
+                Format::number($body->balance) : null,
 
             'update_date' => Time::current()->utc
         ])->where('user_id', USERS_ID)

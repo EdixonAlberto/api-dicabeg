@@ -19,10 +19,10 @@ class Requests
 
     private const PATTERNS = [
         '|/([a-z]+)/(.*)/([a-z]+)/(.*)|',  // /route1/id1/route2/id2
-        '|/([a-z]+)/(.*)/([a-z]+)|',                  // /route1/id1/route2
-        '|/([a-z]+)/group/([0-9]{1,})|',                         // /route1/group/nro
-        '|/([a-z]+)/(.*)|',                           // /route1/id1
-        '|/([a-z]+)|',                                           // /route1
+        '|/([a-z]+)/(.*)/([a-z]+)|',       // /route1/id1/route2
+        '|/([a-z]+)/group/([0-9]{1,})|',   // /route1/group/nro
+        '|/([a-z]+)/(.*)|',                // /route1/id1
+        '|/([a-z]+)|',                     // /route1
     ];
 
     public function __construct()
@@ -42,12 +42,12 @@ class Requests
                 array_shift($arrayRequest);
 
                 foreach ($arrayRequest as $index => $request) {
-                    if (strlen($request) == 36 or strlen($request) == 14) {
+                    if (strlen($request) == 36 or strlen($request) == 6) {
                         if (strlen($request) == 36) {
                             Gui::validate($request);
                             $route = preg_replace('/[a-z0-9-]{36}/', 'id', $url);
 
-                        } else $route = preg_replace('/[A-Z0-9]{14}/', 'id', $url);
+                        } else $route = preg_replace('/[A-Z0-9]{6}/', 'id', $url);
 
                         $idName = strtoupper($resource) . '_ID';
                         define($idName, $request);
