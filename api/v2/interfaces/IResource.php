@@ -36,7 +36,7 @@ interface IResource
    const HISTORY_COLUMNS = [
       'history_id',
       'user_id',
-      'video_id',
+      'video',
       'total_views',
       'update_date'
    ];
