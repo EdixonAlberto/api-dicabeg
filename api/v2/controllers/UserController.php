@@ -115,11 +115,11 @@ class UserController implements IController
                 ]);
                 $info['referred'] =
                     "added as a referral from the user: {$user->username}";
-
-            } else {
-                $userInsert->execute();
-                $accountInsert->execute();
             }
+
+        } else {
+            $userInsert->execute();
+            $accountInsert->execute();
         }
 
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/accounts/activation';
