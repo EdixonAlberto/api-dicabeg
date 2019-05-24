@@ -20,6 +20,16 @@ EndPoint
 
 ---
 
+---
+
+>TRANSFERS
+
+    GET    | v2/transfers/group/nro
+    GET    | v2/transfers/id
+    POST   | v2/transfers
+
+---
+
 >REFERRALS
 
     GET    | v2/referrals/group/nro

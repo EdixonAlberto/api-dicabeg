@@ -15,22 +15,26 @@ class TransferController implements IController
 {
     public static function info() : void
     {
-        $routeServer = 'https://' . $_SERVER['SERVER_NAME'];
-        JsonResponse::OK(
-            [
-                'routes' => [
-                    "GET: {$routeServer}/transfers/group/nro",
-                    "GET: {$routeServer}/transfers/id",
-                    "POST: {$routeServer}/transfers"
+        JsonResponse::OK([
+            'show' => [
+                'GET1' => "/v2/transfers/group/nro",
+                'GET2' => "/v2/transfers/id",
+            ],
+            'create' => [
+                'POST' => "/v2/transfers",
+                'body' => [
+                    'concept',
+                    'username',
+                    'amount'
                 ]
             ]
-        );
+        ]);
     }
 
     public static function index() : void
     {
         $arrayTransfers = Querys::table('transfers')
-            ->select(['transfer_nro, username, amount, total, create_date'])
+            ->select(self::TRANSFERS_COLUMNS)
             ->where('user_id', USERS_ID)
             ->group(GROUP_NRO)
             ->getAll(function () {
@@ -43,7 +47,7 @@ class TransferController implements IController
     public static function show() : void
     {
         $transfer = Querys::table('transfers')
-            ->select(['transfer_nro, username, amount, total, create_date'])
+            ->select(self::TRANSFERS_COLUMNS)
             ->where('transfer_nro', TRANSFERS_ID)
             ->get(function () {
                 throw new Exception('transfer not found', 404);
@@ -58,43 +62,57 @@ class TransferController implements IController
         $userQuery = Querys::table('users');
 
         $user = $userQuery
-            ->select(['username', 'money'])
-            ->where('user_id', USERS_ID)
-            ->get();
-
-        if ($user->money < $amount)
-            throw new Exception('insufficient money', 400);
+            ->select(['username', 'balance'])
+            ->where('user_id', USERS_ID)->get();
+        if ($user->balance < $amount)
+            throw new Exception('insufficient balance', 400);
 
         $receptor = $userQuery
-            ->select(['player_id', 'money'])
+            ->select(['user_id', 'player_id', 'balance'])
             ->where('username', $body->username)
             ->get(function () {
                 throw new Exception('username not found', 404);
             });
 
-        $userQuery->update($total = (object)[
-            'money' => $user->money - $amount
-        ])->where('user_id', USERS_ID)
+        $current_balance = $user->balance - $amount;
+        $transfer_nro = Security::generateCode(7);
+        $currentTime = Time::current()->utc;
+
+        $userQuery->update(['balance' => $current_balance])
+            ->where('user_id', USERS_ID)
             ->execute();
 
-        $userQuery->update([
-            'money' => $receptor->money + $amount
-        ])->where('username', $body->username)
+        $userQuery->update(['balance' => $receptor->balance + $amount])
+            ->where('user_id', $receptor->user_id)
             ->execute();
 
         Querys::table('transfers')->insert($transfer = (object)[
-            'transfer_nro' => Security::generateCode(14),
             'user_id' => USERS_ID,
+            'transfer_nro' => $transfer_nro,
+            'concept' => $body->concept ?? null,
             'username' => $body->username,
-            'amount' => $amount,
-            'total' => $total->money,
-            'create_date' => Time::current()->utc
+            'amount' => -$amount,
+            'previous_balance' => $user->balance,
+            'current_balance' => $current_balance,
+            'create_date' => $currentTime
+        ])->execute();
+
+        Querys::table('transfers')->insert([
+            'user_id' => $receptor->user_id,
+            'transfer_nro' => $transfer_nro,
+            'concept' => $body->concept ?? null,
+            'username' => $user->username,
+            'amount' => +$amount,
+            'previous_balance' => $receptor->balance,
+            'current_balance' => $receptor->balance + $amount,
+            'create_date' => $currentTime
         ])->execute();
 
         if (!is_null($receptor->player_id)) {
             $info['notifications'] = Diffusion::sendNotification(
                 $receptor->player_id,
-                "El usuario: {$user->username} te ha realizado una transferencia"
+                "El usuario: {$user->username}" .
+                    'te ha realizado una transferencia'
             );
         } else $info = null;
 

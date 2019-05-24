@@ -16,7 +16,7 @@ interface IResource
       'avatar',
       'phone',
       'points',
-      'money',
+      'balance',
       'create_date',
       'update_date'
    ];
@@ -26,6 +26,17 @@ interface IResource
       'invite_code',
       'registration_code',
       'time_zone'
+   ];
+
+   const TRANSFERS_COLUMNS = [
+      'user_id',
+      'transfer_nro',
+      'concept',
+      'username',
+      'amount',
+      'previous_balance',
+      'current_balance',
+      'create_date'
    ];
 
    const REFERRALS_COLUMNS = [

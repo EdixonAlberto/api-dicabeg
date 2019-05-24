@@ -45,4 +45,4 @@ VALUES (
 );
 
 INSERT INTO "options" ("expiration_time")
-VALUES ("30 min");
+VALUES ('30 min');

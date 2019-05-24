@@ -23,7 +23,7 @@ CREATE TABLE "users" (
 	"avatar" VARCHAR NULL DEFAULT NULL,
 	"phone" VARCHAR(20) NULL DEFAULT NULL,
 	"points" INTEGER DEFAULT 0,
-	"money" NUMERIC DEFAULT 0.00,
+	"balance" NUMERIC DEFAULT 0.00,
 	"create_date" TIMESTAMP NULL, -- No acepta valores null por defecto
 	"update_date" TIMESTAMP NULL,
 
@@ -54,10 +54,12 @@ CREATE TABLE "accounts" (
 -- TRANSFERS
 CREATE TABLE "transfers" (
 	"user_id" VARCHAR(36) NOT NULL,
-	"transfer_nro" VARCHAR(14) NOT NULL,
+	"transfer_nro" VARCHAR(7) NOT NULL,
+	"concept"  VARCHAR(40) NOT NULL,
 	"username" VARCHAR(20) NOT NULL,
 	"amount" NUMERIC DEFAULT 0.00,
-	"total" NUMERIC DEFAULT 0.00,
+	"previous_balance" NUMERIC DEFAULT 0.00,
+	"current_balance" NUMERIC DEFAULT 0.00,
 	"create_date" TIMESTAMP NULL,
 
 	CONSTRAINT "transfers_user_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id")
