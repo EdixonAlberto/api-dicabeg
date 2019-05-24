@@ -8,7 +8,7 @@ DROP TABLE "accounts";
 DROP TABLE "users";
 
 
--- USUARIOS
+-- USERS
 CREATE TABLE "users" (
 	"user_id" VARCHAR(36) NOT NULL,
 	"player_id" VARCHAR(36) NULL DEFAULT NULL,
@@ -53,16 +53,14 @@ CREATE TABLE "accounts" (
 
 -- TRANSFERS
 CREATE TABLE "transfers" (
-	"transfer_nro" VARCHAR(14) NOT NULL,
 	"user_id" VARCHAR(36) NOT NULL,
+	"transfer_nro" VARCHAR(14) NOT NULL,
 	"username" VARCHAR(20) NOT NULL,
 	"amount" NUMERIC DEFAULT 0.00,
 	"total" NUMERIC DEFAULT 0.00,
 	"create_date" TIMESTAMP NULL,
 
-	CONSTRAINT "transfers_transfer_nro_PK" PRIMARY KEY ("transfer_nro"),
-	CONSTRAINT "transfers_user_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id"),
-	CONSTRAINT "transfers_username_FK" FOREIGN KEY("username") REFERENCES users("username")
+	CONSTRAINT "transfers_user_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id")
 );
 
 
@@ -113,13 +111,13 @@ CREATE TABLE "videos" (
 CREATE TABLE "history" (
 	"history_id" VARCHAR(72) NULL DEFAULT NULL, -- solo para la v1
 	"user_id" VARCHAR(36) NOT NULL,
-	"video_id" VARCHAR(36) NOT NULL,
+	"video" VARCHAR(36) NOT NULL,
 	"total_views" INTEGER DEFAULT 0,
 	"update_date" TIMESTAMP NULL,
 
 	CONSTRAINT "history_history_id_UQ" UNIQUE ("history_id"),
 	CONSTRAINT "history_user_id_FK" FOREIGN KEY ("user_id") REFERENCES users("user_id"),
-	CONSTRAINT "history_video_id_FK" FOREIGN KEY ("video_id") REFERENCES videos("video_id")
+	CONSTRAINT "history_video_FK" FOREIGN KEY ("video") REFERENCES videos("video_id")
 );
 
 -- OPTIONS
