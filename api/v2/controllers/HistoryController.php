@@ -12,39 +12,41 @@ class HistoryController implements IController
 {
     public static function index() : void
     {
-        $arrayHistory_id = Querys::table('history')
-            ->select('video_id')
+        $arrayHistory = Querys::table('history')
+            ->select(self::HISTORY_COLUMNS)
             ->where('user_id', USERS_ID)
             ->group(GROUP_NRO)
             ->getAll(function () {
                 throw new Exception('history not found', 404);
             });
 
-        foreach ($arrayHistory_id as $history) {
-            $arrayHistory[] = (array)Querys::table('videos')
+        foreach ($arrayHistory as $history) {
+            $history->video = Querys::table('videos')
                 ->select(['video_id', 'name', 'link', 'provider_logo'])
-                ->where('video_id', $history->video_id)->get();
+                ->where('video_id', $history->video)->get();
+
+            $_arrayHistory[] = $history;
         }
 
-        JsonResponse::read($arrayHistory);
+        JsonResponse::read($_arrayHistory);
     }
 
     public static function show() : void
     {
-        Querys::table('history')
-            ->select('video_id')
+        $history = Querys::table('history')
+            ->select(self::HISTORY_COLUMNS)
             ->where([
                 'user_id' => USERS_ID,
-                'video_id' => HISTORY_ID
+                'video' => HISTORY_ID
             ])->get(function () {
                 throw new Exception('history not found', 404);
             });
 
-        $history = Querys::table('videos')
+        $history->video = Querys::table('videos')
             ->select(['video_id', 'name', 'link', 'provider_logo'])
             ->where('video_id', HISTORY_ID)->get();
 
-        JsonResponse::read((array)$history);
+        JsonResponse::read($history);
     }
 
     public static function store($body) : void
@@ -55,7 +57,7 @@ class HistoryController implements IController
             ->select('total_views')
             ->where([
                 'user_id' => USERS_ID,
-                'video_id' => HISTORY_ID
+                'video' => HISTORY_ID
             ])->get();
 
         if ($total_views !== false) {
@@ -64,16 +66,17 @@ class HistoryController implements IController
                 'update_date' => Time::current()->utc
             ])->where([
                 'user_id' => USERS_ID,
-                'video_id' => HISTORY_ID
+                'video' => HISTORY_ID
             ])->execute();
 
         } else {
             $historyQuery->insert($history = (object)[
                 'user_id' => USERS_ID,
-                'video_id' => HISTORY_ID,
+                'video' => HISTORY_ID,
                 'total_views' => 1,
                 'update_date' => Time::current()->utc
             ])->execute();
+            unset($history->video);
         }
 
         $views = Querys::table('videos')
@@ -100,7 +103,7 @@ class HistoryController implements IController
         if (defined('HISTORY_ID')) {
             $historyQuery->delete()->where([
                 'user_id' => USERS_ID,
-                'video_id' => HISTORY_ID
+                'video' => HISTORY_ID
             ]);
 
         } else $historyQuery->delete()->where('user_id', USERS_ID);
