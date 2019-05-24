@@ -54,74 +54,76 @@ class UserController implements IController
 
         } else throw new Exception('email is not set', 400);
 
-
         if (isset($body->invite_code)) {
-            $user_id = Querys::table('accounts')
-                ->select('user_id')
-                ->where('invite_code', $body->invite_code)
-                ->get(function () {
-                    throw new Exception('invite code incorrect', 400);
-                });
-            $username = Querys::table('users')
-                ->select('username')
-                ->where('user_id', $user_id)->get();
+            $user = Querys::table('users')
+                ->select(['user_id', 'player_id', 'username'])
+                ->where('user_id', Querys::table('accounts')
+                    ->select('user_id')
+                    ->where('invite_code', $body->invite_code)
+                    ->get(function () {
+                        throw new Exception('invite code incorrect', 400);
+                    }))->get();
         }
 
         $invite_code = Security::generateCode(8);
+        $id = Security::generateID();
 
-        $userQuery->insert($user = (object)[
-            'user_id' => $id = Security::generateID(),
+        $userInsert = $userQuery->insert($newUser = (object)[
+            'user_id' => $id,
             'email' => Format::email($body->email),
             'username' => self::getUsername($body),
             'password' => Security::generateHash($body->password),
             'invite_code' => $invite_code,
             'create_date' => Time::current($body->time_zone)->utc
-        ])->execute();
+        ]);
 
         // ADD: Validar recurrencia de codigos,
         // asegurar unicidad con generacion recursiva del mismo
         $code = Security::generateCode(6);
 
-        Querys::table('accounts')->insert([
+        $accountInsert = Querys::table('accounts')->insert([
             'user_id' => $id,
             'temporal_code' => $code,
             'invite_code' => $invite_code,
             'registration_code' => $username ?? null,
             'time_zone' => $body->time_zone
-        ])->execute();
+        ]);
 
         // TODO: El idioma debe ser determinado en el
         // futuro mediante la config del usuario
 
         $info['email'] = Diffusion::sendEmail(
-            $user->email,
+            $newUser->email,
             EmailTemplate::accountActivation($code, 'spanish')
         );
 
         if (isset($body->invite_code)) {
-            ReferredController::store((object)[
-                'user_id' => $user_id,
-                'referred_id' => $id
-            ]);
-            $info['referred'] =
-                "added as a referral from the user: {$username}";
-
-            $player_id = Querys::table('users')
-                ->select('player_id')
-                ->where('username', $username)->get();
-
             // TODO: crear modelos de contenido para las notificaciones
             // ademas de tener el contenido en varios idiomas
             if ($player_id) {
                 $info['notification'] = Diffusion::sendNotification(
-                    $player_id,
-                    "El usuario: {$user->username} se ha registrado como su referido"
+                    $user->player_id,
+                    "El usuario: {$newUser->username} se ha registrado como su referido"
                 );
+
+                $userInsert->execute();
+                $accountInsert->execute();
+
+                ReferredController::store((object)[
+                    'user_id' => $user->user_id,
+                    'referred_id' => $newUser->user_id
+                ]);
+                $info['referred'] =
+                    "added as a referral from the user: {$user->username}";
+
+            } else {
+                $userInsert->execute();
+                $accountInsert->execute();
             }
         }
 
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/accounts/activation';
-        JsonResponse::created($user, $path, $info);
+        JsonResponse::created($newUser, $path, $info);
     }
 
     public static function update($body) : void
@@ -168,6 +170,10 @@ class UserController implements IController
             ->execute();
 
         Querys::table('referrals')->delete()
+            ->where('user_id', USERS_ID)
+            ->execute();
+
+        Querys::table('transfers')->delete()
             ->where('user_id', USERS_ID)
             ->execute();
 
