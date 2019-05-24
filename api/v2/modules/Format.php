@@ -28,7 +28,7 @@ class Format
         else throw new Exception('format the phone incorrect', 400);
     }
 
-    public static function number($number) : numeric
+    public static function number($number)
     {
         if (is_numeric($number)) {
             $isFloat = preg_match('|^\\d+\\.\\d+$|', $number);
