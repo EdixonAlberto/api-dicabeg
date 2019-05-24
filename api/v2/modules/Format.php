@@ -12,7 +12,7 @@ class Format
         $email = trim($email);
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
         $email = filter_var($email, FILTER_VALIDATE_EMAIL);
-        $emailFormat = '/^[a-z0-9_.]+\@[a-z]+\.com$/';
+        $emailFormat = '/^\S+\@\S+\.\S+$/';
 
         if ($result = preg_match($emailFormat, $email)) return $email;
         else throw new Exception('format the email incorrect', 400);
