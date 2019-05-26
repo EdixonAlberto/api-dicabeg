@@ -55,14 +55,16 @@ class UserController implements IController
         } else throw new Exception('email is not set', 400);
 
         if (isset($body->invite_code)) {
+            $user_id = Querys::table('accounts')
+                ->select('user_id')
+                ->where('invite_code', $body->invite_code)
+                ->get(function () {
+                    throw new Exception('invite code incorrect', 400);
+                });
+
             $user = Querys::table('users')
                 ->select(['user_id', 'player_id', 'username'])
-                ->where('user_id', Querys::table('accounts')
-                    ->select('user_id')
-                    ->where('invite_code', $body->invite_code)
-                    ->get(function () {
-                        throw new Exception('invite code incorrect', 400);
-                    }))->get();
+                ->where('user_id', $user_id)->get();
         }
 
         $invite_code = Security::generateCode(8);
@@ -92,10 +94,25 @@ class UserController implements IController
         // TODO: El idioma debe ser determinado en el
         // futuro mediante la config del usuario
 
-        $info['email'] = Diffusion::sendEmail(
-            $newUser->email,
-            EmailTemplate::accountActivation($code, 'spanish')
-        );
+        if (isset($body->send_emai)) {
+            if ($body->send_email == 'true') {
+                $info['email'] = Diffusion::sendEmail(
+                    $newUser->email,
+                    EmailTemplate::accountActivation($code, 'spanish')
+                );
+
+            } elseif ($body->send_email == 'false') {
+                $info['email'] = [
+                    'response' => 'email not sended',
+                    'temporal_code' => $code
+                ];
+
+            } else throw new Exception(
+                "the {send_email} field should be: 'true' or 'false'",
+                400
+            );
+
+        } else throw new Exception('send_email not set', 400);
 
         if (isset($body->invite_code)) {
             // TODO: crear modelos de contenido para las notificaciones

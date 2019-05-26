@@ -10,6 +10,7 @@
             "homepage": "http://linkedin/in/edixonalberto.com"
         }
     ],
+    "minimum-stability": "alpha",
     "require": {
         "php": "~7.3",
         "sendgrid/sendgrid": "~7",

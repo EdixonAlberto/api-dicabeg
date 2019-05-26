@@ -15,8 +15,9 @@ class Input implements IResource
             foreach ($arrayBody as $key => $value) {
 
                 if (!in_array($key, $arrayColumns) and
-                    !in_array($key, self::ACCOUNTS_COLUMNS))
-                    throw new Exception(
+                    !in_array($key, self::ACCOUNTS_COLUMNS) or
+                    $key == 'send_email') // DEBUG: Este campo no existe en la tabla.
+                throw new Exception(
                     "attribute {{$key}} in body not validat",
                     400
                 );

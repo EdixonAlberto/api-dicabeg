@@ -20,8 +20,6 @@ EndPoint
 
 ---
 
----
-
 >TRANSFERS
 
     GET    | v2/transfers/group/nro
