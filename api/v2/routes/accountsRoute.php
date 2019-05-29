@@ -9,6 +9,11 @@ Route::post('/accounts/login/refresh', function () {
     Controller::refreshLogin();
 });
 
+Route::get('/accounts/invite_code', function () {
+    Middleware::authetication();
+    Controller::show();
+});
+
 Route::post('/accounts/login/oauth2', function () {
     Controller::oauthLogin();
 });

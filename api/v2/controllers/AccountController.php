@@ -15,6 +15,18 @@ use V2\Modules\JsonResponse;
 
 class AccountController implements IResource
 {
+    public static function show()
+    {
+        $code = (object)['invite_code' => Querys::table('accounts')
+            ->select('invite_code')
+            ->where('user_id', USERS_ID)
+            ->get(function () {
+                throw new Exception('error, invite_code not generated', 500);
+            })];
+
+        JsonResponse::read($code);
+    }
+
     public static function activateAccount($body)
     {
         if (isset($body->temporal_code)) {
