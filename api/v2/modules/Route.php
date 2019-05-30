@@ -13,29 +13,31 @@ class Route
         }
     }
 
-    public static function post(string $route, $callback)
+    public static function post(string $route, $callback) : void
     {
         global $request;
 
         if (METHOD == 'POST') {
             if (ROUTE == $route) {
+                if ($request->body) Middleware::input($request->body);
                 $callback($request);
             }
         }
     }
 
-    public static function patch(string $route, $callback)
+    public static function patch(string $route, $callback) : void
     {
         global $request;
 
         if (METHOD == 'PATCH') {
             if (ROUTE == $route) {
+                if ($request->body) Middleware::input($request->body);
                 $callback($request);
             }
         }
     }
 
-    public static function delete(string $route, $callback)
+    public static function delete(string $route, $callback) : void
     {
         if (METHOD == 'DELETE') {
             if (ROUTE == $route) {

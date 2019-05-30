@@ -73,7 +73,8 @@ class Requests
                     define('METHOD', $_SERVER['REQUEST_METHOD']);
 
                     parse_str(file_get_contents('php://input'), $_body);
-                    $this->body = (object)$_body;
+                    if (empty($_body)) $this->body = false;
+                    else $this->body = (object)$_body;
                     break;
 
                 } else {
