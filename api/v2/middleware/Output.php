@@ -17,19 +17,18 @@ class Output
 
     public static function filter($response) : object
     {
-        foreach (self::$denials as $denied) {
-            unset($response->$denied);
-        }
-
         foreach ($response as $key => $value) {
-            if (is_null($value)) unset($response->$key);
+            if (in_array($key, self::$denials))
+                unset($response->$key);
 
-            $numericFormated = (is_numeric($value) and
-                !in_array($key, self::$stringField));
+            if (is_null($value) or $value === '')
+                unset($response->$key);
 
-            if ($numericFormated) $response->$key = Format::number($value);
+            if (is_numeric($value) and !in_array($key, self::$stringField)) {
+                $response->$key = Format::number($value);
+            }
+
         }
-
         return $response;
     }
 }

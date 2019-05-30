@@ -31,8 +31,8 @@ class Format
     public static function number($number)
     {
         if (is_numeric($number)) {
-            $isFloat = preg_match('|^\\d+\\.\\d+$|', $number);
-            $number = $isFloat ?
+            $isFloatString = preg_match('/^\d+\.\d+$/', $number);
+            $number = $isFloatString ?
                 (float)number_format($number, 2, '.', '-') : (int)$number;
             return $number;
 
