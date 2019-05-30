@@ -26,6 +26,11 @@ Route::post('/accounts/recovery', function ($req) {
     Controller::passwordRecovery($req->body);
 });
 
+Route::post('/accounts/send_email', function ($req) {
+    Middleware::input($req->body);
+    Controller::resend($req->body);
+});
+
 Route::post('/accounts/activation', function ($req) {
     Controller::activateAccount($req->body);
 });
