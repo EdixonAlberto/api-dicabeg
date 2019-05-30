@@ -18,7 +18,9 @@ class Input implements IData
                     );
                 }
 
-                if (is_null($value) or empty($value))
+                // TODO: permitir valores vacios solo para player_id
+                // de esta manera se ahorra tener que crear ruta: DELETE
+                if (is_null($value) or empty($value) and $key != 'player_id')
                     throw new Exception(
                     "attribute {{$key}} in body is null or is empty",
                     400

@@ -1,9 +1,11 @@
-<?php namespace V2\Interfaces;
+<?php
+
+namespace V2\Interfaces;
 
 interface IData
 {
     const INPUT_DATA = [
-      // USERS
+        // USERS
         'player_id',
         'username',
         'email',
@@ -17,17 +19,19 @@ interface IData
         'balance',
         'send_email',
 
-      // ACCOUNTS
+        // ACCOUNTS
+        'temporal_code',
+        'invite_code',
         'time_zone',
 
-      // TRANSFERS
+        // TRANSFERS
         'concept',
         'username',
         'amount',
         'previous_balance',
         'current_balance',
 
-      // VIDEOS
+        // VIDEOS
         'name',
         'link',
         'provider_logo',
