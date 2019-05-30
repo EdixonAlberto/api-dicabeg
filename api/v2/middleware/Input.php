@@ -3,24 +3,20 @@
 namespace V2\Middleware;
 
 use Exception;
-use v2\Interfaces\IResource;
+use V2\Interfaces\IData;
 
-class Input implements IResource
+class Input implements IData
 {
-    public function validate($body, array $arrayColumns)
+    public function validate($body)
     {
-        $arrayBody = (array)$body;
-
-        if (!empty($arrayBody)) {
-            foreach ($arrayBody as $key => $value) {
-
-                if (!in_array($key, $arrayColumns) and
-                    !in_array($key, self::ACCOUNTS_COLUMNS) or
-                    $key == 'send_email') // DEBUG: Este campo no existe en la tabla.
-                throw new Exception(
-                    "attribute {{$key}} in body not validat",
-                    400
-                );
+        if (!empty($body)) {
+            foreach ($body as $key => $value) {
+                if (!in_array($key, self::INPUT_DATA)) {
+                    throw new Exception(
+                        "attribute {{$key}} in body not validat",
+                        400
+                    );
+                }
 
                 if (is_null($value) or empty($value))
                     throw new Exception(

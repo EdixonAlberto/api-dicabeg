@@ -8,21 +8,12 @@ use V2\Middleware\Input;
 use V2\Middleware\Output;
 use V2\Middleware\Account;
 use V2\Middleware\Resource;
-use V2\Interfaces\IResource;
 
-class Middleware implements IResource
+class Middleware
 {
     public static function input($body)
     {
-        switch (RESOURCE) {
-            case 'users':
-                Input::validate($body, self::USERS_COLUMNS);
-                break;
-
-            case 'videos':
-                Input::validate($body, self::VIDEOS_COLUMNS);
-                break;
-        }
+        Input::validate($body);
     }
 
     public static function output($response = null)
