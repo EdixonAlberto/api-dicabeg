@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3c9e9e16815bd1c3849dbfce20be80ce",
+    "content-hash": "28fec0323c7719d329b860f23ac99d39",
     "packages": [
         {
             "name": "facebook/graph-sdk",
@@ -755,7 +755,7 @@
     "aliases": [],
     "minimum-stability": "alpha",
     "stability-flags": [],
-    "prefer-stable": false,
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "~7.3"
