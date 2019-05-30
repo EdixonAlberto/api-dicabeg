@@ -52,7 +52,7 @@ class ReferredController implements IController
         Querys::table('referrals')->insert([
             'user_id' => $body->user_id,
             'referred_id' => $body->referred_id,
-            'create_date' => Time::current()->utc
+            'create_date' => Time::current($body->time_zone)->utc
         ])->execute();
     }
 

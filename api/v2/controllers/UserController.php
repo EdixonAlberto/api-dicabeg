@@ -43,8 +43,6 @@ class UserController implements IController
 
     public static function store($body) : void
     {
-        Middleware::input($body);
-
         $userQuery = Querys::table('users');
 
         if (isset($body->email)) {
@@ -62,42 +60,62 @@ class UserController implements IController
                     throw new Exception('invite code incorrect', 400);
                 });
 
-            $user = Querys::table('users')
-                ->select(['user_id', 'player_id', 'username'])
-                ->where('user_id', $user_id)->get();
+            $user = $userQuery->select([
+                'user_id',
+                'player_id',
+                'username'
+            ])->where('user_id', $user_id)->get();
         }
 
-        $invite_code = Security::generateCode(8);
+        $username = self::getUsername($body);
         $id = Security::generateID();
+        $invite_code = Security::generateCode(8);
+        // ADD: Validar recurrencia de codigos,
+        // asegurar unicidad con generacion recursiva del mismo
+        $code = Security::generateCode(6);
 
         $userInsert = $userQuery->insert($newUser = (object)[
             'user_id' => $id,
             'email' => Format::email($body->email),
-            'username' => self::getUsername($body),
+            'username' => $username,
             'password' => Security::generateHash($body->password),
             'invite_code' => $invite_code,
             'create_date' => Time::current($body->time_zone)->utc
-        ]);
-
-        // ADD: Validar recurrencia de codigos,
-        // asegurar unicidad con generacion recursiva del mismo
-        $code = Security::generateCode(6);
+        ])->execute();
 
         $accountInsert = Querys::table('accounts')->insert([
             'user_id' => $id,
             'temporal_code' => $code,
             'invite_code' => $invite_code,
-            'registration_code' => $username ?? null,
+            'registration_code' => $user->username ?? null,
             'time_zone' => $body->time_zone
-        ]);
+        ])->execute();
 
-        // TODO: El idioma debe ser determinado en el
-        // futuro mediante la config del usuario
+        if (isset($body->invite_code)) {
+            ReferredController::store((object)[
+                'user_id' => $user->user_id,
+                'referred_id' => $id,
+                'time_zone' => $body->time_zone
+            ]);
+            $info['referred'] =
+                "added as a referral from the user: {$user->username}";
 
-        if (isset($body->send_emai)) {
+            // TODO: crear modelos de contenido para las notificaciones
+            // ademas de tener el contenido en varios idiomas
+            if (isset($user->player_id)) {
+                $info['notification'] = Diffusion::sendNotification(
+                    $user->player_id,
+                    "El usuario: {$username} se ha registrado como tu referido"
+                );
+            }
+        }
+
+        if (isset($body->send_email)) {
             if ($body->send_email == 'true') {
                 $info['email'] = Diffusion::sendEmail(
                     $newUser->email,
+                    // TODO: El idioma debe ser determinado en el
+                    // futuro mediante la config del usuario
                     EmailTemplate::accountActivation($code, 'spanish')
                 );
 
@@ -114,39 +132,12 @@ class UserController implements IController
 
         } else throw new Exception('send_email not set', 400);
 
-        if (isset($body->invite_code)) {
-            // TODO: crear modelos de contenido para las notificaciones
-            // ademas de tener el contenido en varios idiomas
-            if ($player_id) {
-                $info['notification'] = Diffusion::sendNotification(
-                    $user->player_id,
-                    "El usuario: {$newUser->username} se ha registrado como su referido"
-                );
-
-                $userInsert->execute();
-                $accountInsert->execute();
-
-                ReferredController::store((object)[
-                    'user_id' => $user->user_id,
-                    'referred_id' => $newUser->user_id
-                ]);
-                $info['referred'] =
-                    "added as a referral from the user: {$user->username}";
-            }
-
-        } else {
-            $userInsert->execute();
-            $accountInsert->execute();
-        }
-
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/accounts/activation';
         JsonResponse::created($newUser, $path, $info);
     }
 
     public static function update($body) : void
     {
-        Middleware::input($body);
-
         $result = Querys::table('users')->update($user = (object)[
             'player_id' => $body->player_id ?? null,
 
