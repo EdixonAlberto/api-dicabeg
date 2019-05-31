@@ -17,6 +17,11 @@ class Requests
         'transfers'
     ];
 
+    private const RESERVED_WORDS = [
+        'id',
+        'nro'
+    ];
+
     private const PATTERNS = [
         '|/([a-z]+)/(.*)/([a-z]+)/(.*)|',  // /route1/id1/route2/id2
         '|/([a-z]+)/(.*)/([a-z]+)|',       // /route1/id1/route2
@@ -42,7 +47,13 @@ class Requests
                 array_shift($arrayRequest);
 
                 foreach ($arrayRequest as $index => $request) {
-                    if (strlen($request) == 36 or strlen($request) == 6) {
+                    if (empty($resource))
+                        $resource = $arrayRequest[$index];
+
+                    elseif (in_array($request, self::RESERVED_WORDS)) {
+                        self::recuestError();
+
+                    } elseif (strlen($request) == 36 or strlen($request) == 6) {
                         if (strlen($request) == 36) {
                             Gui::validate($request);
                             $route = preg_replace('/[a-z0-9-]{36}/', 'id', $url);
@@ -51,16 +62,13 @@ class Requests
 
                         $idName = strtoupper($resource) . '_ID';
                         define($idName, $request);
-
                         $resource = $arrayRequest[$index - 1];
 
                     } elseif (is_numeric($request)) {
+                        $route = preg_replace('/[0-9]{1,}/', 'nro', $url);
                         define('GROUP_NRO', $request);
                         $resource = $arrayRequest[$index - 1];
-                        $route = preg_replace('/[0-9]{1,}/', 'nro', $url);
-
-                    } elseif (empty($resource))
-                        $resource = $arrayRequest[$index];
+                    }
                 }
 
                 // var_dump($resource, $route);
@@ -77,12 +85,14 @@ class Requests
                     else $this->body = (object)$_body;
                     break;
 
-                } else {
-                    $validated = false;
-                    break;
-                }
+                } else self::recuestError();
             }
         }
-        if (!$validated) throw new Exception('request incorrect', 400);
+        if (!$validated) self::recuestError();
+    }
+
+    private static function recuestError()
+    {
+        throw new Exception('request incorrect', 400);
     }
 }
