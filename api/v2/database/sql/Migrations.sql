@@ -1,5 +1,6 @@
 DROP TABLE "options";
 DROP TABLE "transfers";
+DROP TABLE "commissions";
 DROP TABLE "history";
 DROP TABLE "videos";
 DROP TABLE "sessions";
@@ -48,7 +49,7 @@ CREATE TABLE "accounts" (
 -- TRANSFERS
 CREATE TABLE "transfers" (
   "user_id" VARCHAR(36) NOT NULL,
-  "transfer_nro" VARCHAR(6) NOT NULL,
+  "transfer_code" VARCHAR(6) NOT NULL,
   "concept" VARCHAR(40) NULL DEFAULT NULL,
   "username" VARCHAR(20) NOT NULL,
   "amount" NUMERIC DEFAULT 0.00,
@@ -59,13 +60,13 @@ CREATE TABLE "transfers" (
 );
 -- COMMISSIONS
 CREATE TABLE "commissions" (
-  "transfer_nro" VARCHAR(6) NOT NULL,
+  "transfer_code" VARCHAR(6) NOT NULL,
   "amount" NUMERIC DEFAULT 0.00,
   "commission" INTEGER DEFAULT 5,
   -- commission expresada en %
   "gain" NUMERIC DEFAULT 0.00,
   "create_date" TIMESTAMP NULL,
-  CONSTRAINT "commissions_transfer_nro_UQ" PRIMARY KEY ("transfer_nro")
+  CONSTRAINT "commissions_transfer_code_UQ" PRIMARY KEY ("transfer_code")
 );
 -- REFERRALS
 CREATE TABLE "referrals" (
