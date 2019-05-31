@@ -24,13 +24,13 @@ class Languages
             } else if ($language == 'english') {
                 switch ($numeric) {
                     case 1:
-                        return '';
+                        return '1';
                     case 2:
-                        return '';
+                        return '2';
                     case 3:
-                        return '';
+                        return '3';
                     case 4:
-                        return '';
+                        return '4';
                 }
             }
 
