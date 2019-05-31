@@ -91,49 +91,58 @@ class AccountController implements IResource
     public static function passwordRecovery($body)
     {
         if (isset($body->email)) {
-            $user_id = Querys::table('users')
-                ->select('user_id')
+            $user = Querys::table('users')
+                ->select(['user_id', 'email'])
                 ->where('email', $body->email)
                 ->get(function () {
                     throw new Exception('email not found', 404);
                 });
 
-            Middleware::activation($user_id);
+            Middleware::activation($user->user_id);
 
             $emailStatus = self::sendCode(
+                'passwordRecovery',
                 Security::generateCode(6),
-                $user_id
+                $user
             );
 
             JsonResponse::OK($emailStatus);
 
         } elseif (isset($body->temporal_code)) {
-            $user_id = Querys::table('accounts')
-                ->select('user_id')
-                ->where('temporal_code', $body->temporal_code)
-                ->get(function () {
-                    throw new Exception('code incorrect or used', 400);
-                });
+            if (isset($body->password)) {
+                $user_id = Querys::table('accounts')
+                    ->select('user_id')
+                    ->where('temporal_code', $body->temporal_code)
+                    ->get(function () {
+                        throw new Exception('code incorrect or used', 400);
+                    });
 
-            Querys::table('users')->update([
-                'password' => Security::generateHash($body->password)
-            ])->where('user_id', $user_id)
-                ->execute(function () {
-                    throw new Exception('error updated password', 500);
-                });
+                Querys::table('users')->update([
+                    'password' => Security::generateHash($body->password)
+                ])->where('user_id', $user_id)
+                    ->execute(function () {
+                        throw new Exception('error updated password', 500);
+                    });
 
-            Querys::table('accounts')->update([
-                'temporal_code' => ''
-            ])->where('user_id', $user_id)->execute();
+                Querys::table('accounts')->update([
+                    'temporal_code' => 'used'
+                ])->where('user_id', $user_id)->execute();
+
+            } else throw new Exception('attribute {password} not set', 400);
 
             JsonResponse::OK('recovery successful, password updated');
-        }
+
+        } else throw new Exception(
+            'enter one of the following parameters: ' .
+                '{email, temporal_code, password}',
+            400
+        );
     }
 
-    public static function resend($body) : void
+    public static function sendEmail($body) : void
     {
-        $user_id = Querys::table('users')
-            ->select('user_id')
+        $user = Querys::table('users')
+            ->select(['user_id', 'email'])
             ->where('email', $body->email)
             ->get(function () {
                 throw new Exception('email not found', 404);
@@ -141,32 +150,36 @@ class AccountController implements IResource
 
         $temporal_code = Querys::table('accounts')
             ->select('temporal_code')
-            ->where('user_id', $user_id)
-            ->get(function () {
-                throw new Exception(
-                    'temporal_code not generated for this account',
-                    404
-                );
-            });
+            ->where('user_id', $user->user_id)
+            ->get();
 
-        $emailStatus = self::resendCode($temporal_code, $user_id);
+        if ($temporal_code == 'used') throw new Exception(
+            'temporal_code not generated for this account',
+            404
+        );
+
+        $emailStatus = self::sendCode(
+            'accountActivation',
+            $temporal_code,
+            $user
+        );
 
         JsonResponse::OK($emailStatus);
     }
 
-    private function sendCode(string $code, string $for) : object
+    private static function sendCode(string $emailType, string $code, object $for) : object
     {
         Querys::table('accounts')->update([
             'temporal_code' => $code
-        ])->where('user_id', $for)->execute();
+        ])->where('user_id', $for->user_id)->execute();
 
         return Diffusion::sendEmail(
-            $body->email,
-            EmailTemplate::passwordRecovery($code, 'spanish')
+            $for->email,
+            EmailTemplate::$emailType($code, 'spanish')
         );
     }
 
-    private function getAccess(string $id) : object
+    private static function getAccess(string $id) : object
     {
         global $timeZone;
 
@@ -181,7 +194,7 @@ class AccountController implements IResource
         ];
     }
 
-    private function passwordValidate($body, $user)
+    private static function passwordValidate($body, $user) : void
     {
         if (!isset($body->password))
             throw new Exception('passsword is not set', 401);

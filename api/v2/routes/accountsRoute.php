@@ -28,7 +28,7 @@ Route::post('/accounts/recovery', function ($req) {
 
 Route::post('/accounts/send_email', function ($req) {
     Middleware::input($req->body);
-    Controller::resend($req->body);
+    Controller::sendEmail($req->body);
 });
 
 Route::post('/accounts/activation', function ($req) {
