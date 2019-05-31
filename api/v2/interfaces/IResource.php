@@ -30,7 +30,7 @@ interface IResource
 
    const TRANSFERS_COLUMNS = [
       'user_id',
-      'transfer_code',
+      'transfer_nro',
       'concept',
       'username',
       'amount',

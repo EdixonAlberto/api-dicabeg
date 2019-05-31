@@ -19,18 +19,16 @@ class TransferController implements IController
     public static function info() : void
     {
         JsonResponse::OK([
-            'end-point' => [
-                'GET' => [
-                    'route_1' => '/v2/transfers/group/nro',
-                    'route_2' => '/v2/transfers/id'
-                ],
-                'POST' => [
-                    'route_1' => '/v2/transfers',
-                    'body' => [
-                        'concept?',
-                        'username!',
-                        'amount!'
-                    ]
+            'show' => [
+                'GET1' => "/v2/transfers/group/nro",
+                'GET2' => "/v2/transfers/id",
+            ],
+            'create' => [
+                'POST' => "/v2/transfers",
+                'body' => [
+                    'concept',
+                    'username',
+                    'amount'
                 ]
             ]
         ]);
@@ -53,7 +51,7 @@ class TransferController implements IController
     {
         $transfer = Querys::table('transfers')
             ->select(self::TRANSFERS_COLUMNS)
-            ->where('transfer_code', TRANSFERS_ID)
+            ->where('transfer_nro', TRANSFERS_ID)
             ->get(function () {
                 throw new Exception('transfer not found', 404);
             });
@@ -69,7 +67,7 @@ class TransferController implements IController
 
         $userQuery = Querys::table('users');
 
-        $user = $userQuery->select(['player_id', 'username', 'balance'])
+        $user = $userQuery->select(['username', 'balance'])
             ->where('user_id', USERS_ID)->get();
         if ($user->balance < $amount)
             throw new Exception('insufficient balance', 400);
@@ -83,7 +81,7 @@ class TransferController implements IController
 
         Middleware::activation($receptor->user_id);
 
-        $transfer_code = Security::generateCode(6);
+        $transfer_nro = Security::generateCode(6);
         $userBalance = $user->balance - $amount;
         $receptorBalance = $receptor->balance + $transferAmount;
         $currentTime = Time::current()->utc;
@@ -98,7 +96,7 @@ class TransferController implements IController
 
         Querys::table('transfers')->insert($transfer = (object)[
             'user_id' => USERS_ID,
-            'transfer_code' => $transfer_code,
+            'transfer_nro' => $transfer_nro,
             'concept' => $body->concept ?? null,
             'username' => $body->username,
             'amount' => -$amount,
@@ -109,7 +107,7 @@ class TransferController implements IController
 
         Querys::table('transfers')->insert([
             'user_id' => $receptor->user_id,
-            'transfer_code' => $transfer_code,
+            'transfer_nro' => $transfer_nro,
             'concept' => $body->concept ?? null,
             'username' => $user->username,
             'amount' => +$transferAmount,
@@ -121,36 +119,23 @@ class TransferController implements IController
         // TODO: mas adelante las comisiones pueden ser dinamicas
         // en ese caso el campo: commission será muy util
         Querys::table('commissions')->insert([
-            "transfer_code" => $transfer_code,
-            "amount" => $amount,
+            "transfer_nro" => $transfer_nro,
+            "amount" => -$amount,
             "commission" => self::COMMISSION * 100, // expresado en %
             "gain" => $commission,
             "create_date" => $currentTime,
         ])->execute();
 
-        if (isset($user->player_id) and $user->player_id != '') {
-            $info['notifications']['user'] =
-                Diffusion::sendNotification(
-                [$user->player_id],
-                'Transferencia realizada exitosamente, ' .
-                    'por un monto de: ' . $amount
-            );
-        }
-
-        if (isset($receptor->player_id) and $receptor->player_id != '') {
-            $info['notifications']['receptor'] =
-                Diffusion::sendNotification(
-                [$receptor->player_id],
+        if (!is_null($receptor->player_id)) {
+            $info['notifications'] = Diffusion::sendNotification(
+                $receptor->player_id,
                 "El usuario: {$user->username}" .
-                    'te ha realizado una transferencia, ' .
-                    'por un monto de:' . $transferAmount
+                    'te ha realizado una transferencia'
             );
-        }
-
-        if (!isset($info)) $info = null;
+        } else $info = null;
 
         $path = 'https://' . $_SERVER['SERVER_NAME'] .
-            '/v2/transfers/' . $transfer->transfer_code;
+            '/v2/transfers/' . $transfer->transfer_nro;
 
         JsonResponse::created($transfer, $path, $info);
     }
