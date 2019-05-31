@@ -19,18 +19,16 @@ class TransferController implements IController
     public static function info() : void
     {
         JsonResponse::OK([
-            'end-point' => [
-                'GET' => [
-                    'route_1' => '/v2/transfers/group/nro',
-                    'route_2' => '/v2/transfers/id'
-                ],
-                'POST' => [
-                    'route_1' => '/v2/transfers',
-                    'body' => [
-                        'concept?',
-                        'username!',
-                        'amount!'
-                    ]
+            'GET' => [
+                'route_1' => '/v2/transfers/group/nro',
+                'route_2' => '/v2/transfers/id'
+            ],
+            'POST' => [
+                'route_1' => '/v2/transfers',
+                'body' => [
+                    'concept?',
+                    'username!',
+                    'amount!'
                 ]
             ]
         ]);
@@ -87,6 +85,7 @@ class TransferController implements IController
         $userBalance = $user->balance - $amount;
         $receptorBalance = $receptor->balance + $transferAmount;
         $currentTime = Time::current()->utc;
+        $info = null;
 
         $userQuery->update(['balance' => $userBalance])
             ->where('user_id', USERS_ID)
@@ -146,8 +145,6 @@ class TransferController implements IController
                     'por un monto de:' . $transferAmount
             );
         }
-
-        if (!isset($info)) $info = null;
 
         $path = 'https://' . $_SERVER['SERVER_NAME'] .
             '/v2/transfers/' . $transfer->transfer_code;
