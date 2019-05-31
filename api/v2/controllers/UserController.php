@@ -50,7 +50,8 @@ class UserController implements IController
                 ->WHERE('email', $body->email)->get();
             if ($email) throw new Exception("email {{$email}} exist", 404);
 
-        } else throw new Exception('email is not set', 400);
+            // TODO: estudiar si el nombre "attribute" esta bien
+        } else throw new Exception('attribute {email} is not set', 400);
 
         if (isset($body->invite_code)) {
             $user_id = Querys::table('accounts')
@@ -76,8 +77,8 @@ class UserController implements IController
 
         $userInsert = $userQuery->insert($newUser = (object)[
             'user_id' => $id,
-            'email' => Format::email($body->email),
             'username' => $username,
+            'email' => Format::email($body->email),
             'password' => Security::generateHash($body->password),
             'invite_code' => $invite_code,
             'create_date' => Time::current($body->time_zone)->utc
@@ -97,14 +98,13 @@ class UserController implements IController
                 'referred_id' => $id,
                 'time_zone' => $body->time_zone
             ]);
-            $info['referred'] =
-                "added as a referral from the user: {$user->username}";
+            $info['as_referred'] = $user->username;
 
             // TODO: crear modelos de contenido para las notificaciones
             // ademas de tener el contenido en varios idiomas
-            if (isset($user->player_id)) {
+            if (isset($user->player_id) and $user->player_id != '') {
                 $info['notification'] = Diffusion::sendNotification(
-                    $user->player_id,
+                    [$user->player_id],
                     "El usuario: {$username} se ha registrado como tu referido"
                 );
             }
@@ -121,7 +121,8 @@ class UserController implements IController
 
             } elseif ($body->send_email == 'false') {
                 $info['email'] = [
-                    'response' => 'email not sended',
+                    'status' => 200,
+                    'response' => 'not sended',
                     'temporal_code' => $code
                 ];
 
@@ -130,7 +131,7 @@ class UserController implements IController
                 400
             );
 
-        } else throw new Exception('send_email not set', 400);
+        } else throw new Exception('attribute {send_email} not set', 400);
 
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/accounts/activation';
         JsonResponse::created($newUser, $path, $info);
@@ -179,6 +180,10 @@ class UserController implements IController
 
         Querys::table('referrals')->delete()
             ->where('user_id', USERS_ID)
+            ->execute();
+
+        Querys::table('referrals')->delete()
+            ->where('referred_id', USERS_ID)
             ->execute();
 
         Querys::table('transfers')->delete()

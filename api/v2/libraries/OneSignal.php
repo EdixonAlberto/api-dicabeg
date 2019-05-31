@@ -28,7 +28,6 @@ class OneSignal
                 'this' => 'that'
             ]
         ];
-
         // $player->create(DeviceTypes::CHROME_WEBSITE, $playerData);
     }
 
@@ -39,12 +38,11 @@ class OneSignal
             ONESIGNAL_APP_ID,
             ONESIGNAL_REST_API_KEY
         );
-
         return $player->all();
     }
 
-    public function createNotifi(
-        array $playerId,
+    public function createNotification(
+        array $arrayPlayerId,
         string $header,
         string $content
     ) : array {
@@ -56,10 +54,10 @@ class OneSignal
         );
 
         $notificationData = [
-            'include_player_ids' => $playerId,
+            'include_player_ids' => $arrayPlayerId,
 
             'headings' => [
-                'es' => 'Dicabeg'
+                'es' => $header,
             ],
 
             'contents' => [
@@ -84,7 +82,7 @@ class OneSignal
                 'status' => 200,
                 'response' => 'successful',
                 'description' =>
-                    "notification {$response->id} sended to the user"
+                    "notification: {$response->id} sended"
             ];
 
         } elseif (!isset($response->errors)) {
@@ -101,5 +99,6 @@ class OneSignal
                 'description' => 'unknown error'
             ];
         }
+        return $result;
     }
 }

@@ -4,7 +4,7 @@ namespace V2\Email;
 
 class EmailTemplate extends Languages
 {
-    public const APP_EMAIL = 'support@dicabeg.com';
+    public const APP_EMAIL = 'support@dicapp.com';
     private const PRIVACY_POLICY_LINK = '*';
     private static $code;
 
@@ -23,7 +23,7 @@ class EmailTemplate extends Languages
         );
 
         $template = new EmailTemplate;
-        $template->subject = '¡Bienvenid@ a Dicabeg! - Activa tu Cuenta';
+        $template->subject = '¡Bienvenid@ a Dicapp! - Activa tu Cuenta';
         $template->html = $html;
         return $template;
     }

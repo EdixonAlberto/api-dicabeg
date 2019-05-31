@@ -12,39 +12,39 @@ class Languages
             if ($language == 'spanish') {
                 switch ($numeric) {
                     case 1:
-                        return 'Estas a solo un paso de abrir tu cuenta Dicabeg';
+                        return 'Estas a solo un paso de abrir tu cuenta Dicapp';
                     case 2:
                         return 'Dentro de la app, escribe el
                         siguiente código para activar tu cuenta.';
                     case 3:
                         return 'Le damos la bienvenida a la comunidad.';
                     case 4:
-                        return '[El equipo de Dicabeg]';
+                        return '[El equipo de Dicapp]';
                 }
             } else if ($language == 'english') {
                 switch ($numeric) {
                     case 1:
-                        return '1';
+                        return '';
                     case 2:
-                        return '2';
+                        return '';
                     case 3:
-                        return '3';
+                        return '';
                     case 4:
-                        return '4';
+                        return '';
                 }
             }
 
         } elseif ($templateType == 'password_recovery') {
             switch ($numeric) {
                 case 1:
-                    return 'Ahora podras recuperar tu cuenta Dicabeg';
+                    return 'Ahora podras recuperar tu cuenta Dicapp';
                 case 2:
                     return 'Dentro de la app, ingresa este código
                     para reestablecer tu contraseña.';
                 case 3:
                     return 'En seguida podrá usar su cuenta nuevamente.';
                 case 4:
-                    return '[El equipo de Dicabeg]';
+                    return '[El equipo de Dicapp]';
             }
         }
     }

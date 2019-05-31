@@ -8,6 +8,8 @@ use V2\Libraries\OneSignal;
 
 class Diffusion
 {
+    private const HEADER = 'DICAPP';
+
     public static function sendEmail(
         string $email,
         EmailTemplate $template
@@ -23,14 +25,14 @@ class Diffusion
     }
 
     public function sendNotification(
-        string $playerId,
+        array $arrayPlayerId,
         string $content
     ) {
 
         $os = new OneSignal;
-
-        $status = $os->createNotific(
-            $playerId,
+        $status = $os->createNotification(
+            $arrayPlayerId,
+            self::HEADER,
             $content
         );
         return $status;
