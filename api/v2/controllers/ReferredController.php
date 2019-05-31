@@ -44,7 +44,7 @@ class ReferredController implements IController
             ->select(['email', 'username', 'avatar', 'phone'])
             ->where('user_id', REFERRALS_ID)->get();
 
-        JsonResponse::read($referred);
+        JsonResponse::read((array)$referred);
     }
 
     public static function store($body) : void
@@ -73,7 +73,5 @@ class ReferredController implements IController
         Querys::table('accounts')->update(['registration_code' => 'deleted'])
             ->where('user_id', REFERRALS_ID)
             ->execute();
-
-        JsonResponse::removed();
     }
 }
