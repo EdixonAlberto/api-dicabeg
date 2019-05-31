@@ -104,13 +104,11 @@ class HistoryController implements IController
             $historyQuery->delete()->where([
                 'user_id' => USERS_ID,
                 'video' => HISTORY_ID
-            ]);
+            ])->execute(function () {
+                throw new Exception('history not found', 404);
+            });
 
-        } else $historyQuery->delete()->where('user_id', USERS_ID);
-
-        $historyQuery->execute(function () {
-            throw new Exception('history not found', 404);
-        });
+        } else $historyQuery->delete()->where('user_id', USERS_ID)->execute();
 
         JsonResponse::removed();
     }
