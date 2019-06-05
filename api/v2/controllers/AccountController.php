@@ -175,7 +175,7 @@ class AccountController implements IResource
 
         return Diffusion::sendEmail(
             $for->email,
-            EmailTemplate::$emailType($code, 'spanish')
+            EmailTemplate::$emailType($code)
         );
     }
 

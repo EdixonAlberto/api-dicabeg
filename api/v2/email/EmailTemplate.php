@@ -9,13 +9,10 @@ class EmailTemplate
     private static $code;
 
     public static function accountActivation(
-        string $_code,
-        string $_language
-    ) {
-        global $language;
+        string $_code
+    ) : EmailTemplate {
 
         self::$code = $_code;
-        $language = $_language;
 
         $html = self::generateEmail(
             '../v2/email/templates/accountActivationEmail.min.html'
@@ -28,13 +25,10 @@ class EmailTemplate
     }
 
     public static function passwordRecovery(
-        string $_code,
-        string $_language
-    ) {
-        global $_language;
+        string $_code
+    ) : EmailTemplate {
 
         self::$code = $_code;
-        $language = $_language;
 
         $html = self::generateEmail(
             '../v2/email/templates/recoveryPasswordEmail.min.html'
@@ -46,15 +40,28 @@ class EmailTemplate
         return $template;
     }
 
-    private static function generateEmail($file)
+    public static function report(
+        array $arrayData,
+        string $id
+    ) : EmailTemplate {
+
+        $html = self::generateEmail(
+            '../v2/email/templates/reportEmail.min.html'
+        );
+
+        $html = self::generateReport($arrayData, $html);
+        $html = preg_replace('|ID|', $id, $html);
+
+        $template = new EmailTemplate;
+        $template->subject = 'Reporte de Transferencia de Usuario';
+        $template->html = $html;
+        return $template;
+    }
+
+    private static function generateEmail(string $file) : string
     {
         $_file = fopen($file, 'r');
         $html = trim(fgets($_file), "'");
-
-        // $html = preg_replace('|text1|', self::text(1), $html);
-        // $html = preg_replace('|text2|', self::text(2), $html);
-        // $html = preg_replace('|text3|', self::text(3), $html);
-        // $html = preg_replace('|text4|', self::text(4), $html);
 
         $html = preg_replace('|CODE|', self::$code, $html);
         $html = preg_replace('|SUPPORT_EMAIL|', self::SUPPORT_EMAIL, $html);
@@ -63,6 +70,42 @@ class EmailTemplate
             self::PRIVACY_POLICY_LINK,
             $html
         );
+        return $html;
+    }
+
+    private static function generateReport(
+        array $arrayData,
+        string $html
+    ) : string {
+
+        $total_amount = $total_gain = 0;
+        foreach ($arrayData as $key => $data) {
+            $amount = $data->amount;
+            $total_amount += $amount;
+
+            $gain = $data->gain;
+            $total_gain += $gain;
+
+            $current_date = $data->current_date;
+
+            $html = preg_replace(
+                '|TABLA|',
+                "
+                <tr>
+                    <td></td>
+                    <td>{$amount}</td>
+                    <td>{$gain}</td>
+                    <td>{$current_date}</td>
+                </tr>
+                    TABLA
+                ",
+                $html
+            );
+        }
+        $html = preg_replace('|TABLA|', '', $html);
+        $html = preg_replace('|TOTAL_AMOUNT|', $total_amount, $html);
+        $html = preg_replace('|TOTAL_GAIN|', $total_gain, $html);
+
         return $html;
     }
 }
