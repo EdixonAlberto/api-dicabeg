@@ -16,7 +16,7 @@ class Diffusion
     ) : object {
 
         $status = SendGrid::generateEmail(
-            $template::APP_EMAIL,
+            $template::SUPPORT_EMAIL,
             $template->subject,
             $email,
             $template->html
