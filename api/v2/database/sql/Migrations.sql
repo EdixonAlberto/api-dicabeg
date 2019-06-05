@@ -1,6 +1,6 @@
 DROP TABLE "options";
 DROP TABLE "transfers";
-DROP TABLE "commissions";
+
 DROP TABLE "history";
 DROP TABLE "videos";
 DROP TABLE "sessions";
@@ -59,14 +59,14 @@ CREATE TABLE "transfers" (
   CONSTRAINT "transfers_user_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id")
 );
 -- COMMISSIONS
+DROP TABLE "commissions";
 CREATE TABLE "commissions" (
-  "transfer_code" VARCHAR(6) NOT NULL,
+  "user_id" VARCHAR(36) NOT NULL,
   "amount" NUMERIC DEFAULT 0.00,
   "commission" INTEGER DEFAULT 5,
   -- commission expresada en %
   "gain" NUMERIC DEFAULT 0.00,
-  "create_date" TIMESTAMP NULL,
-  CONSTRAINT "commissions_transfer_code_UQ" PRIMARY KEY ("transfer_code")
+  "create_date" TIMESTAMP NULL
 );
 -- REFERRALS
 CREATE TABLE "referrals" (
