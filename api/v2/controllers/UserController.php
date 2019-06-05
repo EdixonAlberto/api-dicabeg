@@ -138,35 +138,51 @@ class UserController implements IController
 
     public static function update($body) : void
     {
-        $result = Querys::table('users')->update($user = (object)[
-            'player_id' => $body->player_id ?? null,
+        $userQuery = Querys::table('users');
 
-            'username' => isset($body->username) ?
-                self::getUsername($body) : null,
+        if (isset($body->balance)) {
+            Format::number($body->balance);
 
-            'email' => isset($body->email) ?
-                Format::email($body->email) : null,
+            $currentBalance = $userQuery->select('balance')
+                ->where('user_id', USERS_ID)->get();
 
-            'names' => $body->names ?? null,
-            'lastnames' => $body->lastnames ?? null,
+            $newBalance = $currentBalance + $body->balance;
 
-            'age' => isset($body->age) ?
-                Format::number($body->age) : null,
+            $userQuery->update($user = (object)['balance' => $newBalance])
+                ->where('user_id', USERS_ID)
+                ->execute(function () {
+                    throw new Exception('not updated balance', 500);
+                });
 
-            'avatar' => $body->avatar ?? null,
+        } else {
+            $userQuery->update($user = (object)[
+                'player_id' => $body->player_id ?? null,
 
-            'phone' => isset($body->phone) ?
-                Format::phone($body->phone) : null,
+                'username' => isset($body->username) ?
+                    self::getUsername($body) : null,
 
-            'points' => isset($body->points) ?
-                Format::number($body->points) : null,
+                'names' => $body->names ?? null,
+                'lastnames' => $body->lastnames ?? null,
 
-            'balance' => isset($body->balance) ?
-                Format::number($body->balance) : null,
+                'age' => isset($body->age) ?
+                    Format::number($body->age) : null,
 
-            'update_date' => Time::current()->utc
-        ])->where('user_id', USERS_ID)
-            ->execute();
+                'avatar' => $body->avatar ?? null,
+
+                'phone' => isset($body->phone) ?
+                    Format::phone($body->phone) : null,
+
+                // TODO: Esto ya murio, se debe quitar en la DB
+                // 'points' => isset($body->points) ?
+                //     Format::number($body->points) : null,
+
+                'update_date' => Time::current()->utc
+
+            ])->where('user_id', USERS_ID)
+                ->execute(function () {
+                    throw new Exception('not updated user', 500);
+                });
+        }
 
         JsonResponse::updated($user);
     }
