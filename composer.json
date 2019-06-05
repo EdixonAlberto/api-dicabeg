@@ -10,6 +10,8 @@
             "homepage": "http://linkedin/in/edixonalberto.com"
         }
     ],
+    "minimum-stability": "alpha",
+    "prefer-stable": true,
     "require": {
         "php": "~7.3",
         "sendgrid/sendgrid": "~7",
@@ -28,7 +30,5 @@
             "Lib\\": "api/v1/lib/",
             "Tools\\": "api/v1/tools/"
         }
-    },
-    "prefer-stable": true,
-    "minimum-stability": "alpha"
+    }
 }

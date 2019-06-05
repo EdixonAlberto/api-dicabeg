@@ -116,7 +116,7 @@ class UserController implements IController
                     $newUser->email,
                     // TODO: El idioma debe ser determinado en el
                     // futuro mediante la config del usuario
-                    EmailTemplate::accountActivation($code, 'spanish')
+                    EmailTemplate::accountActivation($code)
                 );
 
             } elseif ($body->send_email == 'false') {

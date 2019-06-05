@@ -12,7 +12,7 @@ class Output
     ];
 
     private static $stringField = [
-        'transfer_nro'
+        'transfer_code'
     ];
 
     public static function filter($response) : object

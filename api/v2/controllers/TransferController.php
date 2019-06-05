@@ -120,7 +120,7 @@ class TransferController implements IController
         // TODO: mas adelante las comisiones pueden ser dinamicas
         // en ese caso el campo: commission será muy util
         Querys::table('commissions')->insert([
-            "transfer_code" => $transfer_code,
+            "user_id" => USERS_ID,
             "amount" => $amount,
             "commission" => self::COMMISSION * 100, // expresado en %
             "gain" => $commission,
