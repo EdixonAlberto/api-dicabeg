@@ -2,6 +2,8 @@
 
 namespace V2\Email;
 
+use V2\Modules\Time;
+
 class EmailTemplate
 {
     public const SUPPORT_EMAIL = 'dicabeg2019@gmail.com';
@@ -41,16 +43,19 @@ class EmailTemplate
     }
 
     public static function report(
-        array $arrayData,
-        string $id
+        string $id,
+        array $arrayData
     ) : EmailTemplate {
 
         $html = self::generateEmail(
             '../v2/email/templates/reportEmail.min.html'
         );
 
-        $html = self::generateReport($arrayData, $html);
+        $month = strftime('%m', strtotime($arrayData[0]->create_date));
+
+        $html = preg_replace('|MONTH|', $month, $html);
         $html = preg_replace('|ID|', $id, $html);
+        $html = self::generateReport($arrayData, $html);
 
         $template = new EmailTemplate;
         $template->subject = 'Reporte de Transferencia de Usuario';
@@ -86,25 +91,12 @@ class EmailTemplate
             $gain = $data->gain;
             $total_gain += $gain;
 
-            $current_date = $data->current_date;
-
-            $html = preg_replace(
-                '|TABLA|',
-                "
-                <tr>
-                    <td></td>
-                    <td>{$amount}</td>
-                    <td>{$gain}</td>
-                    <td>{$current_date}</td>
-                </tr>
-                    TABLA
-                ",
-                $html
-            );
+            $last_date = $data->create_date;
         }
-        $html = preg_replace('|TABLA|', '', $html);
+
         $html = preg_replace('|TOTAL_AMOUNT|', $total_amount, $html);
         $html = preg_replace('|TOTAL_GAIN|', $total_gain, $html);
+        $html = preg_replace('|LAST_DATE|', $last_date, $html);
 
         return $html;
     }
