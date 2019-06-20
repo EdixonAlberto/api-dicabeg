@@ -7,6 +7,7 @@ EndPoint
     GET    | v2/users
     POST   | v2/users
     PACTH  | v2/users
+    PUT    | v2/users/config
     DELETE | v2/users
 
 ---
@@ -17,6 +18,7 @@ EndPoint
     POST   | v2/accounts/login
     POST   | v2/accounts/login/refresh
     POST   | v2/accounts/recovery
+    POST   | v2/accounts/send_email
 
 ---
 

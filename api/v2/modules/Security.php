@@ -12,7 +12,7 @@ class Security
 
     public static function generateHash($data = false)
     {
-        $pass = $data ? : $data . date('Y-m-d H:i:s') . rand();
+        $pass = $data ? : $data . time() . rand();
         return password_hash($data, self::$algo, self::$options);
     }
 

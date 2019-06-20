@@ -63,11 +63,19 @@ class EmailTemplate
         return $template;
     }
 
+    public static function update(
+        string $_code
+    ) : EmailTemplate {
+
+        self::$code = $_code;
+    }
+
     private static function generateEmail(string $file) : string
     {
         $_file = fopen($file, 'r');
         $html = trim(fgets($_file), "'");
 
+        // TODO: colocar el codigo en el metodo que sea requerido.
         $html = preg_replace('|CODE|', self::$code, $html);
         $html = preg_replace('|SUPPORT_EMAIL|', self::SUPPORT_EMAIL, $html);
         $html = preg_replace(

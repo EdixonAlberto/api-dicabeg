@@ -37,6 +37,18 @@ class Route
         }
     }
 
+    public static function put(string $route, $callback) : void
+    {
+        global $request;
+
+        if (METHOD == 'PUT') {
+            if (ROUTE == $route) {
+                // if ($request->body) Middleware::input($request->body);
+                $callback($request);
+            }
+        }
+    }
+
     public static function delete(string $route, $callback) : void
     {
         if (METHOD == 'DELETE') {

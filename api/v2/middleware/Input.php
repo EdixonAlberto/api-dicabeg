@@ -7,7 +7,7 @@ use V2\Interfaces\IData;
 
 class Input implements IData
 {
-    public function validate($body)
+    public static function validate($body)
     {
         if (!empty($body)) {
             foreach ($body as $key => $value) {

@@ -47,18 +47,18 @@ class Requests
                 array_shift($arrayRequest);
 
                 foreach ($arrayRequest as $index => $request) {
-                    if (empty($resource))
-                        $resource = $arrayRequest[$index];
+                    if (empty($resource)) $resource = $arrayRequest[$index];
 
-                    elseif (in_array($request, self::RESERVED_WORDS)) {
+                    elseif (in_array($request, self::RESERVED_WORDS))
                         self::recuestError();
 
-                    } elseif (strlen($request) == 36 or strlen($request) == 6) {
+                    elseif ($resource != 'users') {
                         if (strlen($request) == 36) {
                             Gui::validate($request);
                             $route = preg_replace('/[a-z0-9-]{36}/', 'id', $url);
 
-                        } else $route = preg_replace('/[A-Z0-9]{6}/', 'id', $url);
+                        } elseif (strlen($request) == 6)
+                            $route = preg_replace('/[A-Z0-9]{6}/', 'id', $url);
 
                         $idName = strtoupper($resource) . '_ID';
                         define($idName, $request);
