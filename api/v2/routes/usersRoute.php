@@ -18,6 +18,11 @@ Route::get('/users', function () {
     Controller::show();
 });
 
+Route::put('/users/config', function ($req) {
+    Middleware::authetication();
+    Controller::config($req->body);
+});
+
 Route::delete('/users', function () {
     Middleware::authetication();
     Controller::destroy();

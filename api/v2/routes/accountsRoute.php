@@ -23,7 +23,7 @@ Route::post('/accounts/login', function ($req) {
 });
 
 Route::post('/accounts/recovery', function ($req) {
-    Controller::passwordRecovery($req->body);
+    Controller::accountRecovery($req->body);
 });
 
 Route::post('/accounts/send_email', function ($req) {
