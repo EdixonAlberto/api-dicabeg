@@ -38,13 +38,16 @@ class AccountController implements IResource
                     throw new Exception('code invalid or used', 400);
                 });
 
-        } else throw new Exception('code is not set', 400);
+        } else throw new Exception('temporal_code is not set', 400);
 
         JsonResponse::OK('activated account');
     }
 
     public static function userLogin($body)
     {
+        if (!isset($body->password))
+            throw new Exception('passsword is not set', 401);
+
         $userQuery = Querys::table('users')
             ->select(self::USERS_COLUMNS);
 
@@ -88,7 +91,7 @@ class AccountController implements IResource
         JsonResponse::OK(self::getAccess(USERS_ID));
     }
 
-    public static function passwordRecovery($body)
+    public static function accountRecovery($body)
     {
         if (isset($body->email)) {
             $user = Querys::table('users')
@@ -196,9 +199,6 @@ class AccountController implements IResource
 
     private static function passwordValidate($body, $user) : void
     {
-        if (!isset($body->password))
-            throw new Exception('passsword is not set', 401);
-
         $verify = password_verify($body->password, $user->password);
         if (!$verify) throw new Exception('passsword incorrect', 401);
 

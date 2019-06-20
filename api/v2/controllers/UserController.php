@@ -43,6 +43,15 @@ class UserController implements IController
 
     public static function store($body) : void
     {
+        if (!isset($body->password))
+            throw new Exception('passsword is not set', 401);
+
+        if (!isset($body->time_zone))
+            throw new Exception('time_zone is not set', 400);
+
+        if (!isset($body->send_email))
+            throw new Exception('send_email is not set', 400);
+
         $userQuery = Querys::table('users');
 
         if (isset($body->email)) {
@@ -50,7 +59,7 @@ class UserController implements IController
                 ->WHERE('email', $body->email)->get();
             if ($email) throw new Exception("email {{$email}} exist", 404);
 
-        } else throw new Exception('attribute {email} is not set', 400);
+        } else throw new Exception('email is not set', 400);
 
         if (isset($body->invite_code)) {
             $user_id = Querys::table('accounts')
@@ -100,7 +109,7 @@ class UserController implements IController
             ]);
             $info['as_referred'] = $username;
 
-            // TODO: crear modelos de contenido para las notificaciones
+            // ADD: crear modelos de contenido para las notificaciones
             // ademas de tener el contenido en varios idiomas
             if (isset($user->player_id) and $user->player_id != '') {
                 $info['notification'] = Diffusion::sendNotification(
@@ -110,27 +119,20 @@ class UserController implements IController
             }
         }
 
-        if (isset($body->send_email)) {
-            if ($body->send_email == 'true') {
-                $info['email'] = Diffusion::sendEmail(
-                    $newUser->email,
-                    // TODO: El idioma debe ser determinado en el
+        if ($body->send_email == 'true') {
+            $info['email'] = Diffusion::sendEmail(
+                $newUser->email,
+                    // ADD: El idioma debe ser determinado en el
                     // futuro mediante la config del usuario
-                    EmailTemplate::accountActivation($code)
-                );
-
-            } elseif ($body->send_email == 'false') {
-                $info['email'] = [
-                    'response' => 'email not sended',
-                    'temporal_code' => $code
-                ];
-
-            } else throw new Exception(
-                "the {send_email} field should be: 'true' or 'false'",
-                400
+                EmailTemplate::accountActivation($code)
             );
 
-        } else throw new Exception('attribute {send_email} not set', 400);
+        } elseif ($body->send_email == 'false') {
+            $info['email'] = [
+                'response' => 'not sended',
+                'temporal_code' => $code
+            ];
+        }
 
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/accounts/activation';
         JsonResponse::created($newUser, $path, $info);
@@ -138,17 +140,19 @@ class UserController implements IController
 
     public static function update($body) : void
     {
+        if (!$body) throw new Exception('body empty', 400);
+
         $userQuery = Querys::table('users');
 
         if (isset($body->balance)) {
-            Format::number($body->balance);
+            Format::number($newBalance = $body->balance);
 
             $currentBalance = $userQuery->select('balance')
                 ->where('user_id', USERS_ID)->get();
 
-            $newBalance = $currentBalance + $body->balance;
+            $balance = $currentBalance + $newBalance;
 
-            $userQuery->update($user = (object)['balance' => $newBalance])
+            $userQuery->update($user = (object)['balance' => $balance])
                 ->where('user_id', USERS_ID)
                 ->execute(function () {
                     throw new Exception('not updated balance', 500);
@@ -172,10 +176,6 @@ class UserController implements IController
                 'phone' => isset($body->phone) ?
                     Format::phone($body->phone) : null,
 
-                // TODO: Esto ya murio, se debe quitar en la DB
-                // 'points' => isset($body->points) ?
-                //     Format::number($body->points) : null,
-
                 'update_date' => Time::current()->utc
 
             ])->where('user_id', USERS_ID)
@@ -185,6 +185,35 @@ class UserController implements IController
         }
 
         JsonResponse::updated($user);
+    }
+
+    public static function config($body)
+    {
+        if (isset($body->email)) {
+
+            $var = Querys::table('users')->select('username')
+                ->where('email', $body->email)
+                ->get(function () {
+                    throw new Exception('email not exist', 400);
+                });
+
+            var_dump($var);
+            die;
+
+            $code = Security::generateCode(6);
+
+            $emailResp = Diffusion::sendEmail(
+                $body->email,
+                EmailTemplate::update()
+            );
+
+            if ($emailResp->status == 500) throw new Exception($emailResp, 500);
+
+        } elseif (isset($body->password)) {
+
+
+        } else throw new Exception('no set parameter', 404);
+
     }
 
     public static function destroy() : void
