@@ -1,0 +1,118 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto");
+@import url("https://fonts.googleapis.com/css?family=Inconsolata");
+table {
+  width: 600px;
+  color: #000;
+  padding: 25px;
+  text-align: left;
+}
+.header {
+  padding: 10px;
+}
+.title {
+  color: #fff;
+  background: #404040;
+  border-bottom-width: inherit;
+  border-radius: 20px 20px 0 0;
+  padding: 15px 25px 15px 25px;
+}
+.content {
+  border: 1px solid #404040;
+  border-top-width: inherit;
+  border-radius: 0 0 20px 20px;
+}
+.footer {
+  font-size: small;
+  text-align: center;
+  padding: 10px;
+}
+#td-logo {
+  width: 65px;
+}
+#td-title {
+  margin: 0;
+  width: 80%;
+}
+img {
+  display: block;
+  margin: 0px;
+  padding: 0px;
+}
+#logo-dicabeg {
+  float: left;
+  width: 70px;
+  height: 70px;
+}
+#title-image {
+  width: 80%;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+.p-bold {
+  margin: 0 10px;
+  font-weight: bold;
+  font-size: 25px;
+}
+.content p {
+  margin: 10px;
+}
+.content p:first-child {
+  margin-top: 0;
+}
+.content p:last-child {
+  margin-bottom: 0;
+}
+.footer p {
+  color: #000;
+  margin: 0px;
+  padding: 10px;
+  line-height: 20px;
+}
+.footer a {
+  color: #f37135;
+  text-decoration: none;
+}
+.networks {
+  margin: 10px;
+}
+.networks a {
+  margin: 5px;
+}
+#app-name {
+  display: block;
+  float: left;
+}
+#code {
+  text-align: center;
+}
+#button {
+  margin: 0;
+  display: inline-block;
+  color: #fff;
+  background: #f37135;
+  border-radius: 10px;
+  font-family: 'Inconsolata', monospace;
+  line-height: 16px;
+  padding: 20px 25px;
+}
+@media screen and (max-width: 400px) {
+  table {
+    width: 90%;
+  }
+  .p-bold {
+    font-size: 20px;
+  }
+  #td-title {
+    width: 70%;
+  }
+  #button {
+    padding: 15px 25px;
+  }
+  #logo-dicabeg {
+    width: 60px;
+    height: 60px;
+  }
+}

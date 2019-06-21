@@ -3,8 +3,8 @@
 namespace V2\Modules;
 
 use V2\Libraries\SendGrid;
-use V2\Email\EmailTemplate;
 use V2\Libraries\OneSignal;
+use V2\Modules\EmailTemplate;
 
 class Diffusion
 {

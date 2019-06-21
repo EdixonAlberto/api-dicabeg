@@ -1,27 +1,31 @@
 <?php
 
-namespace V2\Email;
+namespace V2\Modules;
 
 use V2\Modules\Time;
+use Jenssegers\Blade\Blade;
 
 class EmailTemplate
 {
     public const SUPPORT_EMAIL = 'dicabeg2019@gmail.com';
-    private const PRIVACY_POLICY_LINK = '*';
-    private static $code;
+    private const PRIVACY_POLICY_LINK =
+        'https://edixonalberto.github.io/doc-dicabeg/menu/policy.html';
+    private const VIEWS_PATH = 'views/templates';
+    private const CACHE_PATH = 'views/cache';
 
     public static function accountActivation(
-        string $_code
+        string $code
     ) : EmailTemplate {
 
-        self::$code = $_code;
+        $blade = new Blade(self::VIEWS_PATH, self::CACHE_PATH);
 
-        $html = self::generateEmail(
-            '../v2/email/templates/accountActivationEmail.min.html'
-        );
+        $html = $blade->render('accountActivation', [
+            'code' => $code,
+            'support' => self::SUPPORT_EMAIL,
+            'policy' => self::PRIVACY_POLICY_LINK
+        ]);
 
         $template = new EmailTemplate;
-        $template->subject = '¡Bienvenid@ a Dicabeg! - Activa tu Cuenta';
         $template->html = $html;
         return $template;
     }
@@ -42,7 +46,7 @@ class EmailTemplate
         return $template;
     }
 
-    public static function report(
+    public static function userReport(
         string $id,
         array $arrayData
     ) : EmailTemplate {
@@ -63,28 +67,38 @@ class EmailTemplate
         return $template;
     }
 
-    public static function update(
-        string $_code
+    public static function emailUpdate(
+        string $code
     ) : EmailTemplate {
 
-        self::$code = $_code;
+        $blade = new Blade(self::VIEWS_PATH, self::CACHE_PATH);
+
+        $html = $blade->render('emailUpdate', [
+            'code' => $code,
+            'support' => self::SUPPORT_EMAIL,
+            'policy' => self::PRIVACY_POLICY_LINK
+        ]);
+
+        $template = new EmailTemplate;
+        $template->html = $html;
+        return $template;
     }
 
-    private static function generateEmail(string $file) : string
-    {
-        $_file = fopen($file, 'r');
-        $html = trim(fgets($_file), "'");
+    // private static function generateEmail(string $file) : string
+    // {
+    //     $_file = fopen($file, 'r');
+    //     $html = trim(fgets($_file), "'");
 
-        // TODO: colocar el codigo en el metodo que sea requerido.
-        $html = preg_replace('|CODE|', self::$code, $html);
-        $html = preg_replace('|SUPPORT_EMAIL|', self::SUPPORT_EMAIL, $html);
-        $html = preg_replace(
-            '|PRIVACY_POLICY_LINK|',
-            self::PRIVACY_POLICY_LINK,
-            $html
-        );
-        return $html;
-    }
+    //     // TODO: colocar el codigo en el metodo que sea requerido.
+    //     $html = preg_replace('|CODE|', self::$code, $html);
+    //     $html = preg_replace('|SUPPORT_EMAIL|', self::SUPPORT_EMAIL, $html);
+    //     $html = preg_replace(
+    //         '|PRIVACY_POLICY_LINK|',
+    //         self::PRIVACY_POLICY_LINK,
+    //         $html
+    //     );
+    //     return $html;
+    // }
 
     private static function generateReport(
         array $arrayData,
