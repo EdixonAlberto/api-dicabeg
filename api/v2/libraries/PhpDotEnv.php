@@ -17,7 +17,7 @@ class PhpDotEnv
       define('DATABASE_URL', getenv('DATABASE_URL'));
       define('ACCESS_KEY', getenv('ACCESS_KEY'));
       define('REFRESH_KEY', getenv('REFRESH_KEY'));
-      // define('USER_TIME_ZONE',Time::getTimeZone());
+      //ADD: define('USER_TIME_ZONE',Time::getTimeZone());
 
       define('SENDGRID_API_KEY', getenv('SENDGRID_API_KEY'));
 

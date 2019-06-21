@@ -1,0 +1,132 @@
+/* Font from Google Fonts */
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Inconsolata');
+
+/* DEBUG: */
+table,
+tr,
+td {
+    border: 1px solid red
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
+    font-family: 'Roboto', sans-serif;
+}
+
+#image-logo {
+    display: block;
+    float: left;
+
+    margin: 0px;
+    padding: 0px;
+    width: 80px;
+    height: 80px;
+}
+
+#app-name {
+    display: block;
+    float: left;
+    margin: 19px 0px 0px 15px;
+}
+
+.p-content {
+    text-align: left;
+}
+
+.p-bold{
+    font-size: 25px;
+}
+
+#td-title {
+    margin: 0px;
+    width: 80%;
+    /* font-size: 25px; */
+    font-weight: bold;
+}
+
+#image-title{
+    width: 100%;
+}
+
+p#activation-code {
+    display: inline-block;
+
+    color: white;
+    background: #F37135;
+    border-radius: 10px;
+
+    font-family: 'Inconsolata', monospace;
+    font-size: 25px;
+    font-weight: bold;
+
+    margin: 0px;
+    line-height: 16px;
+    padding: 20px 25px 20px 25px;
+}
+
+table {
+    color: white;
+    text-align: center;
+    width: 600px;
+    padding: 25px 25px 25px 25px;
+}
+
+table.header {
+    color: black;
+    padding: 10px;
+}
+
+table.content-title {
+    color: white;
+    background-color: #404040;
+    border-bottom-width: inherit;
+    border-radius: 20px 20px 0px 0px;
+    padding: 15px 25px 15px 25px;
+}
+
+table.content {
+    color: black;
+    border: 1px solid #404040;
+
+    border-top-width: inherit;
+    border-radius: 0px 0px 20px 20px;
+}
+
+table.footer {
+    padding: 10px;
+    color: black;
+    font-size: small;
+    text-align: center;
+}
+
+table.footer a {
+    color: black;
+    font-weight: bold;
+}
+
+@media screen and (max-width: 400px) {
+    table {
+        width: 90%;
+    }
+
+    #td-title {
+        /* font-size: 20px; */
+        width: 70%;
+    }
+
+    #image-logo {
+        width: 60px;
+        height: 60px;
+    }
+
+    #app-name{
+        font-size: 20px;
+        margin-top: 9px;
+    }
+
+    .p-bold{
+        font-size: 20px;
+    }
+}

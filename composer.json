@@ -7,7 +7,7 @@
         {
             "name": "Edixon Alberto",
             "email": "edixonalbertto@gmail.com",
-            "homepage": "http://linkedin/in/edixonalberto.com"
+            "homepage": "https://www.linkedin.com/in/edixonalberto"
         }
     ],
     "minimum-stability": "alpha",
@@ -17,18 +17,15 @@
         "sendgrid/sendgrid": "~7",
         "firebase/php-jwt": "^5.0",
         "namnv609/php-onesignal-sdk": "^1.0",
-        "facebook/graph-sdk": "^5.7"
+        "facebook/graph-sdk": "^5.7",
+        "jenssegers/blade": "^1.2"
     },
     "require-dev": {
-        "vlucas/phpdotenv": "^3.3"
+        "vlucas/phpdotenv": "^3.4"
     },
     "autoload": {
         "psr-4": {
-            "V1\\": "api/v1/",
-            "V2\\": "api/v2/",
-            "Db\\": "api/v1/db/",
-            "Lib\\": "api/v1/lib/",
-            "Tools\\": "api/v1/tools/"
+            "V2\\": "api/v2/"
         }
     }
 }
