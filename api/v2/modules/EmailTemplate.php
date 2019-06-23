@@ -29,14 +29,15 @@ class EmailTemplate
     }
 
     public static function passwordRecovery(
-        string $_code
+        string $code
     ) : EmailTemplate {
 
-        self::$code = $_code;
+        $blade = new Blade(self::VIEWS_PATH, self::CACHE_PATH);
 
-        $html = self::generateEmail(
-            '../v2/email/templates/recoveryPasswordEmail.min.html'
-        );
+        $html = $blade->render('passwordRecovery', [
+            'code' => $code,
+            'support' => self::SUPPORT_EMAIL,
+        ]);
 
         $template = new EmailTemplate;
         $template->subject = 'Recuperación de Cuenta';
