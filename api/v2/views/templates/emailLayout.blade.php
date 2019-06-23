@@ -27,15 +27,12 @@
         <tr>
             <td>
                 <p>
-                    ©Copyright 2019 Dicabeg. Todos los derechos reservados. Dicabeg y el logotipo de Dicabeg son productos desarrollados por <strong>Dicapp</strong>.
-                    Consulte nuestra <a href="https://edixonalberto.github.io/doc-dicabeg/menu/policy.html" target="_blank">política de privacidad</a>
-                    {{-- o tambien puede escribirnos al correo: <a href="mailto:{{ $support }}" target="_blank", title="Envianos un Email">{{ $support }}</a> destinado para brindarle ayuda. --}}
-                     Aprende mas sobre Dicabeg en nuestra <a href="#" title="Página Web" target="_blank">Página Web</a>
+                    ©Copyright 2019 Dicabeg. Todos los derechos reservados. Dicabeg y el logotipo de Dicabeg son productos desarrollados por <strong>Dicapp</strong>. Consulte nuestra <a href="https://edixonalberto.github.io/doc-dicabeg/menu/policy.html" target="_blank">política de privacidad</a> o escribanos al correo: <a href="mailto:{{ $support }}" target="_blank", title="Enviar un Email">{{ $support }}</a> para poder brindarle soporte.
                 </p>
                 <div class="networks">
                     <a href="https://www.instagram.com/dicabeg" title="Síguenos en Instagram" target="_blank">Instagram</a> |
-                    <a href="" title="" target="_blank">Facebook</a> |
-                    <a href="" title="" target="_blank">Web</a>
+                    {{-- <a href="" title="Síguenos en Facebook" target="_blank">Facebook</a> | --}}
+                    <a href="https://edixonalberto.github.io/doc-dicabeg" title="Web Dicabeg" target="_blank">Pagina Web</a>
                 </div>
             </td>
         </tr>
