@@ -8,8 +8,6 @@ use Jenssegers\Blade\Blade;
 class EmailTemplate
 {
     public const SUPPORT_EMAIL = 'dicabeg2019@gmail.com';
-    private const PRIVACY_POLICY_LINK =
-        'https://edixonalberto.github.io/doc-dicabeg/menu/policy.html';
     private const VIEWS_PATH = 'views/templates';
     private const CACHE_PATH = 'views/cache';
 
@@ -22,10 +20,10 @@ class EmailTemplate
         $html = $blade->render('accountActivation', [
             'code' => $code,
             'support' => self::SUPPORT_EMAIL,
-            'policy' => self::PRIVACY_POLICY_LINK
         ]);
 
         $template = new EmailTemplate;
+        $template->subject = 'Activación de Cuenta';
         $template->html = $html;
         return $template;
     }
@@ -83,22 +81,6 @@ class EmailTemplate
         $template->html = $html;
         return $template;
     }
-
-    // private static function generateEmail(string $file) : string
-    // {
-    //     $_file = fopen($file, 'r');
-    //     $html = trim(fgets($_file), "'");
-
-    //     // TODO: colocar el codigo en el metodo que sea requerido.
-    //     $html = preg_replace('|CODE|', self::$code, $html);
-    //     $html = preg_replace('|SUPPORT_EMAIL|', self::SUPPORT_EMAIL, $html);
-    //     $html = preg_replace(
-    //         '|PRIVACY_POLICY_LINK|',
-    //         self::PRIVACY_POLICY_LINK,
-    //         $html
-    //     );
-    //     return $html;
-    // }
 
     private static function generateReport(
         array $arrayData,
