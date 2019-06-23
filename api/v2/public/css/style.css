@@ -68,7 +68,7 @@ body {
 .footer p {
   color: #000;
   margin: 0px;
-  padding: 10px;
+  padding: 0 40px;
   line-height: 20px;
 }
 .footer a {
@@ -114,5 +114,8 @@ body {
   #logo-dicabeg {
     width: 60px;
     height: 60px;
+  }
+  .footer p {
+    padding: 0 10px;
   }
 }

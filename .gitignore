@@ -2,6 +2,7 @@
 .vscode
 .env
 /vendor
+/node_modules
 
 # user
 /developing
