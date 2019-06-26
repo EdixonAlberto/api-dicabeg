@@ -23,7 +23,7 @@ CREATE TABLE "users" (
   "avatar" VARCHAR NULL DEFAULT NULL,
   "phone" VARCHAR(20) NULL DEFAULT NULL,
   "points" INTEGER DEFAULT 0,
-  "balance" NUMERIC DEFAULT 0.00,
+  "balance" NUMERIC DEFAULT 0.000,
   "create_date" TIMESTAMP NULL,
   -- No acepta valores null por defecto
   "update_date" TIMESTAMP NULL,
@@ -52,9 +52,9 @@ CREATE TABLE "transfers" (
   "transfer_code" VARCHAR(6) NOT NULL,
   "concept" VARCHAR(40) NULL DEFAULT NULL,
   "username" VARCHAR(20) NOT NULL,
-  "amount" NUMERIC DEFAULT 0.00,
-  "previous_balance" NUMERIC DEFAULT 0.00,
-  "current_balance" NUMERIC DEFAULT 0.00,
+  "amount" NUMERIC DEFAULT 0.000,
+  "previous_balance" NUMERIC DEFAULT 0.000,
+  "current_balance" NUMERIC DEFAULT 0.000,
   "create_date" TIMESTAMP NULL,
   CONSTRAINT "transfers_user_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id")
 );
@@ -62,10 +62,10 @@ CREATE TABLE "transfers" (
 DROP TABLE "commissions";
 CREATE TABLE "commissions" (
   "user_id" VARCHAR(36) NOT NULL,
-  "amount" NUMERIC DEFAULT 0.00,
+  "amount" NUMERIC DEFAULT 0.000,
   "commission" INTEGER DEFAULT 5,
   -- commission expresada en %
-  "gain" NUMERIC DEFAULT 0.00,
+  "gain" NUMERIC DEFAULT 0.000,
   "create_date" TIMESTAMP NULL
 );
 -- REFERRALS

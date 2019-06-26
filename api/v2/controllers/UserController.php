@@ -141,12 +141,12 @@ class UserController implements IController
         $userQuery = Querys::table('users');
 
         if (isset($body->balance)) {
-            Format::number($body->balance);
+            $currentBalance = Format::number($body->balance);
 
-            $currentBalance = $userQuery->select('balance')
+            $oldBalance = $userQuery->select('balance')
                 ->where('user_id', USERS_ID)->get();
 
-            $newBalance = $currentBalance + $body->balance;
+            $newBalance = $currentBalance + $oldBalance;
 
             $userQuery->update($user = (object)['balance' => $newBalance])
                 ->where('user_id', USERS_ID)
