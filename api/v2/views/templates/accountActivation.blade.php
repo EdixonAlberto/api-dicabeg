@@ -16,7 +16,7 @@
                 </div>
 
                 <p>Le damos la bienvenida a la comunidad.</p>
-                <p>[El equipo de <strong>Dicapp</strong>]</p>
+                <p>El equipo de <strong>Dicapp</strong></p>
             </td>
         </tr>
     </table>
