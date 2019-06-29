@@ -10,7 +10,7 @@ class Minify
     {
         $tinyHtml = new TinyHtmlMinifier([
             'collapse_whitespace' => true,
-            'disable_comments' => false,
+            'disable_comments' => true,
         ]);
         return $tinyHtml->minify($html);
     }

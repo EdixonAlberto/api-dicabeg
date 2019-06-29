@@ -2,8 +2,8 @@
 .vscode
 .env
 /vendor
-/node_modules
 
 # user
 /developing
 /api/v2/test.php
+*.txt
