@@ -1,4 +1,4 @@
-@extends('emailLayout')
+@extends('components.layout')
 
 @section('content')
     @component('components.title',[
@@ -10,11 +10,9 @@
         <tr>
             <td colspan="2">
                 <p>Dentro de la app, escribe el siguiente código para activar tu cuenta.</p>
-
                 <div id="code">
                     <p class="p-bold" id="button">{{ $code }}</p>
                 </div>
-
                 <p>Le damos la bienvenida a la comunidad.</p>
                 <p>El equipo de <strong>Dicapp</strong></p>
             </td>

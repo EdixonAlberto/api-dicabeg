@@ -3,6 +3,7 @@
 namespace V2\Modules;
 
 use V2\Modules\Time;
+use V2\Modules\Minify;
 use Jenssegers\Blade\Blade;
 
 class EmailTemplate
@@ -18,12 +19,13 @@ class EmailTemplate
         $blade = new Blade(self::VIEWS_PATH, self::CACHE_PATH);
 
         $html = $blade->render('accountActivation', [
+            'style' => self::styleLoader(),
             'code' => $code,
             'support' => self::SUPPORT_EMAIL,
         ]);
 
         $template = new EmailTemplate;
-        $template->subject = 'Activación de Cuenta';
+        $template->subject = '¡Bienvenid@ a Dicabeg! | Activa tu Cuenta';
         $template->html = $html;
         return $template;
     }
@@ -35,6 +37,7 @@ class EmailTemplate
         $blade = new Blade(self::VIEWS_PATH, self::CACHE_PATH);
 
         $html = $blade->render('passwordRecovery', [
+            'style' => self::styleLoader(),
             'code' => $code,
             'support' => self::SUPPORT_EMAIL,
         ]);
@@ -70,17 +73,14 @@ class EmailTemplate
         string $code
     ) : EmailTemplate {
 
-        $blade = new Blade(self::VIEWS_PATH, self::CACHE_PATH);
+    }
 
-        $html = $blade->render('emailUpdate', [
-            'code' => $code,
-            'support' => self::SUPPORT_EMAIL,
-            'policy' => self::PRIVACY_POLICY_LINK
-        ]);
-
-        $template = new EmailTemplate;
-        $template->html = $html;
-        return $template;
+    public static function styleLoader() : string
+    {
+        $resource = fopen($file = 'public/css/style.css', 'r');
+        $css = trim(fread($resource, filesize($file)), "'");
+        fclose($resource);
+        return $css;
     }
 
     private static function generateReport(
