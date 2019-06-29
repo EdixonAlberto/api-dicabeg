@@ -10,7 +10,7 @@ try {
     new PhpDotEnv;
     $request = new Requests;
 
-    require 'routes/' . RESOURCE . 'Route.php';
+    require '../routes/api/' . RESOURCE . 'Route.php';
     throw new Exception('the route does not exist', 400);
 
 } catch (Exception $error) {
