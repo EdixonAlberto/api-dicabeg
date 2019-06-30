@@ -54,7 +54,7 @@ body {
   font-size: 25px;
 }
 .content p {
-  margin: 10px;
+  line-height: 30px;
 }
 .content p:first-child {
   margin-top: 0;
@@ -99,7 +99,7 @@ body {
     width: 90%;
   }
   .p-bold {
-    font-size: 20px;
+    font-size: 18px;
   }
   #td-title {
     width: 70%;

@@ -1,23 +1,31 @@
+@php
+    define('SUBJECT', 'Recuperación de Cuenta');
+@endphp
+
 @extends('components.layout')
 
 @section('content')
     @component('components.title', [
-        'description' => 'Ahora podras recuperar tu cuenta Dicabeg',
-        'imagePath' => 'public/img/key.png'
+        'description' => 'Recupere facilmente su cuenta Dicabeg',
+        'imageName' => 'key.png'
     ])@endcomponent
 
     <table class="content" align="center" cellpadding="0" cellspacing="0">
 		<tr>
 			<td colspan="2">
-				<p>Dentro de la app, ingresa este código para reestablecer tu contraseña.
+				<p>
+                    ¿Olvidó su contraseña?, no se preocupe, podemos solucionarlo,<br />
+                    solo ingresa este codigo en la app y podra crear una nueva, así de facil.
                 </p>
-
                 <div id="code">
                     <p class="p-bold" id="button">{{ $code }}</p>
                 </div>
+                <p>
+                    <strong>Nota:</strong>Este codigo se destruirá en una hora.<br />
 
-				<p>En seguida podrá usar tu cuenta nuevamente.</p>
-                <p>El equipo de <strong>Dicapp</strong></p>
+                    <br />
+					—El equipo de <strong>Dicapp</strong>
+                </p>
 			</td>
 		</tr>
 	</table>

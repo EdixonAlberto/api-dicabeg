@@ -12,47 +12,30 @@ class EmailTemplate
     private const VIEWS_PATH = 'views/templates';
     private const CACHE_PATH = 'views/cache';
 
-    public static function accountActivation(
-        string $code
-    ) : EmailTemplate {
+    private $arrayContent;
+    private $blade;
 
-        $blade = new Blade(self::VIEWS_PATH, self::CACHE_PATH);
-
-        $html = $blade->render('accountActivation', [
+    public function __construct()
+    {
+        $this->blade = new Blade(self::VIEWS_PATH, self::CACHE_PATH);
+        $this->arrayContent = [
             'style' => self::styleLoader(),
-            'code' => $code,
             'support' => self::SUPPORT_EMAIL,
-        ]);
-
-        $template = new EmailTemplate;
-        $template->subject = '¡Bienvenid@ a Dicabeg! | Activa tu Cuenta';
-        $template->html = $html;
-        return $template;
+        ];
     }
 
-    public static function passwordRecovery(
-        string $code
-    ) : EmailTemplate {
-
-        $blade = new Blade(self::VIEWS_PATH, self::CACHE_PATH);
-
-        $html = $blade->render('passwordRecovery', [
-            'style' => self::styleLoader(),
-            'code' => $code,
-            'support' => self::SUPPORT_EMAIL,
-        ]);
-
-        $template = new EmailTemplate;
-        $template->subject = 'Recuperación de Cuenta';
-        $template->html = $html;
-        return $template;
+    public function __call($templateType, $code)
+    {
+        $this->html = $this->blade->render(
+            $templateType,
+            array_merge($this->arrayContent, ['code' => $code[0]])
+        );
+        $this->subject = SUBJECT;
+        return $this;
     }
 
-    public static function userReport(
-        string $id,
-        array $arrayData
-    ) : EmailTemplate {
-
+    public function userReport(string $id, array $arrayData) : self
+    {
         $html = self::generateEmail(
             '../v2/email/templates/reportEmail.min.html'
         );
@@ -67,12 +50,6 @@ class EmailTemplate
         $template->subject = 'Reporte de Transferencia de Usuario';
         $template->html = $html;
         return $template;
-    }
-
-    public static function emailUpdate(
-        string $code
-    ) : EmailTemplate {
-
     }
 
     public static function styleLoader() : string
