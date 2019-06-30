@@ -18,7 +18,8 @@
         "firebase/php-jwt": "^5.0",
         "namnv609/php-onesignal-sdk": "^1.0",
         "facebook/graph-sdk": "^5.7",
-        "jenssegers/blade": "^1.2"
+        "jenssegers/blade": "^1.2",
+        "phpunit/phpunit": "^8"
     },
     "require-dev": {
         "vlucas/phpdotenv": "^3.4"
