@@ -127,24 +127,26 @@ class TransferController implements IController
             "create_date" => $currentTime,
         ])->execute();
 
-        if (isset($user->player_id) and $user->player_id != '') {
-            $info['notifications']['user'] =
-                Diffusion::sendNotification(
-                [$user->player_id],
-                'Transferencia realizada exitosamente, ' .
-                    'por un monto de: ' . $amount
-            );
-        }
+        // TODO: Apando la funsion de notificaciones. REPARAR esto despues
 
-        if (isset($receptor->player_id) and $receptor->player_id != '') {
-            $info['notifications']['receptor'] =
-                Diffusion::sendNotification(
-                [$receptor->player_id],
-                "El usuario: {$user->username}" .
-                    'te ha realizado una transferencia, ' .
-                    'por un monto de:' . $transferAmount
-            );
-        }
+        // if (isset($user->player_id) and $user->player_id != '') {
+        //     $info['notifications']['user'] =
+        //         Diffusion::sendNotification(
+        //         [$user->player_id],
+        //         'Transferencia realizada exitosamente, ' .
+        //             'por un monto de: ' . $amount
+        //     );
+        // }
+
+        // if (isset($receptor->player_id) and $receptor->player_id != '') {
+        //     $info['notifications']['receptor'] =
+        //         Diffusion::sendNotification(
+        //         [$receptor->player_id],
+        //         "El usuario: {$user->username}" .
+        //             'te ha realizado una transferencia, ' .
+        //             'por un monto de:' . $transferAmount
+        //     );
+        // }
 
         $path = 'https://' . $_SERVER['SERVER_NAME'] .
             '/v2/transfers/' . $transfer->transfer_code;

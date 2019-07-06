@@ -102,12 +102,15 @@ class UserController implements IController
 
             // TODO: crear modelos de contenido para las notificaciones
             // ademas de tener el contenido en varios idiomas
-            if (isset($user->player_id) and $user->player_id != '') {
-                $info['notification'] = Diffusion::sendNotification(
-                    [$user->player_id],
-                    "El usuario: {$username} se ha registrado como tu referido"
-                );
-            }
+
+            // TODO: Apagando notificaciones. Reparar despues
+
+            // if (isset($user->player_id) and $user->player_id != '') {
+            //     $info['notification'] = Diffusion::sendNotification(
+            //         [$user->player_id],
+            //         "El usuario: {$username} se ha registrado como tu referido"
+            //     );
+            // }
         }
 
         if (isset($body->send_email)) {
