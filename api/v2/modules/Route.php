@@ -2,47 +2,54 @@
 
 namespace V2\Modules;
 
-class Route
+use Exception;
+use V2\Modules\Requests;
+use V2\Modules\RouteManager;
+
+class Route extends RouteManager
 {
-    public static function get(string $route, $callback) : void
+    private const NAME_SPACE = 'V2\\Controllers\\';
+    private const NAME_SPACE_MIDD = 'V2\\Middleware\\';
+    private static $middleware;
+
+    public static function midd(string $middleware) : self
     {
-        if (METHOD == 'GET') {
-            if (ROUTE == $route) {
-                $callback();
-            }
-        }
+        self::$middleware = $middleware;
+        return (new Route);
     }
 
-    public static function post(string $route, $callback) : void
+    public static function __callStatic(string $verb, array $arguments) : void
     {
-        global $request;
-
-        if (METHOD == 'POST') {
-            if (ROUTE == $route) {
-                if ($request->body) Middleware::input($request->body);
-                $callback($request);
-            }
-        }
+        (new Route)->processRoute($verb, $arguments);
     }
 
-    public static function patch(string $route, $callback) : void
+    public function __call(string $verb, array $arguments) : void
     {
-        global $request;
-
-        if (METHOD == 'PATCH') {
-            if (ROUTE == $route) {
-                if ($request->body) Middleware::input($request->body);
-                $callback($request);
-            }
-        }
+        $this->processRoute($verb, $arguments);
     }
 
-    public static function delete(string $route, $callback) : void
+    private function processRoute(string $verb, array $arrayArguments) : void
     {
-        if (METHOD == 'DELETE') {
-            if (ROUTE == $route) {
-                $callback();
-            }
-        }
+        $requestMethod = strtoupper($verb);
+        [$route, $controller] = $arrayArguments;
+        $method = self::getMethod();
+
+        $methodCorrect = ($method == $requestMethod);
+        $routeCorrect = $this->routeValidate($route);
+
+        if ($methodCorrect and $routeCorrect) {
+            $request = new Requests($this->parameters);
+
+            if (self::$middleware) call_user_func(
+                self::NAME_SPACE_MIDD . self::$middleware . '::execute',
+                $request->headers
+            );
+
+            call_user_func(
+                self::NAME_SPACE . $controller,
+                $request
+            );
+
+        } else self::$middleware = false;
     }
 }
