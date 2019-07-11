@@ -10,13 +10,13 @@ use V2\Interfaces\IController;
 
 class VideoController implements IController
 {
-    public static function index() : void
+    public static function index($req) : void
     {
         $arrayVideos = Querys::table('videos')
             ->select(self::VIDEOS_COLUMNS)
-            ->group(GROUP_NRO)
+            ->group($req->params->nro)
             ->getAll(function () {
-                throw new Exception('videos not found', 404);
+                throw new Exception('videos not exist', 404);
             });
 
         foreach ($arrayVideos as $videos) {
@@ -30,11 +30,11 @@ class VideoController implements IController
         JsonResponse::read($_arrayVideos);
     }
 
-    public static function show() : void
+    public static function show($req) : void
     {
         $video = Querys::table('videos')
             ->select(self::VIDEOS_COLUMNS)
-            ->where('video_id', VIDEOS_ID)
+            ->where('video_id', $req->params->id)
             ->get(function () {
                 throw new Exception('video not found', 404);
             });
@@ -47,15 +47,15 @@ class VideoController implements IController
         JsonResponse::read($_video);
     }
 
-    public static function store($body) : void
+    public static function store($req) : void
     {
     }
 
-    public static function update($body) : void
+    public static function update($req) : void
     {
     }
 
-    public static function destroy() : void
+    public static function destroy($req) : void
     {
     }
 }

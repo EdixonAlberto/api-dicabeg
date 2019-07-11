@@ -4,8 +4,6 @@ use V2\Modules\Route;
 
 Route::midd('Auth')->post('/accounts/login/refresh', 'AccountController::loginRefresh');
 
-// Route::midd('Auth')->get('/accounts/invite_code', 'AccountController::inviteCode'); // TODO: ??
-
 Route::post('/accounts/login/oauth2', 'AccountController::loginOauth');
 
 Route::post('/accounts/login', 'AccountController::login');

@@ -6,9 +6,9 @@ use Exception;
 use V2\Modules\Time;
 use V2\Modules\Format;
 use V2\Database\Querys;
+use V2\Middleware\Auth;
 use V2\Modules\Security;
 use V2\Modules\Diffusion;
-use V2\Modules\Middleware;
 use V2\Modules\JsonResponse;
 use V2\Interfaces\IController;
 
@@ -16,30 +16,12 @@ class TransferController implements IController
 {
     private const COMMISSION = 5 / 100; // 5% de comisión
 
-    public static function info() : void
-    {
-        JsonResponse::OK([
-            'GET' => [
-                'route_1' => '/v2/transfers/group/nro',
-                'route_2' => '/v2/transfers/id'
-            ],
-            'POST' => [
-                'route_1' => '/v2/transfers',
-                'body' => [
-                    'concept?',
-                    'username!',
-                    'amount!'
-                ]
-            ]
-        ]);
-    }
-
-    public static function index() : void
+    public static function index($req) : void
     {
         $arrayTransfers = Querys::table('transfers')
             ->select(self::TRANSFERS_COLUMNS)
-            ->where('user_id', USERS_ID)
-            ->group(GROUP_NRO)
+            ->where('user_id', Auth::$id)
+            ->group($req->params->nro)
             ->getAll(function () {
                 throw new Exception('transfers not found', 404);
             });
@@ -47,11 +29,11 @@ class TransferController implements IController
         JsonResponse::read($arrayTransfers);
     }
 
-    public static function show() : void
+    public static function show($req) : void
     {
         $transfer = Querys::table('transfers')
             ->select(self::TRANSFERS_COLUMNS)
-            ->where('transfer_code', TRANSFERS_ID)
+            ->where('transfer_code', $req->params->code)
             ->get(function () {
                 throw new Exception('transfer not found', 404);
             });
@@ -59,8 +41,10 @@ class TransferController implements IController
         JsonResponse::read($transfer);
     }
 
-    public static function store($body) : void
+    public static function store($req) : void
     {
+        $body = $req->body;
+
         $amount = Format::number($body->amount);
         $commission = $amount * self::COMMISSION;
         $transferAmount = $amount - $commission;
@@ -68,18 +52,19 @@ class TransferController implements IController
         $userQuery = Querys::table('users');
 
         $user = $userQuery->select(['player_id', 'username', 'balance'])
-            ->where('user_id', USERS_ID)->get();
+            ->where('user_id', Auth::$id)->get();
         if ($user->balance < $amount)
             throw new Exception('insufficient balance', 400);
 
         $receptor = $userQuery
-            ->select(['user_id', 'player_id', 'balance'])
+            ->select(['user_id', 'activated', 'balance', 'player_id'])
             ->where('username', $body->username)
             ->get(function () {
                 throw new Exception('username not found', 404);
             });
 
-        Middleware::activation($receptor->user_id);
+        if ($receptor->activated == false)
+            throw new Exception("account not activated: {$body->username}", 400); // ERROR:
 
         $transfer_code = Security::generateCode(6);
         $userBalance = $user->balance - $amount;
@@ -88,7 +73,7 @@ class TransferController implements IController
         $info = null;
 
         $userQuery->update(['balance' => $userBalance])
-            ->where('user_id', USERS_ID)
+            ->where('user_id', Auth::$id)
             ->execute();
 
         $userQuery->update(['balance' => $receptorBalance])
@@ -96,7 +81,7 @@ class TransferController implements IController
             ->execute();
 
         Querys::table('transfers')->insert($transfer = (object)[
-            'user_id' => USERS_ID,
+            'user_id' => Auth::$id,
             'transfer_code' => $transfer_code,
             'concept' => $body->concept ?? null,
             'username' => $body->username,
@@ -117,34 +102,34 @@ class TransferController implements IController
             'create_date' => $currentTime
         ])->execute();
 
-        // TODO: mas adelante las comisiones pueden ser dinamicas
-        // en ese caso el campo: commission será muy util
         Querys::table('commissions')->insert([
-            "user_id" => USERS_ID,
+            "user_id" => Auth::$id,
             "amount" => $amount,
             "commission" => self::COMMISSION * 100, // expresado en %
             "gain" => $commission,
             "create_date" => $currentTime,
         ])->execute();
 
-        if (isset($user->player_id) and $user->player_id != '') {
-            $info['notifications']['user'] =
-                Diffusion::sendNotification(
-                [$user->player_id],
-                'Transferencia realizada exitosamente, ' .
-                    'por un monto de: ' . $amount
-            );
-        }
+        // TODO: Hacer funcionar las notificaciones
 
-        if (isset($receptor->player_id) and $receptor->player_id != '') {
-            $info['notifications']['receptor'] =
-                Diffusion::sendNotification(
-                [$receptor->player_id],
-                "El usuario: {$user->username}" .
-                    'te ha realizado una transferencia, ' .
-                    'por un monto de:' . $transferAmount
-            );
-        }
+        // if (isset($user->player_id) and $user->player_id != '') {
+        //     $info['notifications']['user'] =
+        //         Diffusion::sendNotification(
+        //         [$user->player_id],
+        //         'Transferencia realizada exitosamente, ' .
+        //             'por un monto de: ' . $amount
+        //     );
+        // }
+
+        // if (isset($receptor->player_id) and $receptor->player_id != '') {
+        //     $info['notifications']['receptor'] =
+        //         Diffusion::sendNotification(
+        //         [$receptor->player_id],
+        //         "El usuario: {$user->username}" .
+        //             'te ha realizado una transferencia, ' .
+        //             'por un monto de:' . $transferAmount
+        //     );
+        // }
 
         $path = 'https://' . $_SERVER['SERVER_NAME'] .
             '/v2/transfers/' . $transfer->transfer_code;
@@ -152,11 +137,11 @@ class TransferController implements IController
         JsonResponse::created($transfer, $path, $info);
     }
 
-    public static function update($body) : void
+    public static function update($req) : void
     {
     }
 
-    public static function destroy() : void
+    public static function destroy($req) : void
     {
     }
 }
