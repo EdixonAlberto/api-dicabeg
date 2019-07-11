@@ -6,25 +6,25 @@ interface IResource
 {
    const USERS_COLUMNS = [
       'user_id',
-      'player_id',
+      'activated',
       'username',
       'email',
-      'password',
+      'balance',
       'names',
       'lastnames',
       'age',
       'avatar',
       'phone',
-      'points',
-      'balance',
+      'player_id',
+      'invite_code',
+      'password',
       'create_date',
       'update_date'
    ];
 
    const ACCOUNTS_COLUMNS = [
       'temporal_code',
-      'invite_code',
-      'registration_code',
+      'referred_id',
       'time_zone'
    ];
 
@@ -39,7 +39,8 @@ interface IResource
       'create_date'
    ];
 
-   const REFERRALS_COLUMNS = [
+   const REFERREDS_COLUMNS = [
+      'user_id',
       'referred_id',
       'create_date'
    ];
@@ -56,6 +57,7 @@ interface IResource
       'video_id',
       'name',
       'link',
+      'size',
       'provider_logo',
       'question',
       'correct',

@@ -24,11 +24,7 @@
     },
     "autoload": {
         "psr-4": {
-            "V1\\": "api/v1/",
-            "V2\\": "api/v2/",
-            "Db\\": "api/v1/db/",
-            "Lib\\": "api/v1/lib/",
-            "Tools\\": "api/v1/tools/"
+            "V2\\": "api/v2/"
         }
     }
 }
