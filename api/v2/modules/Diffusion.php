@@ -24,7 +24,7 @@ class Diffusion
         return $status;
     }
 
-    public function sendNotification(
+    public static function sendNotification(
         array $arrayPlayerId,
         string $content
     ) {

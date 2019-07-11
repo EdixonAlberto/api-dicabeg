@@ -4,12 +4,15 @@ namespace V2\Modules;
 
 use Exception;
 use V2\Database\Querys;
+use V2\Middleware\Auth;
 
 class Time
 {
-   public static function current(string $tz = null) : object
+   public static $timeZone;
+
+   public static function current() : object
    {
-      self::setTimeZone($tz);
+      self::setTimeZone();
       $current = $_SERVER['REQUEST_TIME'];
 
       $currentTime = (object)[
@@ -19,13 +22,15 @@ class Time
       return $currentTime;
    }
 
-   public static function expiration()
+   public static function expiration() : object
    {
       $expiration_time = Querys::table('options')
          ->select('expiration_time')
          ->get(function () {
-            $error = 'expiration time not configured in the database';
-            throw new Exception($error, 500);
+            throw new Exception(
+               'expiration time not configured in the database',
+               500
+            );
          });
 
       $expiration = strtotime(self::current()->utc . '+' . $expiration_time);
@@ -37,40 +42,18 @@ class Time
       return $expirationTime;
    }
 
-   public static function setTimeZone(string $tz = null) : void
+   public static function setTimeZone() : void
    {
-      global $timeZone;
+      if (isset(self::$timeZone)) {
+         date_default_timezone_set(self::$timeZone);
 
-      if (!is_null($tz)) {
-         $timeZone = $tz;
-         date_default_timezone_set($timeZone);
-
-      } elseif (!isset($timeZone)) {
-         $timeZone = Querys::table('accounts')
+      } else {
+         self::$timeZone = Querys::table('accounts')
             ->select('time_zone')
-            ->where('user_id', USERS_ID)->get();
+            ->where('user_id', Auth::$id)
+            ->get();
 
-         date_default_timezone_set($timeZone);
+         date_default_timezone_set(self::$timeZone);
       }
    }
-
-   // public static function getExpiration()
-   // {
-   //    $optionQuery = new Querys('options');
-
-   //    $option = $optionQuery->selectAll('expiration_time')[0];
-   //    $expiration = $option->expiration_time;
-
-   //    JsonResponse::read('expiration_time', $expiration);
-   // }
-
-   // public static function setExpiration()
-   // {
-   //    $optionQuery = new Querys('options');
-
-   //    $arrayOption['expiration_time'] = $_REQUEST['time'] . ' minute';
-   //    $optionQuery->update(false, false, $arrayOption);
-
-   //    JsonResponse::updated('options', $arrayOption);
-   // }
 }
