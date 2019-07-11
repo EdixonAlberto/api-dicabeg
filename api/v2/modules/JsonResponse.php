@@ -2,7 +2,10 @@
 
 namespace V2\Modules;
 
-class JsonResponse
+use V2\Middleware\Output;
+use V2\Modules\RouteManager;
+
+class JsonResponse extends RouteManager
 {
     public static function read($content) : void
     {
@@ -11,16 +14,17 @@ class JsonResponse
             'response' => 'successful',
             'description' => 'found resource',
             'resource' => [
-                RESOURCE => Middleware::output($content)
+                self::$resource => Output::filter($content)
             ],
         ];
+
         self::send($response);
     }
 
     public static function created(
         $content,
         string $path = null,
-        $info = null
+        string $info = null
     ) : void {
 
         $response = [
@@ -28,11 +32,15 @@ class JsonResponse
             'response' => 'successful',
             'description' => 'created resource',
             'resource' => [
-                RESOURCE => Middleware::output($content)
+                self::$resource => Output::filter($content)
             ],
-            'path' => $path,
-            'information' => Middleware::output($info)
+            'path' => $path
         ];
+
+        if ($info) $response = array_merge(
+            $response,
+            ['information' => Output::filter($info)]
+        );
         self::send($response, 201);
     }
 
@@ -46,10 +54,14 @@ class JsonResponse
             'response' => 'successful',
             'description' => 'updated resource',
             'resource' => [
-                RESOURCE => Middleware::output($content)
-            ],
-            'information' => $info
+                self::$resource => Output::filter($content)
+            ]
         ];
+
+        if ($info) $response = array_merge(
+            $response,
+            ['information' => Output::filter($info)]
+        );
         self::send($response);
     }
 
@@ -63,13 +75,21 @@ class JsonResponse
         self::send($response);
     }
 
-    public static function OK($content) : void
-    {
+    public static function OK(
+        string $description,
+        $result = null
+    ) : void {
+
         $response = [
             'status' => 200,
             'response' => 'successful',
-            'description' => $content
+            'description' => $description
         ];
+
+        if ($result) $response = array_merge(
+            $response,
+            ['information' => Output::filter($result)]
+        );
         self::send($response);
     }
 

@@ -8,17 +8,31 @@ use V2\Database\Querys;
 
 class Auth
 {
-    public function __construct(string $token, string $key)
+    public static $id;
+
+    public static function execute(object $headers) : string
     {
+        if (isset($headers->ACCESS_TOKEN)) {
+            $token = $headers->ACCESS_TOKEN;
+            $key = ACCESS_KEY;
+            unset($headers->ACCESS_TOKEN);
+
+        } elseif (isset($headers->REFRESH_TOKEN)) {
+            $token = $headers->REFRESH_TOKEN;
+            $key = REFRESH_KEY;
+            Jwt::extraTime(2);
+            unset($headers->REFRESH_TOKEN);
+
+
+        } else throw new Exception('unauthorized access: token require', 401); //ERROR:
+
         $payload = Jwt::verific($token, $key);
 
-        $user_id = Querys::table('users')
-            ->select('user_id')
-            ->where('user_id', $payload->sub)
-            ->get(function () {
-                throw new Exception('token incorrect', 401);
-            });
+        $user = Querys::table('users')
+            ->select(['user_id', 'activated'])
+            ->where('user_id', $payload->sub)->get();
 
-        define('USERS_ID', $user_id);
+        if ($user->activated) return self::$id = $user->user_id;
+        else throw new Exception('account not activated', 403);
     }
 }
