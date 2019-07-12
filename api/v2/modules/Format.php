@@ -31,11 +31,15 @@ class Format
     public static function number($number)
     {
         if (is_numeric($number)) {
-            $isFloatString = preg_match('/^\d+\.\d+$/', $number);
+            $isFloatString = preg_match('/^\-?\d+\.\d+$/', $number);
             $number = $isFloatString ?
-                (float)number_format($number, 2, '.', '-') : (int)$number;
+                (float)number_format($number, 5, '.', '') : (int)$number;
             return $number;
 
-        } else throw new Exception("the number: {$number} is incorrect", 400);
+        } else throw new Exception(
+            "the number: {$number} is incorrect," .
+                'must have this format: 0.00000',
+            400
+        );
     }
 }
