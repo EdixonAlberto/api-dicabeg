@@ -2,7 +2,9 @@
 .vscode
 .env
 /vendor
+/api/v2/views/cache
 
 # user
 /developing
 /api/v2/test.php
+*.txt
