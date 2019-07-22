@@ -1,0 +1,6 @@
+{
+    "scripts": {
+        "log:api": "heroku logs --app api-dicabeg --source app --dyno api --force-colors",
+        "log:web": "heroku logs --app api-dicabeg --source app --dyno web --num 50 --tail --force-colors"
+    }
+}

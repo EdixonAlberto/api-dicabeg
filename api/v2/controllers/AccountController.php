@@ -37,7 +37,6 @@ class AccountController implements IResource
                 ->execute(function () {
                     throw new Exception('code invalid or used', 400);
                 });
-
         } else throw new Exception('code is not set', 400);
 
         JsonResponse::OK('activated account');
@@ -53,13 +52,11 @@ class AccountController implements IResource
                 ->get(function () {
                     throw new Exception('email not found', 404);
                 });
-
         } elseif (isset($body->username)) {
             $user = $userQuery->where('username', $body->username)
                 ->get(function () {
                     throw new Exception('username not found', 404);
                 });
-
         } else throw new Exception(
             'enter email or username to login',
             400
@@ -78,12 +75,10 @@ class AccountController implements IResource
         );
     }
 
-    public static function oauthLogin() : void
-    {
+    public static function oauthLogin(): void
+    { }
 
-    }
-
-    public static function refreshLogin() : void
+    public static function refreshLogin(): void
     {
         JsonResponse::OK(self::getAccess(USERS_ID));
     }
@@ -100,14 +95,27 @@ class AccountController implements IResource
 
             Middleware::activation($user->user_id);
 
-            $emailStatus = self::sendCode(
-                'passwordRecovery',
-                Security::generateCode(6),
-                $user
+            $code = Security::generateCode(6);
+
+            if (isset($body->send_email)) {
+                if ($body->send_email == 'true') {
+                    $emailStatus = self::sendCode(
+                        'passwordRecovery',
+                        $code,
+                        $user
+                    );
+                } elseif ($body->send_email == 'false') {
+                    $emailStatus = [
+                        'response' => 'email not sended',
+                        'temporal_code' => $code
+                    ];
+                }
+            } else throw new Exception(
+                "the send_email field should be: 'true' or 'false'",
+                400
             );
 
             JsonResponse::OK($emailStatus);
-
         } elseif (isset($body->temporal_code)) {
             if (isset($body->password)) {
                 $user_id = Querys::table('accounts')
@@ -127,11 +135,9 @@ class AccountController implements IResource
                 Querys::table('accounts')->update([
                     'temporal_code' => 'used'
                 ])->where('user_id', $user_id)->execute();
-
             } else throw new Exception('attribute {password} not set', 400);
 
             JsonResponse::OK('recovery successful, password updated');
-
         } else throw new Exception(
             'enter one of the following parameters: ' .
                 '{email, temporal_code, password}',
@@ -139,7 +145,7 @@ class AccountController implements IResource
         );
     }
 
-    public static function sendEmail($body) : void
+    public static function sendEmail($body): void
     {
         $user = Querys::table('users')
             ->select(['user_id', 'email'])
@@ -167,11 +173,13 @@ class AccountController implements IResource
         JsonResponse::OK($emailStatus);
     }
 
-    private static function sendCode(string $emailType, string $code, object $for) : object
+    private static function sendCode(string $emailType, string $code, object $for): object
     {
         Querys::table('accounts')->update([
             'temporal_code' => $code
-        ])->where('user_id', $for->user_id)->execute();
+        ])->where('user_id', $for->user_id)->execute(function () {
+            throw new Exception('error saving temporal code', 500);
+        });
 
         return Diffusion::sendEmail(
             $for->email,
@@ -179,14 +187,14 @@ class AccountController implements IResource
         );
     }
 
-    private static function getAccess(string $id) : object
+    private static function getAccess(string $id): object
     {
         global $timeZone;
 
         $access = new Jwt($id, ACCESS_KEY);
         $refresh = new Jwt($id, REFRESH_KEY);
 
-        return (object)[
+        return (object) [
             'access_token' => $access->token,
             'refresh_token' => $refresh->token,
             'expiration_date' => $access->expiration_date,
@@ -194,7 +202,7 @@ class AccountController implements IResource
         ];
     }
 
-    private static function passwordValidate($body, $user) : void
+    private static function passwordValidate($body, $user): void
     {
         if (!isset($body->password))
             throw new Exception('passsword is not set', 401);
