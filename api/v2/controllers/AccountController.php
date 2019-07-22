@@ -118,23 +118,24 @@ class AccountController implements IResource
             JsonResponse::OK($emailStatus);
         } elseif (isset($body->temporal_code)) {
             if (isset($body->password)) {
-                $user_id = Querys::table('accounts')
-                    ->select('user_id')
+                $user = Querys::table('accounts')
+                    ->select(['user_id', 'time_zone'])
                     ->where('temporal_code', $body->temporal_code)
                     ->get(function () {
                         throw new Exception('code incorrect or used', 400);
                     });
 
                 Querys::table('users')->update([
-                    'password' => Security::generateHash($body->password)
-                ])->where('user_id', $user_id)
+                    'password' => Security::generateHash($body->password),
+                    'update_date' => Time::current($user->time_zone)->utc
+                ])->where('user_id', $user->user_id)
                     ->execute(function () {
                         throw new Exception('error updated password', 500);
                     });
 
                 Querys::table('accounts')->update([
                     'temporal_code' => 'used'
-                ])->where('user_id', $user_id)->execute();
+                ])->where('user_id', $user->user_id)->execute();
             } else throw new Exception('attribute {password} not set', 400);
 
             JsonResponse::OK('recovery successful, password updated');
