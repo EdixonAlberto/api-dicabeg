@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-    @include('components.style')
+    @include('component.style')
 
 </head>
 <body>
@@ -28,14 +28,19 @@
     <table class="footer" align="center" cellpadding="0" cellspacing="0">
         <tr>
             <td>
-                <p>
-                    ©Copyright 2019 Dicabeg. Todos los derechos reservados. Dicabeg y el logotipo de Dicabeg son productos desarrollados por <strong>Dicapp</strong>. Consulte nuestra <a href="https://edixonalberto.github.io/doc-dicabeg/menu/policy.html" target="_blank">política de privacidad</a> o escribanos a <a href="mailto:{{ $support }}" target="_blank", title="Envianos un Email">{{ $support }}</a> para poder brindarle soporte.
+                <p id="about">
+                    Copyright &copy; 2019 Dicabeg. Todos los derechos reservados. Dicabeg y el logotipo de Dicabeg son productos desarrollados por <strong>Dicapp</strong>. Consulte nuestra <a href="https://edixonalberto.github.io/doc-dicabeg/menu/policy.html" target="_blank">política de privacidad</a> o escribanos a <a href="mailto:{{ $support }}" target="_blank", title="Envianos un Email">{{ $support }}</a> para poder brindarle soporte.
                 </p>
-                <div class="networks">
-                    <a href="https://www.instagram.com/dicabeg" title="Síguenos en Instagram" target="_blank">Instagram</a> |
-                    {{-- <a href="" title="Síguenos en Facebook" target="_blank">Facebook</a> | --}}
-                    <a href="https://edixonalberto.github.io/doc-dicabeg" title="Visita Nuestra Web" target="_blank">Pagina Web</a>
-                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p id="networks">
+                    <a href="https://edixonalberto.github.io/doc-dicabeg" title="Visita Nuestra Web" target="_blank">Página Web</a> |
+                    <a href="https://twitter.com/Dicapp1" title="Síguenos en Twitter" target="_blank">Twitter</a> |
+                    <a href="https://www.instagram.com/dicabeg" title="Síguenos en Instagram" target="_blank">Instagram</a>
+                    {{-- <a href="" title="Síguenos en Facebook" target="_blank">Facebook</a> --}}
+                </p>
             </td>
         </tr>
     </table>

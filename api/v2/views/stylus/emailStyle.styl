@@ -1,0 +1,77 @@
+$path = './'
+@import $path + 'colors'
+@import $path + 'func'
+@import $path + 'tables'
+@import $path + 'img'
+
+body, h2
+    margin: 0
+    padding: 0
+
+.p-bold
+    font-weight: bold
+    font-size: 25px
+
+.p-data
+    margin: 0
+    padding-left: 25px
+    font-size: small
+
+.p-about
+    color: grey
+
+.content a
+    color: $dicabegColor
+
+.content p:not(.p-data)
+    margin: 10px 0
+    padding: 0
+    font-size: 16px
+    line-height: 22px
+
+.first p:first-child
+    margin: 25px 0 10px 0
+
+.last p:first-child
+    margin: 10px 0 25px 0
+
+.footer p
+    color: black
+    margin: 0px
+    padding: 0 40px
+    line-height: 20px
+
+.footer a
+    color: $dicabegColor
+    text-decoration: none
+
+.color
+    color: $dicabegColor
+
+#networks
+    margin-top: 10px
+
+#networks a
+    margin: 5px
+
+#app-name
+    display: block
+    float left
+
+#button
+    text-align: center
+
+#code
+    color: white
+    background: $dicabegColor
+    margin: 0
+    padding: 20px 25px
+    display: inline-block
+    border-radius: 10px
+    line-height: 16px
+    font-size: 25px
+
+#information
+    margin: 0
+
+@import $path + 'response'

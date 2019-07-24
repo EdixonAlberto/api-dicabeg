@@ -1,22 +1,26 @@
-@include('header')
-@include('title')
+@php
+	V2\Modules\EmailTemplate::$subject = 'Actualizar Correo Electrónico';
+@endphp
 
+@extends('component.layout')
 
-    <table class="content" align="center" cellpadding="0" cellspacing="0">
-        <tr>
-            <td colspan="2">
-                <p class="p-content" style="margin-top:0px;">
-                    txt2
-                </p>
-                <p class="p-bold" id="activation-code"> {{ $code }} </p>
+@section('content')
 
-                <p class="p-content">txt3</p>
+@component('component.content', [
+		'imageName' => 'mail.png',
+		'user' => $data->user
+	])
+	@slot('content_first')
+		<p>
+			Para continuar con la actualización de tu correo debes ingresar el siguiente código en la aplicación:
+		</p>
 
-                <p class="p-content" style="margin-bottom:0px;">
+		@include('component.code')
+	@endslot
 
-                    [El equipo de <strong>Dicapp</strong>]
-                </p>
-            </td>
-        </tr>
-    </table>
-@include('footer')
+	@slot('footer')
+		<strong id="information">El código caducará dentro de 24 horas</strong>
+	@endslot
+@endcomponent
+
+@endsection
