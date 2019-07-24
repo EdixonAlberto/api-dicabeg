@@ -2,107 +2,48 @@
 
 namespace V2\Modules;
 
-use V2\Modules\Time;
 use V2\Modules\Minify;
 use Jenssegers\Blade\Blade;
 
 class EmailTemplate
 {
     public const SUPPORT_EMAIL = 'dicabeg2019@gmail.com';
+    public static $subject;
+
     private const VIEWS_PATH = 'views/templates';
     private const CACHE_PATH = 'views/cache';
+    private $arrayContentDefault;
+    private $blade;
 
-    public static function accountActivation(
-        string $code
-    ) : EmailTemplate {
-
-        $blade = new Blade(self::VIEWS_PATH, self::CACHE_PATH);
-
-        $html = $blade->render('accountActivation', [
-            'style' => self::styleLoader(),
-            'code' => $code,
-            'support' => self::SUPPORT_EMAIL,
-        ]);
-
-        $template = new EmailTemplate;
-        $template->subject = '¡Bienvenid@ a Dicabeg! | Activa tu Cuenta';
-        $template->html = $html;
-        return $template;
-    }
-
-    public static function passwordRecovery(
-        string $code
-    ) : EmailTemplate {
-
-        $blade = new Blade(self::VIEWS_PATH, self::CACHE_PATH);
-
-        $html = $blade->render('passwordRecovery', [
-            'style' => self::styleLoader(),
-            'code' => $code,
-            'support' => self::SUPPORT_EMAIL,
-        ]);
-
-        $template = new EmailTemplate;
-        $template->subject = 'Recuperación de Cuenta';
-        $template->html = $html;
-        return $template;
-    }
-
-    public static function userReport(
-        string $id,
-        array $arrayData
-    ) : EmailTemplate {
-
-        $html = self::generateEmail(
-            '../v2/email/templates/reportEmail.min.html'
-        );
-
-        $month = strftime('%m', strtotime($arrayData[0]->create_date));
-
-        $html = preg_replace('|MONTH|', $month, $html);
-        $html = preg_replace('|ID|', $id, $html);
-        $html = self::generateReport($arrayData, $html);
-
-        $template = new EmailTemplate;
-        $template->subject = 'Reporte de Transferencia de Usuario';
-        $template->html = $html;
-        return $template;
-    }
-
-    public static function emailUpdate(
-        string $code
-    ) : EmailTemplate {
-
-    }
-
-    public static function styleLoader() : string
+    public function __construct()
     {
-        $resource = fopen($file = 'public/css/style.css', 'r');
+        $this->blade = new Blade(self::VIEWS_PATH, self::CACHE_PATH);
+
+        $this->arrayContentDefault = [
+            'style' => self::styleLoader(),
+            'support' => self::SUPPORT_EMAIL,
+        ];
+    }
+
+    public function __call(string $templateType, array $arguments): EmailTemplate
+    {
+        [$data] = $arguments;
+
+        $flatHtml = $this->blade->render(
+            $templateType,
+            array_merge($this->arrayContentDefault, [
+                'data' => $data
+            ])
+        );
+        $this->html = Minify::html($flatHtml);
+        return $this;
+    }
+
+    public static function styleLoader(): string
+    {
+        $resource = fopen($file = 'public/css/emailStyle.css', 'r');
         $css = trim(fread($resource, filesize($file)), "'");
         fclose($resource);
         return $css;
-    }
-
-    private static function generateReport(
-        array $arrayData,
-        string $html
-    ) : string {
-
-        $total_amount = $total_gain = 0;
-        foreach ($arrayData as $key => $data) {
-            $amount = $data->amount;
-            $total_amount += $amount;
-
-            $gain = $data->gain;
-            $total_gain += $gain;
-
-            $last_date = $data->create_date;
-        }
-
-        $html = preg_replace('|TOTAL_AMOUNT|', $total_amount, $html);
-        $html = preg_replace('|TOTAL_GAIN|', $total_gain, $html);
-        $html = preg_replace('|LAST_DATE|', $last_date, $html);
-
-        return $html;
     }
 }

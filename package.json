@@ -1,7 +1,8 @@
 {
     "scripts": {
         "log:api": "heroku logs --app api-dicabeg --source app --dyno api --force-colors",
-        "log:web": "heroku logs --app api-dicabeg --source app --dyno web --num 10 --tail --force-colors",
-        "build:styl": "stylus -w ./api/v2/views -o ./api/v2/public/css"
+        "log:router": "heroku logs --app api-dicabeg --source heroku --dyno router --num 50 --tail --force-colors",
+        "log:web": "heroku logs --app api-dicabeg --source app --dyno web --num 50 --tail --force-colors",
+        "build:styl": "stylus -w ./api/v2/views/stylus/emailStyle.styl -o ./api/v2/public/css"
     }
 }

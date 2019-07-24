@@ -13,14 +13,13 @@ class Diffusion
     public static function sendEmail(
         string $email,
         EmailTemplate $template
-    ) : object {
-
+    ): object {
         $status = SendGrid::generateEmail(
-            $template::SUPPORT_EMAIL,
-            $template->subject,
             $email,
+            $template::SUPPORT_EMAIL,
+            $template::$subject,
             $template->html
-        )->send($email);
+        )->send();
         return $status;
     }
 
@@ -28,7 +27,6 @@ class Diffusion
         array $arrayPlayerId,
         string $content
     ) {
-
         $os = new OneSignal;
         $status = $os->createNotification(
             $arrayPlayerId,
