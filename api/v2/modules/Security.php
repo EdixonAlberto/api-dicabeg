@@ -12,7 +12,7 @@ class Security
 
     public static function generateHash($data = false)
     {
-        $pass = $data ? : $data . time() . rand();
+        $pass = $data ?: $data . time() . rand();
         return password_hash($data, self::$algo, self::$options);
     }
 
@@ -28,8 +28,10 @@ class Security
         return trim($code, '{}');
     }
 
-    public static function generateCode(int $codeLength) : string
+    public static function generateCode(int $codeLength): string
     {
+        // ADD: para asegurar la unicidad en los codigos de activacion, se debe
+        // poner vencimiento a los mismos por medio de un trigger en la DB
         $code = Gui::generate();
         $code = preg_replace('|-|', '', $code);
         $code = strtoupper($code);

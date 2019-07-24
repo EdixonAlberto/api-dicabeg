@@ -6,10 +6,10 @@ use Exception;
 use V2\Modules\Time;
 use V2\Modules\Format;
 use V2\Database\Querys;
+use V2\Middleware\Auth;
 use V2\Modules\Security;
+use V2\Modules\Username;
 use V2\Modules\Diffusion;
-use V2\Libraries\SendGrid;
-use V2\Modules\Middleware;
 use V2\Email\EmailTemplate;
 use V2\Modules\JsonResponse;
 use V2\Interfaces\IController;
@@ -17,11 +17,11 @@ use V2\Controllers\ReferredController;
 
 class UserController implements IController
 {
-    public static function index() : void
+    public static function index($req): void
     {
         $arrayUser = Querys::table('users')
             ->select(self::USERS_COLUMNS)
-            ->group(GROUP_NRO)
+            ->group($req->params->nro)
             ->getAll(function () {
                 throw new Exception('not found users', 404);
             });
@@ -29,11 +29,11 @@ class UserController implements IController
         JsonResponse::read($arrayUser);
     }
 
-    public static function show() : void
+    public static function show($req): void
     {
         $user = Querys::table('users')
             ->select(self::USERS_COLUMNS)
-            ->where('user_id', USERS_ID)
+            ->where('user_id', Auth::$id)
             ->get(function () {
                 throw new Exception('user not found', 404);
             });
@@ -41,8 +41,10 @@ class UserController implements IController
         JsonResponse::read($user);
     }
 
-    public static function store($body) : void
+    public static function store($req): void
     {
+        $body = $req->body;
+
         if (!isset($body->password))
             throw new Exception('passsword is not set', 401);
 
@@ -57,12 +59,11 @@ class UserController implements IController
         if (isset($body->email)) {
             $email = $userQuery->select('email')
                 ->WHERE('email', $body->email)->get();
-            if ($email) throw new Exception("email {{$email}} exist", 404);
-
+            if ($email) throw new Exception("email exist: {$email}", 404);
         } else throw new Exception('email is not set', 400);
 
         if (isset($body->invite_code)) {
-            $user_id = Querys::table('accounts')
+            $user_id = Querys::table('users')
                 ->select('user_id')
                 ->where('invite_code', $body->invite_code)
                 ->get(function () {
@@ -76,57 +77,52 @@ class UserController implements IController
             ])->where('user_id', $user_id)->get();
         }
 
-        $username = self::getUsername($body);
+        $username = Username::validate($body->username);
         $id = Security::generateID();
-        $invite_code = Security::generateCode(8);
-        // ADD: Validar recurrencia de codigos,
-        // asegurar unicidad con generacion recursiva del mismo
         $code = Security::generateCode(6);
-        $info = null;
+        Time::$timeZone = $body->time_zone;
 
-        $userInsert = $userQuery->insert($newUser = (object)[
+        $userInsert = $userQuery->insert($newUser = (object) [
             'user_id' => $id,
             'username' => $username,
             'email' => Format::email($body->email),
+            'invite_code' => Security::generateCode(8),
             'password' => Security::generateHash($body->password),
-            'invite_code' => $invite_code,
-            'create_date' => Time::current($body->time_zone)->utc
+            'create_date' => Time::current()->utc
         ])->execute();
 
         $accountInsert = Querys::table('accounts')->insert([
             'user_id' => $id,
             'temporal_code' => $code,
-            'invite_code' => $invite_code,
-            'registration_code' => $user->username ?? null,
+            'referred_id' => $user->user_id ?? null,
             'time_zone' => $body->time_zone
         ])->execute();
 
         if (isset($body->invite_code)) {
-            ReferredController::store((object)[
+            ReferredController::store((object) [
                 'user_id' => $user->user_id,
-                'referred_id' => $id,
-                'time_zone' => $body->time_zone
+                'referred_id' => $id
             ]);
-            $info['as_referred'] = $username;
+            $info['as_referred'] = true;
 
             // ADD: crear modelos de contenido para las notificaciones
             // ademas de tener el contenido en varios idiomas
-            if (isset($user->player_id) and $user->player_id != '') {
-                $info['notification'] = Diffusion::sendNotification(
-                    [$user->player_id],
-                    "El usuario: {$username} se ha registrado como tu referido"
-                );
-            }
-        }
+            // TODO: Probar notificaciones
+            // if (isset($user->player_id) and $user->player_id != '') {
+            //     $info['notification'] = Diffusion::sendNotification(
+            //         [$user->player_id],
+            //         "El usuario: {$username} se ha registrado como tu referido"
+            //     );
+            // }
+        } else $info['as_referred'] = false;
 
         if ($body->send_email == 'true') {
             $info['email'] = Diffusion::sendEmail(
                 $newUser->email,
-                    // ADD: El idioma debe ser determinado en el
-                    // futuro mediante la config del usuario
+                // ADD: El idioma debe ser determinado en el
+                // futuro mediante la config del usuario
                 EmailTemplate::accountActivation($code)
             );
-
         } elseif ($body->send_email == 'false') {
             $info['email'] = [
                 'response' => 'not sended',
@@ -138,32 +134,32 @@ class UserController implements IController
         JsonResponse::created($newUser, $path, $info);
     }
 
-    public static function update($body) : void
+    public static function update($req): void
     {
+        $body = $req->body;
+
         if (!$body) throw new Exception('body empty', 400);
 
+        $id = Auth::$id;
         $userQuery = Querys::table('users');
 
         if (isset($body->balance)) {
-            Format::number($newBalance = $body->balance);
+            $currentBalance = Format::number($body->balance);
 
-            $currentBalance = $userQuery->select('balance')
-                ->where('user_id', USERS_ID)->get();
+            $oldBalance = $userQuery->select('balance')
+                ->where('user_id', $id)->get();
 
-            $balance = $currentBalance + $newBalance;
+            $newBalance = $currentBalance + $oldBalance;
 
-            $userQuery->update($user = (object)['balance' => $balance])
-                ->where('user_id', USERS_ID)
+            $userQuery->update($user = (object) ['balance' => $newBalance])
+                ->where('user_id', $id)
                 ->execute(function () {
                     throw new Exception('not updated balance', 500);
                 });
-
         } else {
-            $userQuery->update($user = (object)[
-                'player_id' => $body->player_id ?? null,
-
+            $userQuery->update($user = (object) [
                 'username' => isset($body->username) ?
-                    self::getUsername($body) : null,
+                    Username::validate($body->username) : null,
 
                 'names' => $body->names ?? null,
                 'lastnames' => $body->lastnames ?? null,
@@ -178,7 +174,7 @@ class UserController implements IController
 
                 'update_date' => Time::current()->utc
 
-            ])->where('user_id', USERS_ID)
+            ])->where('user_id', $id)
                 ->execute(function () {
                     throw new Exception('not updated user', 500);
                 });
@@ -187,94 +183,36 @@ class UserController implements IController
         JsonResponse::updated($user);
     }
 
-    public static function config($body)
+    public static function destroy($req): void
     {
-        if (isset($body->email)) {
+        $id = Auth::$id;
 
-            $var = Querys::table('users')->select('username')
-                ->where('email', $body->email)
-                ->get(function () {
-                    throw new Exception('email not exist', 400);
-                });
+        Querys::table('users')->select('user_id')
+            ->where('user_id', $id)
+            ->get(function () {
+                throw new Exception('user not found', 404);
+            });
 
-            var_dump($var);
-            die;
-
-            $code = Security::generateCode(6);
-
-            $emailResp = Diffusion::sendEmail(
-                $body->email,
-                EmailTemplate::update()
-            );
-
-            if ($emailResp->status == 500) throw new Exception($emailResp, 500);
-
-        } elseif (isset($body->password)) {
-
-
-        } else throw new Exception('no set parameter', 404);
-
-    }
-
-    public static function destroy() : void
-    {
         Querys::table('history')->delete()
-            ->where('user_id', USERS_ID)
+            ->where('user_id', $id)
             ->execute();
 
-        Querys::table('referrals')->delete()
-            ->where('user_id', USERS_ID)
+        Querys::table('referreds')->delete()
+            ->where('user_id', $id)
             ->execute();
 
         Querys::table('transfers')->delete()
-            ->where('user_id', USERS_ID)
+            ->where('user_id', $id)
             ->execute();
 
         Querys::table('accounts')->delete()
-            ->where('user_id', USERS_ID)
+            ->where('user_id', $id)
             ->execute();
 
         Querys::table('users')->delete()
-            ->where('user_id', USERS_ID)
+            ->where('user_id', $id)
             ->execute();
 
         JsonResponse::removed();
-    }
-
-    private static function getUsername($body) : string
-    {
-        if (isset($body->username)) {
-            $username = Querys::table('users')
-                ->select('username')
-                ->where('username', $body->username)
-                ->get();
-
-            if ($username) self::sendUsername($username);
-            else return $body->username;
-
-        } else return substr($body->email, 0, strpos($body->email, '@'));
-    }
-
-    private static function sendUsername(string $username) : void
-    {
-        global $newUsername;
-
-        $existUsername = Querys::table('users')
-            ->select('username')
-            ->where('username', $username)->get();
-
-        if ($existUsername) {
-            $newUsername = substr($username, 0, (strpos($username, '_') > 0) ?
-                strpos($username, '_') : strlen($username));
-            $newUsername .= '_' . Security::generateCode(4);
-
-            self::sendUsername($newUsername);
-
-        } else {
-            JsonResponse::error([
-                'message' => 'username exist',
-                'suggested_username' => $newUsername
-            ], 400);
-        }
     }
 }

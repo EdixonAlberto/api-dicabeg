@@ -2,38 +2,36 @@
 
 namespace V2\Interfaces;
 
-interface IData
+interface IBody
 {
     const INPUT_DATA = [
         // USERS
-        'player_id',
         'username',
         'email',
-        'password',
+        'balance',
         'names',
         'lastnames',
         'age',
         'avatar',
         'phone',
-        'points',
-        'balance',
+        'player_id',
         'send_email',
+        'invite_code',
+        'password',
 
         // ACCOUNTS
         'temporal_code',
-        'invite_code',
         'time_zone',
 
         // TRANSFERS
         'concept',
         'username',
         'amount',
-        'previous_balance',
-        'current_balance',
 
         // VIDEOS
         'name',
         'link',
+        'size',
         'provider_logo',
         'question',
         'correct',

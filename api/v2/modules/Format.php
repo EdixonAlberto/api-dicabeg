@@ -6,7 +6,7 @@ use Exception;
 
 class Format
 {
-    public static function email(string $email) : string
+    public static function email(string $email): string
     {
         $email = filter_var($email, FILTER_SANITIZE_STRING);
         $email = trim($email);
@@ -18,7 +18,7 @@ class Format
         else throw new Exception('format the email incorrect', 400);
     }
 
-    public static function phone(string $phone) : string
+    public static function phone(string $phone): string
     {
         $phone = filter_var($phone, FILTER_SANITIZE_STRING);
         $phone = trim($phone);
@@ -31,11 +31,14 @@ class Format
     public static function number($number)
     {
         if (is_numeric($number)) {
-            $isFloatString = preg_match('/^\d+\.\d+$/', $number);
+            $isFloatString = preg_match('/^\-?\d+\.\d+$/', $number);
             $number = $isFloatString ?
-                (float)number_format($number, 2, '.', '-') : (int)$number;
+                (float) number_format($number, 5, '.', '') : (int) $number;
             return $number;
-
-        } else throw new Exception("the number: {$number} is incorrect", 400);
+        } else throw new Exception(
+            "the number: {$number} is incorrect," .
+                'must have this format: 0.00000',
+            400
+        );
     }
 }

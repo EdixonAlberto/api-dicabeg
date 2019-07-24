@@ -2,6 +2,7 @@
 .vscode
 .env
 /vendor
+/api/v2/views/cache
 
 # user
 /developing

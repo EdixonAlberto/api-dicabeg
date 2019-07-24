@@ -2,11 +2,13 @@
 
 namespace V2\Interfaces;
 
+use V2\Modules\Requests;
+
 interface IController extends IResource
 {
-    public static function index() : void;
-    public static function show() : void;
-    public static function store($body) : void;
-    public static function update($body) : void;
-    public static function destroy() : void;
+    public static function index(Requests $req): void;
+    public static function show(Requests $req): void;
+    public static function store(Requests $req): void;
+    public static function update(Requests $req): void;
+    public static function destroy(Requests $req): void;
 }
