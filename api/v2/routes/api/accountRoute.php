@@ -10,6 +10,6 @@ Route::post('/accounts/login', 'AccountController::login');
 
 Route::post('/accounts/recovery', 'AccountController::recovery');
 
-Route::post('/accounts/send_email', 'AccountController::sendEmail');
+Route::post('/accounts/resend_email', 'AccountController::resendEmail');
 
 Route::post('/accounts/activation', 'AccountController::activation');

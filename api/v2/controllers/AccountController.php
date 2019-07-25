@@ -95,45 +95,61 @@ class AccountController
             if ($user->activated) $temporalCode = Security::generateCode(6);
             else throw new Exception('account not activated', 403);
 
+            $code = Security::generateCode(6);
+
             Querys::table('accounts')->update([
-                'temporal_code' => $temporalCode
+                'temporal_code' => $code
             ])->where('user_id', $user->user_id)->execute();
 
-            $emailStatus = Diffusion::sendEmail(
-                $user->email,
-                EmailTemplate::passwordRecovery($temporalCode)
+
+            if (isset($body->send_email)) {
+                if ($body->send_email == 'true') {
+                    $emailStatus = Diffusion::sendEmail(
+                        $user->email,
+                        EmailTemplate::accountRecovery($code)
+                    );
+                } elseif ($body->send_email == 'false') {
+                    $emailStatus = [
+                        'response' => 'email not sended',
+                        'temporal_code' => $code
+                    ];
+                }
+            } else throw new Exception(
+                "the send_email field should be: 'true' or 'false'",
+                400
             );
 
-            JsonResponse::OK('activated account', $emailStatus);
+            JsonResponse::OK($emailStatus);
         } elseif (isset($body->temporal_code)) {
             if (isset($body->password)) {
-                $user_id = Querys::table('accounts')
-                    ->select('user_id')
+                $user = Querys::table('accounts')
+                    ->select(['user_id', 'time_zone'])
                     ->where('temporal_code', $body->temporal_code)
                     ->get(function () {
                         throw new Exception('code incorrect or used', 400);
                     });
 
                 Querys::table('users')->update([
-                    'password' => Security::generateHash($body->password)
-                ])->where('user_id', $user_id)
+                    'password' => Security::generateHash($body->password),
+                    'update_date' => Time::current($user->time_zone)->utc
+                ])->where('user_id', $user->user_id)
                     ->execute(function () {
                         throw new Exception('error updated password', 500);
                     });
 
                 Querys::table('accounts')->update([
                     'temporal_code' => 'used'
-                ])->where('user_id', $user_id)->execute();
-            } else throw new Exception('password is not set', 400);
+                ])->where('user_id', $user->user_id)->execute();
+            } else throw new Exception('attribute {password} not set', 400);
 
-            JsonResponse::OK('recovery successful: password updated');
+            JsonResponse::OK('recovery successful, password updated');
         } else throw new Exception(
             'email or temporal_code is not set',
             400
         );
     }
 
-    public static function sendEmail($req): void
+    public static function resendEmail($req): void
     {
         $user = Querys::table('users')
             ->select(['user_id', 'email'])

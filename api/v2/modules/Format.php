@@ -8,6 +8,7 @@ class Format
 {
     public static function email(string $email): string
     {
+        $email = strtolower($email);
         $email = filter_var($email, FILTER_SANITIZE_STRING);
         $email = trim($email);
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);

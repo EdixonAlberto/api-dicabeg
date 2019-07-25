@@ -107,21 +107,33 @@ class UserController implements IController
 
             // ADD: crear modelos de contenido para las notificaciones
             // ademas de tener el contenido en varios idiomas
-            // TODO: Probar notificaciones
+
+            // TODO: Apagando notificaciones. Reparar despues
+
             // if (isset($user->player_id) and $user->player_id != '') {
             //     $info['notification'] = Diffusion::sendNotification(
             //         [$user->player_id],
             //         "El usuario: {$username} se ha registrado como tu referido"
             //     );
             // }
-        } else $info['as_referred'] = false;
+        }
 
-        if ($body->send_email == 'true') {
-            $info['email'] = Diffusion::sendEmail(
-                $newUser->email,
-                // ADD: El idioma debe ser determinado en el
-                // futuro mediante la config del usuario
-                EmailTemplate::accountActivation($code)
+        if (isset($body->send_email)) {
+            if ($body->send_email == 'true') {
+                $info['email'] = Diffusion::sendEmail(
+                    $newUser->email,
+                    // TODO: El idioma debe ser determinado en el
+                    // futuro mediante la config del usuario
+                    EmailTemplate::accountActivation($code)
+                );
+            } elseif ($body->send_email == 'false') {
+                $info['email'] = [
+                    'response' => 'email not sended',
+                    'temporal_code' => $code
+                ];
+            } else throw new Exception(
+                "the {send_email} field should be: 'true' or 'false'",
+                400
             );
         } elseif ($body->send_email == 'false') {
             $info['email'] = [

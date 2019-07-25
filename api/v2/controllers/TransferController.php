@@ -110,7 +110,7 @@ class TransferController implements IController
             "create_date" => $currentTime,
         ])->execute();
 
-        // TODO: Hacer funcionar las notificaciones
+        // TODO: Apando la funsion de notificaciones. REPARAR esto despues
 
         // if (isset($user->player_id) and $user->player_id != '') {
         //     $info['notifications']['user'] =
