@@ -27,12 +27,13 @@ class EmailTemplate
 
     public function __call(string $templateType, array $arguments): EmailTemplate
     {
-        [$data] = $arguments;
+        if (empty($arguments[0])) $data = null;
+        else [$data] = $arguments;
 
         $flatHtml = $this->blade->render(
             $templateType,
             array_merge($this->arrayContentDefault, [
-                'data' => $data
+                'data' => (object) $data
             ])
         );
         $this->html = Minify::html($flatHtml);

@@ -28,7 +28,8 @@ class HistoryController implements IController
         foreach ($arrayHistory as $history) {
             $history->video = Querys::table('videos')
                 ->select(self::VIDEO_DATA)
-                ->where('video_id', $history->video)->get();
+                ->where('video_id', $history->video)
+                ->get();
 
             $_arrayHistory[] = $history;
         }
@@ -49,7 +50,8 @@ class HistoryController implements IController
 
         $history->video = Querys::table('videos')
             ->select(self::VIDEO_DATA)
-            ->where('video_id', $req->params->id)->get();
+            ->where('video_id', $history->video)
+            ->get();
 
         JsonResponse::read($history);
     }
@@ -66,10 +68,10 @@ class HistoryController implements IController
                 'video' => $video_id
             ])->get();
 
-        if ($total_views) {
+        if ($total_views > 0) {
             $historyQuery->update($history = (object) [
                 'total_views' => ++$total_views,
-                'update_date' => Time::current()->utc
+                'create_date' => Time::current()->utc
             ])->where([
                 'user_id' => Auth::$id,
                 'video' => $video_id
@@ -79,7 +81,7 @@ class HistoryController implements IController
                 'user_id' => Auth::$id,
                 'video' => $video_id,
                 'total_views' => 1,
-                'update_date' => Time::current()->utc
+                'create_date' => Time::current()->utc
             ])->execute();
             unset($history->video);
         }

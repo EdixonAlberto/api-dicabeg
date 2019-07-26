@@ -3,37 +3,50 @@
 namespace V2\Controllers;
 
 use Exception;
+use V2\Modules\Time;
 use V2\Modules\Access;
 use V2\Database\Querys;
 use V2\Middleware\Auth;
 use V2\Modules\Security;
 use V2\Modules\Diffusion;
-use V2\Email\EmailTemplate;
+use V2\Interfaces\IResource;
 use V2\Modules\JsonResponse;
+use V2\Modules\EmailTemplate;
 
-class AccountController
+class AccountController implements IResource
 {
     public static function activation($req): void
     {
         $body = $req->body;
 
         if (isset($body->temporal_code)) {
-            $id = Querys::table('accounts')->select('user_id')
+            $user = Querys::table('accounts')->select(['user_id'])
                 ->where('temporal_code', $body->temporal_code)
                 ->get(function () {
-                    throw new Exception('code invalid or used', 400);
+                    throw new Exception('code invalid', 400);
                 });
 
+            $user->email = Querys::table('users')->select('email')
+                ->where('user_id', $user->user_id)
+                ->get();
+
             Querys::table('users')->update(['activated' => true])
-                ->where('user_id', $id)
+                ->where('user_id', $user->user_id)
                 ->execute();
 
-            Querys::table('accounts')->update(['temporal_code' => 'used'])
-                ->where('user_id', $id)
-                ->execute();
+            Querys::table('accounts')->update([
+                'last_email_sended' => 'accountCreated',
+                'temporal_code' => 'used'
+            ])->where('user_id', $user->user_id)->execute();
+
+            $info['email'] = Diffusion::sendEmail(
+                $body->send_email,
+                $user->email,
+                'accountCreated'
+            );
         } else throw new Exception('temporal_code is not set', 400);
 
-        JsonResponse::OK('activated account');
+        JsonResponse::OK('activated account', $info);
     }
 
     public static function login($req): void
@@ -97,33 +110,32 @@ class AccountController
 
             $code = Security::generateCode(6);
 
+            Time::$timeZone = Querys::table('account')
+                ->select('time_zone')
+                ->where('user_id', $user->user_id)
+                ->get();
+
             Querys::table('accounts')->update([
-                'temporal_code' => $code
+                'last_email_sended' => 'accountRecovery',
+                'temporal_code' => $code,
+                'code_create_date' => Time::current()
             ])->where('user_id', $user->user_id)->execute();
 
-
-            if (isset($body->send_email)) {
-                if ($body->send_email == 'true') {
-                    $emailStatus = Diffusion::sendEmail(
-                        $user->email,
-                        EmailTemplate::accountRecovery($code)
+            $info['email'] = Diffusion::sendEmail(
+                $body->send_email,
+                $user->email,
+                function () use ($code) {
+                    return (new EmailTemplate)->accountRecovery(
+                        ['code' => $code]
                     );
-                } elseif ($body->send_email == 'false') {
-                    $emailStatus = [
-                        'response' => 'email not sended',
-                        'temporal_code' => $code
-                    ];
                 }
-            } else throw new Exception(
-                "the send_email field should be: 'true' or 'false'",
-                400
             );
 
-            JsonResponse::OK($emailStatus);
+            JsonResponse::OK($info);
         } elseif (isset($body->temporal_code)) {
             if (isset($body->password)) {
                 $user = Querys::table('accounts')
-                    ->select(['user_id', 'time_zone'])
+                    ->select(['user_id', 'email', 'time_zone'])
                     ->where('temporal_code', $body->temporal_code)
                     ->get(function () {
                         throw new Exception('code incorrect or used', 400);
@@ -138,11 +150,22 @@ class AccountController
                     });
 
                 Querys::table('accounts')->update([
+                    'last_email_sended' => '',
                     'temporal_code' => 'used'
                 ])->where('user_id', $user->user_id)->execute();
+
+                $info['email'] = Diffusion::sendEmail(
+                    $body->send_email,
+                    $user->email,
+                    function () {
+                        return (new EmailTemplate)->successfull([
+                            'message' => 'Has recuperado tu cuenta Dicabeg'
+                        ]);
+                    }
+                );
             } else throw new Exception('attribute {password} not set', 400);
 
-            JsonResponse::OK('recovery successful, password updated');
+            JsonResponse::OK('recovery successful, password updated', $info);
         } else throw new Exception(
             'email or temporal_code is not set',
             400
@@ -158,23 +181,24 @@ class AccountController
                 throw new Exception('email not found', 404);
             });
 
-        $temporalCode = Querys::table('accounts')
-            ->select('temporal_code')
+        $account = Querys::table('accounts')
+            ->select(['last_email_sended', 'temporal_code'])
             ->where('user_id', $user->user_id)
             ->get();
 
-        if ($temporalCode == 'used') throw new Exception(
+        if ($account->temporal_code == 'used') throw new Exception(
             'temporal_code not generated for this account',
             404
         );
 
-        Querys::table('accounts')->update([
-            'temporal_code' => $temporalCode
-        ])->where('user_id', $user->user_id)->execute();
-
         $emailStatus = Diffusion::sendEmail(
+            'true',
             $user->email,
-            EmailTemplate::accountActivation($temporalCode)
+            function () use ($account) {
+                return (new EmailTemplate)->$account->last_email_sended([
+                    'code' => $account->temporal_code
+                ]);
+            }
         );
 
         JsonResponse::OK('send email', $emailStatus);

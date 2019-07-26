@@ -24,7 +24,7 @@ class JsonResponse extends RouteManager
     public static function created(
         $content,
         string $path = null,
-        string $info = null
+        $info = null
     ): void {
 
         $response = [

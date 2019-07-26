@@ -10,8 +10,8 @@ use V2\Middleware\Auth;
 use V2\Modules\Security;
 use V2\Modules\Username;
 use V2\Modules\Diffusion;
-use V2\Email\EmailTemplate;
 use V2\Modules\JsonResponse;
+use V2\Modules\EmailTemplate;
 use V2\Interfaces\IController;
 use V2\Controllers\ReferredController;
 
@@ -82,7 +82,7 @@ class UserController implements IController
         $code = Security::generateCode(6);
         Time::$timeZone = $body->time_zone;
 
-        $userInsert = $userQuery->insert($newUser = (object) [
+        $userQuery->insert($newUser = (object) [
             'user_id' => $id,
             'username' => $username,
             'email' => Format::email($body->email),
@@ -91,11 +91,13 @@ class UserController implements IController
             'create_date' => Time::current()->utc
         ])->execute();
 
-        $accountInsert = Querys::table('accounts')->insert([
+        Querys::table('accounts')->insert([
             'user_id' => $id,
+            'last_email_sended' => 'accountActivation',
             'temporal_code' => $code,
             'referred_id' => $user->user_id ?? null,
-            'time_zone' => $body->time_zone
+            'time_zone' => $body->time_zone,
+            'code_create_date' => Time::current()->utc
         ])->execute();
 
         if (isset($body->invite_code)) {
@@ -107,9 +109,7 @@ class UserController implements IController
 
             // ADD: crear modelos de contenido para las notificaciones
             // ademas de tener el contenido en varios idiomas
-
             // TODO: Apagando notificaciones. Reparar despues
-
             // if (isset($user->player_id) and $user->player_id != '') {
             //     $info['notification'] = Diffusion::sendNotification(
             //         [$user->player_id],
@@ -118,29 +118,15 @@ class UserController implements IController
             // }
         }
 
-        if (isset($body->send_email)) {
-            if ($body->send_email == 'true') {
-                $info['email'] = Diffusion::sendEmail(
-                    $newUser->email,
-                    // TODO: El idioma debe ser determinado en el
-                    // futuro mediante la config del usuario
-                    EmailTemplate::accountActivation($code)
+        $info['email'] = Diffusion::sendEmail(
+            $body->send_email,
+            $newUser->email,
+            function () use ($code) {
+                return (new EmailTemplate)->accountActivation(
+                    ['code' => $code]
                 );
-            } elseif ($body->send_email == 'false') {
-                $info['email'] = [
-                    'response' => 'email not sended',
-                    'temporal_code' => $code
-                ];
-            } else throw new Exception(
-                "the {send_email} field should be: 'true' or 'false'",
-                400
-            );
-        } elseif ($body->send_email == 'false') {
-            $info['email'] = [
-                'response' => 'not sended',
-                'temporal_code' => $code
-            ];
-        }
+            }
+        );
 
         $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/accounts/activation';
         JsonResponse::created($newUser, $path, $info);
