@@ -23,16 +23,18 @@ interface IResource
    ];
 
    const ACCOUNTS_COLUMNS = [
+      'last_email_sended',
       'temporal_code',
       'referred_id',
-      'time_zone'
+      'time_zone',
+      'code_create_date'
    ];
 
    const TRANSFERS_COLUMNS = [
       'user_id',
       'transfer_code',
       'concept',
-      'username',
+      'responsible',
       'amount',
       'previous_balance',
       'current_balance',
@@ -46,11 +48,10 @@ interface IResource
    ];
 
    const HISTORY_COLUMNS = [
-      'history_id',
       'user_id',
       'video',
       'total_views',
-      'update_date'
+      'create_date'
    ];
 
    const VIDEOS_COLUMNS = [

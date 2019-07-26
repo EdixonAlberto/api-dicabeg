@@ -1,7 +1,3 @@
-DELETE FROM "history";
-DELETE FROM "videos";
-DELETE FROM "options";
-
 INSERT INTO "videos" ("video_id", "name", "link", "provider_logo", "question", "correct", "responses", "total_views", "create_date", "update_date")
 VALUES (
    'd415fdbe-b1bb-4d09-a8e7-154468abfc63',

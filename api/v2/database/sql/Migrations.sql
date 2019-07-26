@@ -24,9 +24,11 @@ CREATE TABLE "users" (
 -- ACCOUNTS
 CREATE TABLE "accounts" (
   "user_id" VARCHAR(36) NOT NULL,
+  "last_email_sended" VARCHAR(20) NULL DEFAULT NULL,
   "temporal_code" VARCHAR(6) NULL DEFAULT NULL,
   "referred_id" VARCHAR(36) NULL DEFAULT NULL,
   "time_zone" VARCHAR NOT NULL,
+  "code_create_date" TIMESTAMP NULL,
   CONSTRAINT "accounts_user_id_PK" PRIMARY KEY ("user_id"),
   CONSTRAINT "accounts_user_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id"),
   CONSTRAINT "accounts_referred_id_UQ" UNIQUE ("referred_id")
@@ -36,7 +38,7 @@ CREATE TABLE "transfers" (
   "user_id" VARCHAR(36) NOT NULL,
   "transfer_code" VARCHAR(6) NOT NULL,
   "concept" VARCHAR(40) NULL DEFAULT NULL,
-  "username" VARCHAR(20) NOT NULL,
+  "responsible" VARCHAR(36) NOT NULL,
   "amount" NUMERIC DEFAULT 0.00000,
   "previous_balance" NUMERIC DEFAULT 0.00000,
   "current_balance" NUMERIC DEFAULT 0.00000,
@@ -47,9 +49,7 @@ CREATE TABLE "transfers" (
 CREATE TABLE "commissions" (
   "user_id" VARCHAR(36) NOT NULL,
   "amount" NUMERIC DEFAULT 0.00000,
-  -- commission expresada en %
-  "commission" INTEGER DEFAULT 5,
-  "gain" NUMERIC DEFAULT 0.00000,
+  "commission" NUMERIC DEFAULT 0.00000,
   "create_date" TIMESTAMP NULL,
   CONSTRAINT "commissions_user_id_UQ" UNIQUE ("user_id")
 );
@@ -81,7 +81,7 @@ CREATE TABLE "history" (
   "user_id" VARCHAR(36) NOT NULL,
   "video" VARCHAR(36) NOT NULL,
   "total_views" INTEGER DEFAULT 0,
-  "update_date" TIMESTAMP NULL,
+  "create_date" TIMESTAMP NULL,
   CONSTRAINT "history_user_id_FK" FOREIGN KEY ("user_id") REFERENCES users("user_id"),
   CONSTRAINT "history_video_FK" FOREIGN KEY ("video") REFERENCES videos("video_id")
 );
