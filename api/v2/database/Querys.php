@@ -4,14 +4,14 @@ namespace V2\Database;
 
 class Querys extends Execute
 {
-    public static function table(string $table) : Querys
+    public static function table(string $table): Querys
     {
         $query = new Querys;
         $query->table = $table;
         return $query;
     }
 
-    public function select($fields) : Querys
+    public function select($fields): Querys
     {
         $_fields = '';
         if (is_array($fields)) {
@@ -19,7 +19,6 @@ class Querys extends Execute
                 $_fields .= "{$field}, ";
             }
             $_fields = substr($_fields, 0, strrpos($_fields, ','));
-
         } else $_fields = $fields;
 
         $this->sql = "SELECT {$_fields} FROM {$this->table}";
@@ -30,11 +29,11 @@ class Querys extends Execute
     public function group(int $number)
     {
         $start = 10 * ($number - 1);
-        $this->sql .= " OFFSET {$start} LIMIT 10";
+        $this->sql .= " ORDER BY create_date OFFSET {$start} LIMIT 10";
         return $this;
     }
 
-    public function insert($Sets) : Querys
+    public function insert($Sets): Querys
     {
         $setInsert = $setValues = '';
         foreach ($Sets as $set => $value) {
@@ -56,7 +55,6 @@ class Querys extends Execute
         foreach ($Sets as $set => $value) {
             if (!is_null($value)) {
                 $setUpdate .= "{$set} = ?, ";
-
             } else {
                 if (is_array($Sets)) unset($Sets[$set]);
                 else unset($Sets->$set);
@@ -76,7 +74,7 @@ class Querys extends Execute
         return $this;
     }
 
-    public function where($column, string $value = null) : Querys
+    public function where($column, string $value = null): Querys
     {
         $_column = '';
         if (is_array($column)) {
@@ -88,7 +86,6 @@ class Querys extends Execute
             $_column = substr($_column, 0, strrpos($_column, 'and') - 1);
             $this->sql .= " WHERE {$_column}";
             $this->value = $_value;
-
         } else {
             $_column = $column;
             $this->sql .= " WHERE {$_column} = ?";
