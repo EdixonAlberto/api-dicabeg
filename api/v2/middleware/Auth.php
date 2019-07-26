@@ -3,12 +3,13 @@
 namespace V2\Middleware;
 
 use Exception;
+use V2\Modules\User;
 use V2\Libraries\Jwt;
-use V2\Database\Querys;
 
 class Auth
 {
     public static $id;
+    public static $name;
 
     public static function execute(object $headers): string
     {
@@ -25,11 +26,12 @@ class Auth
 
         $payload = Jwt::verific($token, $key);
 
-        $user = Querys::table('users')
-            ->select(['user_id', 'activated'])
-            ->where('user_id', $payload->sub)->get();
+        new User($payload->sub);
 
-        if ($user->activated) return self::$id = $user->user_id;
+        self::$id = User::$id;
+        self::$name = 'Estimado usuario'; // TODO: colocar el nombre y apellido del usuario
+
+        if (User::$activated) return User::$id;
         else throw new Exception('account not activated', 403);
     }
 }

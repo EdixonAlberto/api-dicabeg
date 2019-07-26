@@ -8,7 +8,7 @@
 
 @component('component.content', [
         'imageName' => 'key.png',
-        'user' => $data->user
+        'user' => V2\Middleware\Auth::$name
     ])
     @slot('content_first')
         <p>
