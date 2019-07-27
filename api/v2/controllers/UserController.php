@@ -121,10 +121,11 @@ class UserController implements IController
         $info['email'] = Diffusion::sendEmail(
             $body->send_email,
             $newUser->email,
-            function () use ($code) {
-                return (new EmailTemplate)->accountActivation(
-                    ['code' => $code]
-                );
+            function ($send) use ($code) {
+                if ($send) return (new EmailTemplate)->accountActivation([
+                    'code' => $code
+                ]);
+                else return $code;
             }
         );
 

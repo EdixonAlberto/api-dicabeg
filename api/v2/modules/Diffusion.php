@@ -12,22 +12,25 @@ class Diffusion
     public static function sendEmail(
         string $send,
         string $email,
-        callable $functionBuildTemplate
-    ): object {
+        callable $functionTemplate
+    ): array {
         if (isset($send)) {
             if ($send == 'true') {
-                $template = $functionBuildTemplate;
+                $template = $functionTemplate(true);
 
-                $response = SendGrid::generateEmail(
+                $response['email'] = SendGrid::generateEmail(
                     $email,
                     $template::SUPPORT_EMAIL,
                     $template::$subject,
                     $template->html
                 )->send();
             } elseif ($send == 'false') {
-                $response = (object) [
-                    'status' => 200,
-                    'response' => 'not sended'
+                $code = $functionTemplate(false) ?? null;
+
+                $response['email'] = (object) [
+                    'response' => 'email not sended',
+                    'destiny_email' => $email,
+                    'temporal_code' => $code
                 ];
             } else throw new Exception(
                 "the send_email field should be: 'true' or 'false'",
