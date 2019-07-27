@@ -15,7 +15,7 @@ class Format
         $email = filter_var($email, FILTER_VALIDATE_EMAIL);
         $emailFormat = '/^\S+\@\S+\.\S+$/';
 
-        if ($result = preg_match($emailFormat, $email)) return $email;
+        if (preg_match($emailFormat, $email)) return $email;
         else throw new Exception('format the email incorrect', 400);
     }
 

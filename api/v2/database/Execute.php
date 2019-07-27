@@ -9,7 +9,7 @@ use V2\Database\PgSqlConnection;
 class Execute
 {
     // TODO: devolver el numero de resultados obtenidos o restantes
-    public function get($callback = false)
+    public function get(callable $callback = null)
     {
         $result = self::execute($callback);
 
@@ -27,7 +27,7 @@ class Execute
         return $queryResult;
     }
 
-    public function getAll($callback = false)
+    public function getAll(callable $callback = null)
     {
         $result = self::execute($callback);
 
@@ -35,7 +35,6 @@ class Execute
             for ($i = 0; $i < $result; $i++)
                 $arrayQuery[] = $this->query->fetch(PDO::FETCH_OBJ);
             return $arrayQuery;
-
         } else return false;
     }
 
@@ -48,7 +47,7 @@ class Execute
     //     if ($rows == $found) $function();
     // }
 
-    public function execute($callback = false)
+    public function execute(callable $callback = null)
     {
         $query = PgSqlConnection::connection()->prepare($this->sql);
         $queryType = substr($this->sql, 0, 6);
@@ -60,15 +59,12 @@ class Execute
             if (isset($this->value)) {
                 if (is_array($this->value)) {
                     foreach ($this->value as $value) $query->bindValue($index++, $value);
-
                 } else $query->bindValue($index, $this->value);
             }
-
         } elseif ($queryType == 'SELECT' or $queryType == 'DELETE') {
             if (isset($this->value)) {
                 if (is_array($this->value)) {
                     foreach ($this->value as $value) $query->bindValue($index++, $value);
-
                 } else $query->execute([$this->value]);
             }
         }
@@ -83,12 +79,8 @@ class Execute
             if ($rows > 0) {
                 $this->query = $query;
                 return $rows;
-
-            } else {
-                if ($callback) $callback();
-                else return false;
-            }
-
+            } else if (!is_null($callback)) $callback();
+            else return false;
         } else throw new Exception($error, 500);
     }
 }
