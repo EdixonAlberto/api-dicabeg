@@ -45,13 +45,10 @@ class UserController implements IController
     {
         $body = $req->body;
 
-        if (!isset($body->password))
-            throw new Exception('passsword is not set', 401);
-
-        if (!isset($body->time_zone))
+        if (isset($body->time_zone) == false)
             throw new Exception('time_zone is not set', 400);
 
-        if (!isset($body->send_email))
+        if (isset($body->send_email) == false)
             throw new Exception('send_email is not set', 400);
 
         $userQuery = Querys::table('users');
@@ -77,6 +74,7 @@ class UserController implements IController
             ])->where('user_id', $user_id)->get();
         }
 
+        $pass = Security::generatePass($body->password ?? null);
         $username = Username::validate($body->username);
         $id = Security::generateID();
         $code = Security::generateCode(6);
@@ -87,7 +85,7 @@ class UserController implements IController
             'username' => $username,
             'email' => Format::email($body->email),
             'invite_code' => Security::generateCode(8),
-            'password' => Security::generateHash($body->password),
+            'password' => $pass,
             'create_date' => Time::current()->utc
         ])->execute();
 
@@ -129,7 +127,7 @@ class UserController implements IController
             }
         );
 
-        $path = 'https://' . $_SERVER['SERVER_NAME'] . '/v2/accounts/activation';
+        $path = "https://{$_SERVER['SERVER_NAME']}/v2/accounts/activation";
         JsonResponse::created($newUser, $path, $info);
     }
 

@@ -2,24 +2,35 @@
 
 namespace V2\Modules;
 
-use Db\Querys;
+use Exception;
 use V2\Libraries\Gui;
 
 class Security
 {
     private static $algo = PASSWORD_DEFAULT;
     private static $options = ['cost' => 11];
+    private const MIN_LENGTH = 8;
+    private const MAX_LENGTH = 15;
 
-    public static function generateHash($data = false)
+    public static function generatePass($pass)
     {
-        $pass = $data ?: $data . time() . rand();
-        return password_hash($data, self::$algo, self::$options);
+        // $pass = $data ?: $data . time() . rand();
+
+        if (is_null($pass)) throw new Exception('password is not set', 400);
+        elseif (
+            strlen($pass) >= self::MIN_LENGTH
+            and strlen($pass) <= self::MAX_LENGTH
+        ) return password_hash($pass, self::$algo, self::$options);
+        else throw new Exception(
+            "{self::MIN_LENGTH} <= password <= self::MAX_LENGTH",
+            400
+        );
     }
 
     public static function rehash($hash)
     {
         $needsRehash = password_needs_rehash($hash, self::$algo, self::$options);
-        return $needsRehash ? self::generateHash($hash, true) : false;
+        return $needsRehash ? self::generatePass($hash, true) : false;
     }
 
     public static function generateID()
