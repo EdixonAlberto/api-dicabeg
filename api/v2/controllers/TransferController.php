@@ -4,11 +4,14 @@ namespace V2\Controllers;
 
 use Exception;
 use V2\Modules\Time;
+use V2\Modules\User;
 use V2\Modules\Format;
 use V2\Database\Querys;
 use V2\Middleware\Auth;
 use V2\Modules\Security;
+use V2\Modules\Diffusion;
 use V2\Modules\JsonResponse;
+use V2\Modules\EmailTemplate;
 use V2\Interfaces\IController;
 
 class TransferController implements IController
@@ -185,6 +188,34 @@ class TransferController implements IController
         $path = "https://{$_SERVER['SERVER_NAME']}/v2/transfers/{$transfer->transfer_code}";
 
         JsonResponse::created($transfer, $path, $info);
+    }
+
+    public static function send_report($req): void
+    {
+        $body = $req->body;
+
+        $report = Querys::table('commissions')
+            ->select(self::COMMISSIONS_COLUMNS)
+            ->where('user_id', User::$id)
+            ->get();
+
+        // Querys::table('accounts')->update([''])->execute();
+
+        $info = Diffusion::sendEmail(
+            $body->send_email,
+            User::$email,
+            function ($send) use ($report) {
+                if ($send) return (new EmailTemplate)->report($report = [
+                    'id' => $report->user_id,
+                    'amount' => $report->amount,
+                    'commission' => $report->commission,
+                    'dateLast' => $report->create_date
+                ]);
+            }
+        );
+        $info['report'] = $report;
+
+        JsonResponse::OK('report sended', $info);
     }
 
     public static function update($req): void

@@ -41,6 +41,13 @@ interface IResource
       'create_date'
    ];
 
+   const COMMISSIONS_COLUMNS = [
+      'user_id',
+      'amount',
+      'commission',
+      'create_date'
+   ];
+
    const REFERREDS_COLUMNS = [
       'user_id',
       'referred_id',
