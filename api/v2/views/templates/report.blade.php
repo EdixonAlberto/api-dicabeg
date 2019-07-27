@@ -38,7 +38,7 @@
         </tr>
         <tr>
             <td>
-                <span>MES: {{ $data->month }}</span>
+                {{-- <span>MES: {{ $data->month }}</span> --}}
             </td>
         </tr>
     </table>
@@ -52,13 +52,13 @@
         <tr id="report-leyenda">
             <td></td>
             <td>Monto</td>
-            <td>Ganancia</td>
+            <td>Comisión</td>
             <td>Ultima Fecha</td>
         </tr>
         <tr id="report-value">
         <td>TOTAL</td>
             <td>{{ $data->amount }}</td>
-            <td>{{ $data->gain }}</td>
+            <td>{{ $data->commission }}</td>
             <td>{{ $data->dateLast }}</td>
         </tr>
     </table>

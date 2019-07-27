@@ -13,7 +13,7 @@
     <tr>
         <td colspan="2">
             @if (isset($user))
-                <p>Hola {{ $user }}.</p>
+                <p>{{ $user }}.</p>
             @endif
             {{ $content_first }}
         </td>
