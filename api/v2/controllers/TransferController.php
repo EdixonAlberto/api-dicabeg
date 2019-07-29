@@ -6,9 +6,9 @@ use Exception;
 use V2\Modules\Time;
 use V2\Modules\User;
 use V2\Modules\Format;
+use Modules\Tools\Code;
 use V2\Database\Querys;
 use V2\Middleware\Auth;
-use V2\Modules\Security;
 use V2\Modules\Diffusion;
 use V2\Modules\JsonResponse;
 use V2\Modules\EmailTemplate;
@@ -108,7 +108,7 @@ class TransferController implements IController
         if ($receptor->activated == false)
             throw new Exception("account not activated: {$body->receptor}", 400);
 
-        $transfer_code = Security::generateCode(6);
+        $transfer_code = Code::create();
         $userBalance = $user->balance - $amount;
         $receptorBalance = $receptor->balance + $transferAmount;
         $currentTime = Time::current()->utc;
@@ -185,12 +185,12 @@ class TransferController implements IController
         //     );
         // }
 
-        $path = "https://{$_SERVER['SERVER_NAME']}/v2/transfers/{$transfer->transfer_code}";
+        $path = "https://{$_SERVER['SERVER_NAME']}/api/transfers/{$transfer->transfer_code}";
 
         JsonResponse::created($transfer, $path, $info);
     }
 
-    public static function send_report($req): void
+    public static function sendReport($req): void
     {
         $body = $req->body;
 
@@ -199,21 +199,23 @@ class TransferController implements IController
             ->where('user_id', User::$id)
             ->get();
 
-        // Querys::table('accounts')->update([''])->execute();
-
-        $info = Diffusion::sendEmail(
-            $body->send_email,
-            User::$email,
-            function ($send) use ($report) {
-                if ($send) return (new EmailTemplate)->report($report = [
+        if ($report) {
+            $template = new EmailTemplate;
+            $info['email_report'] = Diffusion::sendEmail(
+                $body->send_email,
+                $template::SUPPORT_EMAIL,
+                $template->report($report = [
                     'id' => $report->user_id,
                     'amount' => $report->amount,
                     'commission' => $report->commission,
                     'dateLast' => $report->create_date
-                ]);
-            }
+                ])
+            );
+            $info['report'] = $report;
+        } else throw new Exception(
+            'report not generated: transfers not exist',
+            400
         );
-        $info['report'] = $report;
 
         JsonResponse::OK('report sended', $info);
     }

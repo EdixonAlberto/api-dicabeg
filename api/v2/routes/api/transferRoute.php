@@ -8,4 +8,4 @@ Route::midd('Auth')->get('/transfers/page/{nro}/date-order/{order}', 'TransferCo
 
 Route::midd('Auth')->get('/transfers/{code}', 'TransferController::show');
 
-Route::midd('Auth')->post('/transfers/send_report', 'TransferController::send_report');
+Route::midd('Auth')->post('/transfers/send_report', 'TransferController::sendReport');
