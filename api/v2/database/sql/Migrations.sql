@@ -29,9 +29,7 @@ CREATE TABLE "accounts" (
   "referred_id" VARCHAR(36) NULL DEFAULT NULL,
   "time_zone" VARCHAR NOT NULL,
   "code_create_date" TIMESTAMP NULL,
-  CONSTRAINT "accounts_email_PK" PRIMARY KEY ("email"),
-  CONSTRAINT "accounts_email_FK" FOREIGN KEY("email") REFERENCES users("email"),
-  CONSTRAINT "accounts_referred_id_UQ" UNIQUE ("referred_id")
+  CONSTRAINT "accounts_email_PK" PRIMARY KEY ("email")
 );
 -- TRANSFERS
 CREATE TABLE "transfers" (

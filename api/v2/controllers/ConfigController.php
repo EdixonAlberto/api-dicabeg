@@ -34,8 +34,10 @@ class ConfigController implements IResource
                         throw new Exception('could not update email', 500);
                     });
 
-                Querys::table('accounts')->update(['temporal_code' => 'used'])
-                    ->where('email', User::$email)
+                Querys::table('accounts')->update([
+                    'email' => $newEmail,
+                    'temporal_code' => 'used'
+                ])->where('email', User::$email)
                     ->execute();
             }
 
