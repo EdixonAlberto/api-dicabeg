@@ -21,8 +21,8 @@
 
         <tr>
             <td id="td-portada" colspan="2">
-                <img class="portada" id="port-l" src="public/img/portada_l.jpg" alt="portada_r" />
-                <img class="portada" id="port-r" src="public/img/portada_r.jpg" alt="portada_l" />
+                <img class="portada" id="port-l" src="img/portada_l.jpg" alt="portada_r" />
+                <img class="portada" id="port-r" src="img/portada_r.jpg" alt="portada_l" />
                 <h2><strong class="color">¡Bienvenid@ a Dicabeg!</strong></h2>
             </td>
         </tr>
