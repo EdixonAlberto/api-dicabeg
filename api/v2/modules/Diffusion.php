@@ -4,6 +4,7 @@ namespace V2\Modules;
 
 use V2\Libraries\SendGrid;
 use V2\Libraries\OneSignal;
+use V2\Modules\EmailTemplate;
 
 class Diffusion
 {
@@ -12,32 +13,25 @@ class Diffusion
     public static function sendEmail(
         string $send,
         string $email,
-        callable $functionTemplate
-    ): array {
-        if (isset($send)) {
-            if ($send == 'true') {
-                $template = $functionTemplate(true);
-
-                $response['email'] = SendGrid::generateEmail(
-                    $email,
-                    $template::SUPPORT_EMAIL,
-                    $template::$subject,
-                    $template->html
-                )->send();
-            } elseif ($send == 'false') {
-                $code = $functionTemplate(false) ?? null;
-
-                $response['email'] = (object) [
-                    'response' => 'email not sended',
-                    'destiny_email' => $email,
-                    'temporal_code' => $code
-                ];
-            } else throw new Exception(
-                "the send_email field should be: 'true' or 'false'",
-                400
-            );
-        } else throw new Exception("send_email is not set", 400);
-
+        EmailTemplate $template
+    ): object {
+        if ($send == 'true') {
+            $response = SendGrid::generateEmail(
+                $email,
+                $template::SUPPORT_EMAIL,
+                $template::$subject,
+                $template->html
+            )->send();
+        } elseif ($send == 'false') {
+            $response = (object) [
+                'response' => 'email not sended',
+                'destiny_email' => $email,
+                'temporal_code' => $template->code
+            ];
+        } else throw new Exception(
+            "the send_email field should be: 'true' or 'false'",
+            400
+        );
         return $response;
     }
 

@@ -116,15 +116,10 @@ class UserController implements IController
             // }
         }
 
-        $info['email'] = Diffusion::sendEmail(
+        $info['email_accountActivation'] = Diffusion::sendEmail(
             $body->send_email,
             $newUser->email,
-            function ($send) use ($code) {
-                if ($send) return (new EmailTemplate)->accountActivation([
-                    'code' => $code
-                ]);
-                else return $code;
-            }
+            (new EmailTemplate)->accountActivation(['code' => $code])
         );
 
         $path = "https://{$_SERVER['SERVER_NAME']}/v2/accounts/activation";

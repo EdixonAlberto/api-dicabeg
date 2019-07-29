@@ -41,12 +41,10 @@ class AccountController implements IResource
                 ->where('user_id', $id)
                 ->execute();
 
-            $info['email'] = Diffusion::sendEmail(
+            $info['email_accountCreated'] = Diffusion::sendEmail(
                 $body->send_email,
                 $body->email,
-                function ($send) {
-                    if ($send) return (new EmailTemplate)->accountCreated();
-                }
+                (new EmailTemplate)->accountCreated()
             );
         } else throw new Exception('email or temporal_code is not set', 400);
 
@@ -134,14 +132,12 @@ class AccountController implements IResource
                 'temporal_code' => 'used'
             ])->where('user_id', $id)->execute();
 
-            $info['email'] = Diffusion::sendEmail(
+            $info['email_successfull'] = Diffusion::sendEmail(
                 $body->send_email,
                 $body->email,
-                function ($send) {
-                    if ($send) return (new EmailTemplate)->successfull([
-                        'message' => 'Has recuperado tu cuenta Dicabeg'
-                    ]);
-                }
+                (new EmailTemplate)->successfull([
+                    'message' => 'Has recuperado tu cuenta Dicabeg'
+                ])
             );
 
             JsonResponse::OK('recovery successful, password updated', $info);
@@ -165,15 +161,10 @@ class AccountController implements IResource
                 'code_create_date' => Time::current()->utc
             ])->where('user_id', $user->user_id)->execute();
 
-            $info['email'] = Diffusion::sendEmail(
+            $info['email_accountRecovery'] = Diffusion::sendEmail(
                 $body->send_email,
                 $body->email,
-                function ($send) use ($code) {
-                    if ($send) return (new EmailTemplate)->accountRecovery([
-                        'code' => $code
-                    ]);
-                    else return $code;
-                }
+                (new EmailTemplate)->accountRecovery(['code' => $code])
             );
 
             JsonResponse::OK('email sended', $info);
@@ -201,14 +192,10 @@ class AccountController implements IResource
             404
         );
 
-        $emailStatus = Diffusion::sendEmail(
-            'true',
-            $user->email,
-            function () use ($account) {
-                return (new EmailTemplate)->$account->last_email_sended([
-                    'code' => $account->temporal_code
-                ]);
-            }
+        $info['email_' . $emailType] = Diffusion::sendEmail(
+            $body->send_email,
+            $body->email,
+            (new EmailTemplate)->$emailType(['code' => $code])
         );
 
         JsonResponse::OK('send email', $emailStatus);

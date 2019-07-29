@@ -28,7 +28,7 @@ class EmailTemplate
 
     public function __call(string $templateType, array $arguments): EmailTemplate
     {
-        if (empty($arguments[0])) $data = null;
+        if (empty($arguments)) $data = null;
         else [$data] = $arguments;
 
         $flatHtml = $this->blade->render(
@@ -38,6 +38,7 @@ class EmailTemplate
             ])
         );
         $this->html = Minify::html($flatHtml);
+        $this->code = $data['code'] ?? null;
         return $this;
     }
 

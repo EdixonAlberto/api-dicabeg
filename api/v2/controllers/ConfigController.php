@@ -36,17 +36,15 @@ class ConfigController implements IResource
             $emailStatus = Diffusion::sendEmail(
                 $body->send_email,
                 $newEmail,
-                function ($send) {
-                    if ($send) return (new EmailTemplate)->successfull([
-                        'message' => 'Has actualizado tu correo electrónico'
-                    ]);
-                }
+                (new EmailTemplate)->successfull([
+                    'message' => 'Has actualizado tu correo electrónico'
+                ])
             );
 
             JsonResponse::OK('email updated', $emailStatus);
         } else {
             // Se notifica al usuario por medio de su email actual
-            $emailStatus['email_advise'] = Diffusion::sendEmail(
+            $info['email_advise'] = Diffusion::sendEmail(
                 $body->send_email,
                 User::$email,
                 function ($send) use ($newEmail) {
@@ -68,15 +66,10 @@ class ConfigController implements IResource
             ])->where('user_id', User::$id)->execute();
 
             // Se envia codigo de activacion al nuevo email
-            $emailStatus['email_activation'] = Diffusion::sendEmail(
+            $info['email_emailUpdate'] = Diffusion::sendEmail(
                 $body->send_email,
                 $newEmail,
-                function ($send) use ($code) {
-                    if ($send) return (new EmailTemplate)->emailUpdate([
-                        'code' => $code
-                    ]);
-                    else return $code;
-                }
+                (new EmailTemplate)->emailUpdate(['code' => $code])
             );
 
             JsonResponse::OK('email sended', $emailStatus);
@@ -105,11 +98,9 @@ class ConfigController implements IResource
             $emailStatus = Diffusion::sendEmail(
                 $body->send_email,
                 User::$email,
-                function ($send) {
-                    if ($send) return (new EmailTemplate)->successfull([
-                        'message' => 'Has actualizado tu contraseña'
-                    ]);
-                }
+                (new EmailTemplate)->successfull([
+                    'message' => 'Has actualizado tu contraseña'
+                ])
             );
 
             JsonResponse::OK('password updated', $emailStatus);
@@ -122,15 +113,10 @@ class ConfigController implements IResource
                 'code_create_date' => Time::current()->utc
             ])->where('user_id', User::$id)->execute();
 
-            $emailStatus = Diffusion::sendEmail(
+            $info['email_passUpdate'] = Diffusion::sendEmail(
                 $body->send_email,
                 User::$email,
-                function ($send) use ($code) {
-                    if ($send) return (new EmailTemplate)->passUpdate([
-                        'code' => $code
-                    ]);
-                    else return $code;
-                }
+                (new EmailTemplate)->passUpdate(['code' => $code])
             );
 
             JsonResponse::OK('email sended', $emailStatus);
