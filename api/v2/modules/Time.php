@@ -3,16 +3,16 @@
 namespace V2\Modules;
 
 use Exception;
+use V2\Modules\User;
 use V2\Database\Querys;
-use V2\Middleware\Auth;
 
 class Time
 {
    public static $timeZone;
 
-   public static function current(): object
+   public static function current(string $timeZone = null): object
    {
-      self::setTimeZone();
+      self::setTimeZone($timeZone);
       $current = $_SERVER['REQUEST_TIME'];
 
       $currentTime = (object) [
@@ -42,17 +42,16 @@ class Time
       return $expirationTime;
    }
 
-   public static function setTimeZone(): void
+   private static function setTimeZone(string $timeZone = null): void
    {
-      if (isset(self::$timeZone)) {
-         date_default_timezone_set(self::$timeZone);
-      } else {
-         self::$timeZone = Querys::table('accounts')
-            ->select('time_zone')
-            ->where('user_id', Auth::$id)
-            ->get();
-
-         date_default_timezone_set(self::$timeZone);
-      }
+      if (is_null($timeZone)) {
+         if (is_null(self::$timeZone)) {
+            self::$timeZone = Querys::table('accounts')
+               ->select('time_zone')
+               ->where('email', User::$email)
+               ->get();
+         }
+      } else self::$timeZone = $timeZone;
+      date_default_timezone_set(self::$timeZone);
    }
 }

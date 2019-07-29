@@ -4,12 +4,14 @@ namespace V2\Controllers;
 
 use Exception;
 use V2\Modules\Time;
+use V2\Modules\User;
 use V2\Modules\Format;
+use Modules\Tools\Code;
 use V2\Database\Querys;
-use V2\Middleware\Auth;
 use V2\Modules\Security;
 use V2\Modules\Username;
 use V2\Modules\Diffusion;
+use Modules\Tools\Password;
 use V2\Modules\JsonResponse;
 use V2\Modules\EmailTemplate;
 use V2\Interfaces\IController;
@@ -33,7 +35,7 @@ class UserController implements IController
     {
         $user = Querys::table('users')
             ->select(self::USERS_COLUMNS)
-            ->where('user_id', Auth::$id)
+            ->where('user_id', User::$id)
             ->get(function () {
                 throw new Exception('user not found', 404);
             });
@@ -56,7 +58,7 @@ class UserController implements IController
         if (isset($body->email)) {
             $email = $userQuery->select('email')
                 ->WHERE('email', $body->email)->get();
-            if ($email) throw new Exception("email exist: {$email}", 404);
+            if ($email) throw new Exception("email exist: $email", 404);
         } else throw new Exception('email is not set', 400);
 
         if (isset($body->invite_code)) {
@@ -74,23 +76,23 @@ class UserController implements IController
             ])->where('user_id', $user_id)->get();
         }
 
-        $pass = Security::generatePass($body->password ?? null);
+        $pass = Password::create($body->password ?? '');
         $username = Username::validate($body->username);
+        $email =  Format::email($body->email);
         $id = Security::generateID();
-        $code = Security::generateCode(6);
-        Time::$timeZone = $body->time_zone;
+        $code = Code::create();
 
         $userQuery->insert($newUser = (object) [
             'user_id' => $id,
             'username' => $username,
-            'email' => Format::email($body->email),
-            'invite_code' => Security::generateCode(8),
+            'email' => $email,
+            'invite_code' => Code::create(),
             'password' => $pass,
-            'create_date' => Time::current()->utc
+            'create_date' => Time::current($body->time_zone)->utc
         ])->execute();
 
         Querys::table('accounts')->insert([
-            'user_id' => $id,
+            'email' => $email,
             'last_email_sended' => 'accountActivation',
             'temporal_code' => $code,
             'referred_id' => $user->user_id ?? null,
@@ -122,7 +124,7 @@ class UserController implements IController
             (new EmailTemplate)->accountActivation(['code' => $code])
         );
 
-        $path = "https://{$_SERVER['SERVER_NAME']}/v2/accounts/activation";
+        $path = "https://{$_SERVER['SERVER_NAME']}/api/accounts/activation";
         JsonResponse::created($newUser, $path, $info);
     }
 
@@ -132,24 +134,23 @@ class UserController implements IController
 
         if (!$body) throw new Exception('body empty', 400);
 
-        $id = Auth::$id;
         $userQuery = Querys::table('users');
 
         if (isset($body->balance)) {
             $currentBalance = Format::number($body->balance);
 
             $oldBalance = $userQuery->select('balance')
-                ->where('user_id', $id)->get();
+                ->where('user_id', User::$id)->get();
 
             $newBalance = $currentBalance + $oldBalance;
 
-            $userQuery->update($user = (object) ['balance' => $newBalance])
-                ->where('user_id', $id)
+            $userQuery->update($user = ['balance' => $newBalance])
+                ->where('user_id', User::$id)
                 ->execute(function () {
                     throw new Exception('not updated balance', 500);
                 });
         } else {
-            $userQuery->update($user = (object) [
+            $userQuery->update($user = [
                 'username' => isset($body->username) ?
                     Username::validate($body->username) : null,
 
@@ -166,7 +167,7 @@ class UserController implements IController
 
                 'update_date' => Time::current()->utc
 
-            ])->where('user_id', $id)
+            ])->where('user_id', User::$id)
                 ->execute(function () {
                     throw new Exception('not updated user', 500);
                 });
@@ -177,32 +178,30 @@ class UserController implements IController
 
     public static function destroy($req): void
     {
-        $id = Auth::$id;
-
         Querys::table('users')->select('user_id')
-            ->where('user_id', $id)
+            ->where('user_id', User::$id)
             ->get(function () {
                 throw new Exception('user not found', 404);
             });
 
         Querys::table('history')->delete()
-            ->where('user_id', $id)
+            ->where('user_id', User::$id)
             ->execute();
 
         Querys::table('referreds')->delete()
-            ->where('user_id', $id)
+            ->where('user_id', User::$id)
             ->execute();
 
         Querys::table('transfers')->delete()
-            ->where('user_id', $id)
+            ->where('user_id', User::$id)
             ->execute();
 
         Querys::table('accounts')->delete()
-            ->where('user_id', $id)
+            ->where('user_id', User::$id)
             ->execute();
 
         Querys::table('users')->delete()
-            ->where('user_id', $id)
+            ->where('user_id', User::$id)
             ->execute();
 
         JsonResponse::removed();
