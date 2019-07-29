@@ -12,17 +12,18 @@ class RouteManager implements IRequest
 
     public function __construct()
     {
-        self::$uri = preg_replace('/\/public\/api/', '', $_SERVER['REQUEST_URI']);
+        self::$uri = preg_replace('/^\/api/', '', $_SERVER['REQUEST_URI']);
         $this->parameters = (object) [];
+        // \var_dump(self::$uri); // DEBUG:
     }
 
     public static function getResource(): string
     {
-        $resourceFound = preg_match('/[a-z]+/', self::$uri, $arrayResource);
-
+        $resourceFound = preg_match('/^\/([a-z]+)\/?/', self::$uri, $arrayResource);
+        // \var_dump($arrayResource); // DEBUG:
         if ($resourceFound) {
-            if (in_array($arrayResource[0], self::RESOURCES)) {
-                self::$resource = trim($arrayResource[0], 's');
+            if (in_array($arrayResource[1], self::RESOURCES)) {
+                self::$resource = trim($arrayResource[1], 's');
                 return self::$resource;
             }
         }
