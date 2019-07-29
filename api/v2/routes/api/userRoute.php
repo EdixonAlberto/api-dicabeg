@@ -10,4 +10,4 @@ Route::midd('Auth')->get('/users', 'UserController::show');
 
 Route::midd('Auth')->delete('/users', 'UserController::destroy');
 
-Route::midd('Auth')->get('/users/page/{nro}', 'UserController::index');
+Route::midd('Auth')->get('/users/page/{nro}/date-order/{order}', 'UserController::index');

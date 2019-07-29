@@ -27,11 +27,9 @@ class RequestManager implements IRequest
             array_shift($arrayValues);
 
             foreach ($arrayValues as $value) {
-                $_params = (object) [
-                    $arrayKeys[$i++] => $value
-                ];
+                $_params[$arrayKeys[$i++]] = $value;
             }
-            return $_params;
+            return (object) $_params;
         } else return (object) [];
     }
 

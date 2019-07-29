@@ -26,7 +26,7 @@ class TransferController implements IController
         $arrayTransfers = Querys::table('transfers')
             ->select(self::TRANSFERS_COLUMNS)
             ->where('user_id', Auth::$id)
-            ->group($req->params->nro)
+            ->group($req->params->nro, $req->params->order)
             ->getAll(function () {
                 throw new Exception('transfers not exist', 404);
             });

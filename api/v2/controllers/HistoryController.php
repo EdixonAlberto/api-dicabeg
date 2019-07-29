@@ -20,7 +20,7 @@ class HistoryController implements IController
         $arrayHistory = Querys::table('history')
             ->select(self::HISTORY_COLUMNS)
             ->where('user_id', Auth::$id)
-            ->group($req->params->nro)
+            ->group($req->params->nro, $req->params->order)
             ->getAll(function () {
                 throw new Exception('history not exist', 404);
             });

@@ -26,10 +26,10 @@ class Querys extends Execute
         return $this;
     }
 
-    public function group(int $number)
+    public function group(int $number, string $order): Querys
     {
         $start = 10 * ($number - 1);
-        $this->sql .= " ORDER BY create_date OFFSET {$start} LIMIT 10";
+        $this->sql .= " ORDER BY create_date {$order} OFFSET {$start} LIMIT 10";
         return $this;
     }
 

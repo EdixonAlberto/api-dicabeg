@@ -14,7 +14,7 @@ class VideoController implements IController
     {
         $arrayVideos = Querys::table('videos')
             ->select(self::VIDEOS_COLUMNS)
-            ->group($req->params->nro)
+            ->group($req->params->nro, $req->params->order)
             ->getAll(function () {
                 throw new Exception('videos not exist', 404);
             });

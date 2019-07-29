@@ -21,7 +21,7 @@ class UserController implements IController
     {
         $arrayUser = Querys::table('users')
             ->select(self::USERS_COLUMNS)
-            ->group($req->params->nro)
+            ->group($req->params->nro, $req->params->order)
             ->getAll(function () {
                 throw new Exception('not found users', 404);
             });

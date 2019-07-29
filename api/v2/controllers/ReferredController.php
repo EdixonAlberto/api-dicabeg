@@ -20,7 +20,7 @@ class ReferredController implements IController
         $arrayReferred_id = Querys::table('referreds')
             ->select('referred_id')
             ->where('user_id', Auth::$id)
-            ->group($req->params->nro)
+            ->group($req->params->nro, $req->params->order)
             ->getAll(function () {
                 throw new Exception('referreds not exist', 404);
             });
