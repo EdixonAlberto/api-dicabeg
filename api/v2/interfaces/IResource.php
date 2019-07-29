@@ -23,8 +23,9 @@ interface IResource
    ];
 
    const ACCOUNTS_COLUMNS = [
-      'last_email_sended',
+      'email',
       'temporal_code',
+      'last_email_sended',
       'referred_id',
       'time_zone',
       'code_create_date'

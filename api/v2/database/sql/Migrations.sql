@@ -11,7 +11,7 @@ CREATE TABLE "users" (
   "avatar" VARCHAR NULL DEFAULT NULL,
   "phone" VARCHAR(20) NULL DEFAULT NULL,
   "player_id" VARCHAR(36) NULL DEFAULT NULL,
-  "invite_code" VARCHAR(8) NOT NULL,
+  "invite_code" VARCHAR(6) NOT NULL,
   "password" VARCHAR(255) NOT NULL,
   "create_date" TIMESTAMP NULL,
   "update_date" TIMESTAMP NULL,
@@ -23,14 +23,14 @@ CREATE TABLE "users" (
 );
 -- ACCOUNTS
 CREATE TABLE "accounts" (
-  "user_id" VARCHAR(36) NOT NULL,
-  "last_email_sended" VARCHAR(20) NULL DEFAULT NULL,
+  "email" VARCHAR(36) NOT NULL,
   "temporal_code" VARCHAR(6) NULL DEFAULT NULL,
+  "last_email_sended" VARCHAR(20) NULL DEFAULT NULL,
   "referred_id" VARCHAR(36) NULL DEFAULT NULL,
   "time_zone" VARCHAR NOT NULL,
   "code_create_date" TIMESTAMP NULL,
-  CONSTRAINT "accounts_user_id_PK" PRIMARY KEY ("user_id"),
-  CONSTRAINT "accounts_user_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id"),
+  CONSTRAINT "accounts_email_PK" PRIMARY KEY ("email"),
+  CONSTRAINT "accounts_email_FK" FOREIGN KEY("email") REFERENCES users("email"),
   CONSTRAINT "accounts_referred_id_UQ" UNIQUE ("referred_id")
 );
 -- TRANSFERS
