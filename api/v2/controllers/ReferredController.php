@@ -4,8 +4,8 @@ namespace V2\Controllers;
 
 use Exception;
 use V2\Modules\Time;
+use V2\Modules\User;
 use V2\Database\Querys;
-use V2\Middleware\Auth;
 use V2\Modules\JsonResponse;
 use V2\Interfaces\IController;
 
@@ -17,21 +17,21 @@ class ReferredController implements IController
 
     public static function index($req): void
     {
-        $arrayReferred_id = Querys::table('referreds')
+        $arrayReferred = Querys::table('referreds')
             ->select('referred_id')
-            ->where('user_id', Auth::$id)
+            ->where('user_id', User::$id)
             ->group($req->params->nro, $req->params->order)
             ->getAll(function () {
                 throw new Exception('referreds not exist', 404);
             });
 
-        foreach ($arrayReferred_id as $referred) {
-            $arrayReferrals[] = Querys::table('users')
+        foreach ($arrayReferred as $referred) {
+            $_arrayReferrals[] = Querys::table('users')
                 ->select(self::REFERRED_DATA)
                 ->where('user_id', $referred->referred_id)->get();
         }
 
-        JsonResponse::read($arrayReferrals);
+        JsonResponse::read($_arrayReferrals);
     }
 
     public static function show($req): void
@@ -39,7 +39,7 @@ class ReferredController implements IController
         Querys::table('referreds')
             ->select('referred_id')
             ->where([
-                'user_id' => Auth::$id,
+                'user_id' => User::$id,
                 'referred_id' => $req->params->id
             ])->get(function () {
                 throw new Exception('referred not found', 404);
@@ -67,16 +67,15 @@ class ReferredController implements IController
     public static function destroy($req): void
     {
         Querys::table('referreds')->delete()
-            ->where([
-                'user_id' => Auth::$id,
-                'referred_id' => $req->params->id
-            ])->execute(function () {
+            ->where(['referred_id' => $req->params->id])
+            ->execute(function () {
                 throw new Exception('referred not found', 404);
             });
 
-        Querys::table('accounts')->update([
-            'referred_id' => 'user not exist'
-        ])->where('user_id', $req->params->id)->execute();
+        // TODO: se debe pasar por query-param el email del referred
+        // Querys::table('accounts')->update(['referred_id' => ''])
+        //     ->where('email', $req->params->email)
+        //     ->execute();
 
         JsonResponse::removed();
     }

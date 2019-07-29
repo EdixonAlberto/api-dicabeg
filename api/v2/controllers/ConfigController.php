@@ -128,7 +128,6 @@ class ConfigController implements IResource
                 User::$email,
                 (new EmailTemplate)->passUpdate(['code' => $code])
             );
-            $info['temporal_code'] = $code;
 
             JsonResponse::OK('email sended', $info);
         }

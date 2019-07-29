@@ -61,6 +61,7 @@ class UserController implements IController
             if ($email) throw new Exception("email exist: $email", 404);
         } else throw new Exception('email is not set', 400);
 
+        // Agragando user como referido
         if (isset($body->invite_code)) {
             $user_id = Querys::table('users')
                 ->select('user_id')
@@ -93,8 +94,8 @@ class UserController implements IController
 
         Querys::table('accounts')->insert([
             'email' => $email,
-            'last_email_sended' => 'accountActivation',
             'temporal_code' => $code,
+            'last_email_sended' => 'accountActivation',
             'referred_id' => $user->user_id ?? null,
             'time_zone' => $body->time_zone,
             'code_create_date' => Time::current()->utc
@@ -131,7 +132,6 @@ class UserController implements IController
     public static function update($req): void
     {
         $body = $req->body;
-
         if (!$body) throw new Exception('body empty', 400);
 
         $userQuery = Querys::table('users');

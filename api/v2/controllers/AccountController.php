@@ -13,6 +13,7 @@ use Modules\Tools\Password;
 use V2\Interfaces\IResource;
 use V2\Modules\JsonResponse;
 use V2\Modules\EmailTemplate;
+use Modules\Exceptions\CodeException;
 
 class AccountController implements IResource
 {
@@ -173,20 +174,22 @@ class AccountController implements IResource
         $body = $req->body;
 
         $account = Querys::table('accounts')
-            ->select(['last_email_sended', 'time_zone'])
+            ->select(['temporal_code', 'last_email_sended', 'time_zone'])
             ->where('email', $body->email)
             ->get(function () {
                 throw new Exception('email not found', 404);
             });
 
-        $code = Code::create();
-        $timeZone = $account->time_zone;
-        $emailType = $account->last_email_sended;
+        if ($account->temporal_code != 'used') {
+            $code = Code::create();
+            $timeZone = $account->time_zone;
+            $emailType = $account->last_email_sended;
 
-        Querys::table('accounts')->update([
-            'temporal_code' => $code,
-            'code_create_date' => Time::current($timeZone)->utc
-        ])->where('email', $body->email)->execute();
+            Querys::table('accounts')->update([
+                'temporal_code' => $code,
+                'code_create_date' => Time::current($timeZone)->utc
+            ])->where('email', $body->email)->execute();
+        } else throw new CodeException('used');
 
         $info['email_' . $emailType] = Diffusion::sendEmail(
             $body->send_email,
