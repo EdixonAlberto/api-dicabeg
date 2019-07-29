@@ -8,15 +8,17 @@ class Format
 {
     public static function email(string $email): string
     {
-        $email = strtolower($email);
-        $email = filter_var($email, FILTER_SANITIZE_STRING);
-        $email = trim($email);
-        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
-        $email = filter_var($email, FILTER_VALIDATE_EMAIL);
-        $emailFormat = '/^\S+\@\S+\.\S+$/';
+        if ($email) {
+            $email = strtolower($email);
+            $email = filter_var($email, FILTER_SANITIZE_STRING);
+            $email = trim($email);
+            $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+            $email = filter_var($email, FILTER_VALIDATE_EMAIL);
+            $emailFormat = '/^\S+\@\S+\.\S+$/';
 
-        if (preg_match($emailFormat, $email)) return $email;
-        else throw new Exception('format the email incorrect', 400);
+            if (preg_match($emailFormat, $email)) return $email;
+            else throw new Exception('format the email incorrect', 400);
+        } else throw new Exception('email is not set', 400);
     }
 
     public static function phone(string $phone): string
@@ -29,7 +31,7 @@ class Format
         else throw new Exception('format the phone incorrect', 400);
     }
 
-    public static function number($number)
+    public static function number(string $number)
     {
         if (is_numeric($number)) {
             $isFloatString = preg_match('/^\-?\d+\.\d+$/', $number);

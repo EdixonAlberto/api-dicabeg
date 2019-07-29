@@ -1,6 +1,6 @@
 <?php
 
-namespace V2\Libraries;
+namespace Libraries;
 
 use Exception;
 
@@ -9,7 +9,7 @@ class Gui
     /**
         GUI v4
      */
-    public static function generate() : string
+    public static function create(): string
     {
         $code = sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
@@ -25,7 +25,7 @@ class Gui
         return $code;
     }
 
-    public static function validate(string $gui) : bool
+    public static function validate(string $gui): bool
     {
         if (preg_match(
             '/^[a-z0-9]{8}(\-[a-z0-9]{4}){3}\-[a-z0-9]{12}$/',
