@@ -1,5 +1,5 @@
 RewriteEngine On
-RewriteBase /v2
+RewriteBase /public
 RewriteCond %{SCRIPT_FILENAME} !-d
 RewriteCond %{SCRIPT_FILENAME} !-f
 AddDefaultCharset utf-8

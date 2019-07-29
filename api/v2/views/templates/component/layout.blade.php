@@ -14,7 +14,7 @@
         <tr>
             <td id="td-logo">
                 <img id="logo-dicabeg"
-                    src="https://{{ $_SERVER['SERVER_NAME'] }}/v2/public/img/dicabeg.png"
+                    src="https://{{ $_SERVER['SERVER_NAME'] }}/img/dicabeg.png"
                     alt="Logo Dicabeg" />
             </td>
             <td>

@@ -12,7 +12,7 @@ class RouteManager implements IRequest
 
     public function __construct()
     {
-        self::$uri = preg_replace('/\/v2/', '', $_SERVER['REQUEST_URI']);
+        self::$uri = preg_replace('/\/public\/api/', '', $_SERVER['REQUEST_URI']);
         $this->parameters = (object) [];
     }
 
@@ -48,12 +48,13 @@ class RouteManager implements IRequest
             },
             $route
         );
-        // var_dump($route, self::$uri);
+
         $validation = preg_match(
             '|^' . $route . '$|',
             self::$uri,
             $this->parameters->value
         );
+        // var_dump(self::$uri, $route,  $this->parameters); // DEBUG:
         return $validation;
     }
 }

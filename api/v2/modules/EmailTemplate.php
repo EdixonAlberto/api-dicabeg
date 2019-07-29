@@ -9,9 +9,10 @@ class EmailTemplate
 {
     public const SUPPORT_EMAIL = 'dicabeg2019@gmail.com';
     public static $subject;
+    public $html, $code;
 
-    private const VIEWS_PATH = 'views/templates';
-    private const CACHE_PATH = 'views/cache';
+    private const VIEWS_PATH = '../views/templates';
+    private const CACHE_PATH = '../views/cache';
     private $arrayContentDefault;
     private $blade;
 
@@ -42,7 +43,7 @@ class EmailTemplate
 
     public static function styleLoader(): string
     {
-        $resource = fopen($file = 'public/css/emailStyle.css', 'r');
+        $resource = fopen($file = 'css/emailStyle.css', 'r');
         $css = trim(fread($resource, filesize($file)), "'");
         fclose($resource);
         return $css;
