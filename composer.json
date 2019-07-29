@@ -24,8 +24,15 @@
         "vlucas/phpdotenv": "^3.4"
     },
     "autoload": {
+        "classmap": [
+            "api/v2/libraries",
+            "api/v2/modules"
+        ],
         "psr-4": {
             "V2\\": "api/v2/"
         }
+    },
+    "config": {
+        "optimize-autoloader": true
     }
 }
