@@ -139,16 +139,24 @@ class UserController implements IController
         if (isset($body->balance)) {
             $currentBalance = Format::number($body->balance);
 
-            $oldBalance = $userQuery->select('balance')
+            // Comprobacion para el pago
+            $video = Querys::table('history')->select('video')
                 ->where('user_id', User::$id)->get();
 
-            $newBalance = $currentBalance + $oldBalance;
+            $viewedVideo = $video == $body->video ?? '';
 
-            $userQuery->update($user = ['balance' => $newBalance])
-                ->where('user_id', User::$id)
-                ->execute(function () {
-                    throw new Exception('not updated balance', 500);
-                });
+            if ($viewedVideo == false) {
+                $oldBalance = $userQuery->select('balance')
+                    ->where('user_id', User::$id)->get();
+
+                $newBalance = $currentBalance + $oldBalance;
+
+                $userQuery->update($user = ['balance' => $newBalance])
+                    ->where('user_id', User::$id)
+                    ->execute(function () {
+                        throw new Exception('not updated balance', 500);
+                    });
+            } else JsonResponse::OK('pago no procesado: video visto');
         } else {
             $userQuery->update($user = [
                 'username' => isset($body->username) ?
