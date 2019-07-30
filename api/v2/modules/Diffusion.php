@@ -24,6 +24,7 @@ class Diffusion
             )->send();
         } elseif ($send == 'false') {
             $response = (object) [
+                'status' => 'DEBUG',
                 'response' => 'email not sended',
                 'destiny_email' => $email,
                 'temporal_code' => $template->code
