@@ -19,7 +19,7 @@ class ConfigController implements IResource
     public static function updateEmail($req)
     {
         $body = $req->body;
-        $newEmail = Format::email($body->new_email ?? '');
+        $newEmail = Format::email($body->email ?? $body->new_email ?? '');
 
         if (isset($body->temporal_code)) {
             $saved_temporal_code = Querys::table('accounts')
@@ -52,15 +52,24 @@ class ConfigController implements IResource
 
             JsonResponse::OK('email updated', $info);
         } else {
+            $emailFound = Querys::table('users')->select('email')
+                ->where('email', $newEmail)->get();
+
+            if ($emailFound) throw new Exception(
+                "email exist: {$emailFound}",
+                400
+            );
+
             // Se notifica al usuario por medio de su email actual
             $info['email_advise'] = Diffusion::sendEmail(
                 $body->send_email,
                 User::$email,
                 (new EmailTemplate)->advise([
-                    'oldMail' => User::$email,
-                    'newMail' => $newEmail,
-                    'date' => Time::current()->utc,
-                    'location' => Time::$timeZone
+                    'oldEmail' => User::$email,
+                    'newEmail' =>  $newEmail,
+                    'date' => Time::current()->utc
+                    // 'location' => 'Venezuela'
+                    // TODO: conseguir datos del user para enviarlos a su email
                 ])
             );
 
@@ -68,7 +77,7 @@ class ConfigController implements IResource
 
             Querys::table('accounts')->update([
                 'last_email_sended' => 'emailUpdate',
-                'temporal_code' => $code,
+                'temporal_code' =>  $code,
                 'code_create_date' => Time::current()->utc
             ])->where('email', User::$email)->execute();
 
@@ -76,27 +85,27 @@ class ConfigController implements IResource
             $info['email_emailUpdate'] = Diffusion::sendEmail(
                 $body->send_email,
                 $newEmail,
-                (new EmailTemplate)->emailUpdate(['code' => $code])
+                (new EmailTemplate)->emailUpdate(['code' =>  $code])
             );
 
-            JsonResponse::OK('email sended', $info);
+            JsonResponse::OK('email sended',  $info);
         }
     }
 
     public static function updatePassword($req)
     {
-        $body = $req->body;
+        $body =  $req->body;
 
         if (isset($body->temporal_code)) {
-            $newPass = Password::create($body->new_password ?? '');
+            $newPass = Password::create($body->password ??  $body->new_password ?? '');
 
             $saved_temporal_code = Querys::table('accounts')
                 ->select('temporal_code')
                 ->where('email', User::$email)
                 ->get();
 
-            if (Code::validate($body->temporal_code, $saved_temporal_code)) {
-                Querys::table('users')->update(['password' => $newPass])
+            if (Code::validate($body->temporal_code,  $saved_temporal_code)) {
+                Querys::table('users')->update(['password' =>  $newPass])
                     ->where('email', User::$email)
                     ->execute(function () {
                         throw new Exception('could not update password', 500);
@@ -115,23 +124,23 @@ class ConfigController implements IResource
                 ])
             );
 
-            JsonResponse::OK('password updated', $info);
+            JsonResponse::OK('password updated',  $info);
         } else {
             $code = Code::create();
 
             Querys::table('accounts')->update([
                 'last_email_sended' => 'passUpdate',
-                'temporal_code' => $code,
+                'temporal_code' =>  $code,
                 'code_create_date' => Time::current()->utc
             ])->where('email', User::$email)->execute();
 
             $info['email_passUpdate'] = Diffusion::sendEmail(
                 $body->send_email,
                 User::$email,
-                (new EmailTemplate)->passUpdate(['code' => $code])
+                (new EmailTemplate)->passUpdate(['code' =>  $code])
             );
 
-            JsonResponse::OK('email sended', $info);
+            JsonResponse::OK('email sended',  $info);
         }
     }
 }

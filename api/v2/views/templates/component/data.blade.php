@@ -1,7 +1,7 @@
 <table class="content" align="center" cellpadding="0" cellspacing="0">
     <tr class="tr-data">
         <td colspan="2">
-            <p class="p-data"><strong class="color">Donde y cuando sucedió:</strong></p>
+            <p class="p-data"><strong class="color">Cuando sucedió:</strong></p>
         </td>
     </tr>
 
@@ -9,8 +9,8 @@
         <td>
             <p class="p-data">
                 <strong class="colo">Fecha:</strong> <br />
-                <strong class="colo">Dispositivo:</strong> <br />
-                <strong class="colo">Ubicación:</strong> <br />
+                {{-- <strong class="colo">Dispositivo:</strong> <br /> --}}
+                {{-- <strong class="colo">Ubicación:</strong> <br /> --}}
             </p>
         </td>
         <td>

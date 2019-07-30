@@ -21,7 +21,7 @@
     @component('component.data', ['support' => $support])
             {{ $data->date }} <br />
             {{-- {{ $data->device }} <br /> --}}
-            {{ $data->location }} <br />
+            {{-- {{ $data->location }} <br /> --}}
     @endcomponent
 
 @endcomponent
