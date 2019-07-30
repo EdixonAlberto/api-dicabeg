@@ -39,7 +39,7 @@ class SendGrid
         $sendgrid = new ApiSendGrid(SENDGRID_API_KEY);
         $response = $sendgrid->send($this->mail);
 
-        $code = ($response->statusCode() != 0) ?: 500;
+        $code = ($response->statusCode() == 0) ? 500 : $response->statusCode();
         $resp = ($code == 202) ? "email sended" : 'email not sended';
         $description = $response->headers()[2] ?? null;
 
