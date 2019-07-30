@@ -6,6 +6,7 @@ use Exception;
 use V2\Modules\Time;
 use V2\Modules\User;
 use V2\Modules\Access;
+use V2\Modules\Format;
 use Modules\Tools\Code;
 use V2\Database\Querys;
 use V2\Modules\Diffusion;
@@ -20,31 +21,32 @@ class AccountController implements IResource
     public static function activation($req): void
     {
         $body = $req->body;
+        $email = Format::email($body->email ?? '');
 
-        if (isset($body->email) and isset($body->temporal_code)) {
+        if (isset($body->temporal_code)) {
             $saved_temporal_code = Querys::table('accounts')
                 ->select('temporal_code')
-                ->where('email', $body->email)
+                ->where('email', $email)
                 ->get(function () {
                     throw new Exception('email not found', 404);
                 });
 
             if (Code::validate($body->temporal_code, $saved_temporal_code)) {
                 Querys::table('accounts')->update(['temporal_code' => 'used'])
-                    ->where('email', $body->email)
+                    ->where('email', $email)
                     ->execute();
 
                 Querys::table('users')->update(['activated' => true])
-                    ->where('email', $body->email)
+                    ->where('email', $email)
                     ->execute();
             }
 
             $info['email_accountCreated'] = Diffusion::sendEmail(
                 $body->send_email,
-                $body->email,
+                $email,
                 (new EmailTemplate)->accountCreated()
             );
-        } else throw new Exception('email or temporal_code is not set', 400);
+        } else throw new Exception('temporal_code is not set', 400);
 
         JsonResponse::OK('activated account', $info);
     }
@@ -60,7 +62,9 @@ class AccountController implements IResource
             ->select(self::USERS_COLUMNS);
 
         if (isset($body->email)) {
-            $user = $userQuery->where('email', $body->email)
+            $email = Format::email($body->email ?? '');
+
+            $user = $userQuery->where('email', $email)
                 ->get(function () {
                     throw new Exception('email not found', 404);
                 });
@@ -98,13 +102,14 @@ class AccountController implements IResource
     public static function recovery($req): void
     {
         $body = $req->body;
+        $email = Format::email($body->email ?? '');
 
-        if (isset($body->email) and isset($body->temporal_code)) {
+        if (isset($body->temporal_code)) {
             $newPass = Password::create($body->new_password ?? $body->password ?? '');
 
             $saved_temporal_code = Querys::table('accounts')
                 ->select('temporal_code')
-                ->where('email', $body->email)
+                ->where('email', $email)
                 ->get(function () {
                     throw new Exception('email not found', 404);
                 });
@@ -112,35 +117,35 @@ class AccountController implements IResource
             if (Code::validate($body->temporal_code, $saved_temporal_code)) {
                 $timeZone = Querys::table('accounts')
                     ->select('time_zone')
-                    ->where('email', $body->email)
+                    ->where('email', $email)
                     ->get();
 
                 Querys::table('users')->update([
                     'password' => $newPass,
                     'update_date' => Time::current($timeZone)->utc
-                ])->where('email', $body->email)
+                ])->where('email', $email)
                     ->execute(function () {
                         throw new Exception('error updated password', 500);
                     });
 
                 Querys::table('accounts')->update(['temporal_code' => 'used'])
-                    ->where('email', $body->email)
+                    ->where('email', $email)
                     ->execute();
             }
 
             $info['email_successfull'] = Diffusion::sendEmail(
                 $body->send_email,
-                $body->email,
+                $email,
                 (new EmailTemplate)->successfull([
                     'message' => 'Has recuperado tu cuenta Dicabeg'
                 ])
             );
 
             JsonResponse::OK('recovery successful, password updated', $info);
-        } else if (isset($body->email)) {
+        } else {
             $activatedAccount = Querys::table('users')
                 ->select('activated')
-                ->where('email', $body->email)
+                ->where('email', $email)
                 ->get(function () {
                     throw new Exception('email not found', 404);
                 });
@@ -149,33 +154,34 @@ class AccountController implements IResource
                 $code = Code::create();
 
                 $timeZone = Querys::table('accounts')->select('time_zone')
-                    ->where('email', $body->email)
+                    ->where('email', $email)
                     ->get();
 
                 Querys::table('accounts')->update([
                     'last_email_sended' => 'accountRecovery',
                     'temporal_code' => $code,
                     'code_create_date' => Time::current($timeZone)->utc
-                ])->where('email', $body->email)->execute();
+                ])->where('email', $email)->execute();
             } else throw new Exception('account not activated', 403);
 
             $info['email_accountRecovery'] = Diffusion::sendEmail(
                 $body->send_email,
-                $body->email,
+                $email,
                 (new EmailTemplate)->accountRecovery(['code' => $code])
             );
 
             JsonResponse::OK('email sended', $info);
-        } else throw new Exception('email is not set', 400);
+        }
     }
 
     public static function resendEmail($req): void
     {
         $body = $req->body;
+        $email = Format::email($body->email ?? '');
 
         $account = Querys::table('accounts')
             ->select(['temporal_code', 'last_email_sended', 'time_zone'])
-            ->where('email', $body->email)
+            ->where('email', $email)
             ->get(function () {
                 throw new Exception('email not found', 404);
             });
@@ -188,12 +194,12 @@ class AccountController implements IResource
             Querys::table('accounts')->update([
                 'temporal_code' => $code,
                 'code_create_date' => Time::current($timeZone)->utc
-            ])->where('email', $body->email)->execute();
+            ])->where('email', $email)->execute();
         } else throw new CodeException('used');
 
         $info['email_' . $emailType] = Diffusion::sendEmail(
             $body->send_email,
-            $body->email,
+            $email,
             (new EmailTemplate)->$emailType(['code' => $code])
         );
 
