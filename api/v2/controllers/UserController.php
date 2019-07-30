@@ -56,9 +56,13 @@ class UserController implements IController
         $userQuery = Querys::table('users');
 
         if (isset($body->email)) {
-            $email = $userQuery->select('email')
+            $emailFound = $userQuery->select('email')
                 ->WHERE('email', $body->email)->get();
-            if ($email) throw new Exception("email exist: $email", 404);
+
+            if ($emailFound) throw new Exception(
+                "email exist: {$emailFound}",
+                400
+            );
         } else throw new Exception('email is not set', 400);
 
         // Agragando user como referido
@@ -143,9 +147,9 @@ class UserController implements IController
             $video = Querys::table('history')->select('video')
                 ->where('user_id', User::$id)->get();
 
-            $viewedVideo = $video == $body->video ?? '';
+            $viewedVideo = $video == ($body->video ?? '');
 
-            if ($viewedVideo == false) {
+            if ($video == false or $viewedVideo == false) {
                 $oldBalance = $userQuery->select('balance')
                     ->where('user_id', User::$id)->get();
 
@@ -205,7 +209,7 @@ class UserController implements IController
             ->execute();
 
         Querys::table('accounts')->delete()
-            ->where('user_id', User::$id)
+            ->where('email', User::$email)
             ->execute();
 
         Querys::table('users')->delete()

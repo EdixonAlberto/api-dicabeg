@@ -100,7 +100,7 @@ class AccountController implements IResource
         $body = $req->body;
 
         if (isset($body->email) and isset($body->temporal_code)) {
-            $newPass = Password::create($body->new_password ?? '');
+            $newPass = Password::create($body->new_password ?? $body->password ?? '');
 
             $saved_temporal_code = Querys::table('accounts')
                 ->select('temporal_code')
