@@ -20,7 +20,8 @@ class Password
                 and strlen($input) <= self::MAX_LENGTH
             ) return password_hash($input, self::$algo, self::$options);
             else throw new Exception(
-                "{self::MIN_LENGTH} <= password <= {self::MAX_LENGTH}",
+                'length password incorrect, limit: ' .
+                    '[ ' . self::MIN_LENGTH . ' , ' . self::MAX_LENGTH . ' ]',
                 400
             );
         } else throw new Exception('password is not set', 400);
