@@ -7,7 +7,7 @@ use V2\Modules\RouteManager;
 
 class JsonResponse extends RouteManager
 {
-    public static function read($content): void
+    public static function read($content, $info = false): void
     {
         $response = [
             'status' => 200,
@@ -18,13 +18,17 @@ class JsonResponse extends RouteManager
             ],
         ];
 
+        if ($info) $response = array_merge(
+            $response,
+            ['information' => Output::filter($info)]
+        );
         self::send($response);
     }
 
     public static function created(
         $content,
         string $path = null,
-        $info = null
+        $info = false
     ): void {
 
         $response = [
@@ -46,7 +50,7 @@ class JsonResponse extends RouteManager
 
     public static function updated(
         $content,
-        string $info = null
+        $info = false
     ): void {
 
         $response = [
@@ -77,7 +81,7 @@ class JsonResponse extends RouteManager
 
     public static function OK(
         string $description,
-        $result = null
+        $result = false
     ): void {
 
         $response = [
