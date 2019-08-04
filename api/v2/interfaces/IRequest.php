@@ -14,6 +14,7 @@ interface IRequest
         'referreds',
         'videos',
         'history',
-        'transfers'
+        'transfers',
+        'adverts'
     ];
 }

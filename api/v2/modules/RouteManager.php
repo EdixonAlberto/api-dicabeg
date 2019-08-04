@@ -41,7 +41,7 @@ class RouteManager implements IRequest
     protected function routeValidate(string $route): bool
     {
         preg_replace_callback(
-            '/\{([a-z0-9]+)\}/',
+            '/\{([a-zA-Z0-9]+)\}/', // Patron de busqueda para parametros get
             function ($arrayGet) use (&$route) {
                 $validation = true;
                 $get = $this->parameters->keys[] = $arrayGet[1];

@@ -2,7 +2,6 @@
 
 namespace V2\Modules;
 
-use Exception;
 use V2\Modules\Requests;
 use V2\Modules\RouteManager;
 
@@ -45,10 +44,11 @@ class Route extends RouteManager
                 $request->headers
             );
 
-            call_user_func(
+            if (is_string($controller)) call_user_func(
                 self::NAME_SPACE . $controller,
                 $request
             );
+            else $controller();
         } else self::$middleware = false;
     }
 }
