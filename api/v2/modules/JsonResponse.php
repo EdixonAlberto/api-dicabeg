@@ -107,7 +107,7 @@ class JsonResponse extends RouteManager
         self::send($response, $code);
     }
 
-    private static function send(array $response, int $code = 200): void
+    protected static function send(array $response, int $code = 200): void
     {
         header('Content-Type: application/json; charset=utf-8');
         http_response_code($code);

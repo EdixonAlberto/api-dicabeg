@@ -2,8 +2,10 @@
 
 namespace V2\Libraries;
 
+use Exception;
 use V2\Modules\Time;
 use Firebase\JWT\JWT as JwtToken;
+use Modules\Exceptions\ExpiredException;
 
 class Jwt
 {
@@ -32,7 +34,14 @@ class Jwt
 
     public static function verific(string $token, string $key): object
     {
-        return JwtToken::decode($token, $key, self::ALG);
+        try {
+            return JwtToken::decode($token, $key, self::ALG);
+        } catch (Exception $err) {
+            $message = $err->getMessage();
+
+            if ($message == 'Expired token') new ExpiredException;
+            else throw new Exception($message, $err->getCode());
+        }
     }
 
     public static function extraTime(int $time_min): void
