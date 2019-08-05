@@ -2,8 +2,10 @@
 
 namespace V2\Libraries;
 
+use Exception;
 use V2\Modules\Time;
 use Firebase\JWT\JWT as JwtToken;
+use Modules\Exceptions\TokenException;
 
 class Jwt
 {
@@ -32,7 +34,11 @@ class Jwt
 
     public static function verific(string $token, string $key): object
     {
-        return JwtToken::decode($token, $key, self::ALG);
+        try {
+            return JwtToken::decode($token, $key, self::ALG);
+        } catch (Exception $err) {
+            new TokenException($err->getMessage());
+        }
     }
 
     public static function extraTime(int $time_min): void
