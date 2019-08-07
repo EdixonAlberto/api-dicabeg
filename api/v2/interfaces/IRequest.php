@@ -15,6 +15,7 @@ interface IRequest
         'videos',
         'history',
         'transfers',
-        'adverts'
+        'adverts',
+        'app'
     ];
 }

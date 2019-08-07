@@ -15,7 +15,7 @@ class AppController
         $arrayRanking = Querys::table('view_ranking')
             ->select(self::USER_DATA)
             ->getAll(function () {
-                throw new Exception('resource not found', 404);
+                new \Modules\Exceptions\ResourceException;
             });
 
         $top10 = [0 => null];
@@ -36,5 +36,27 @@ class AppController
         $info['user_position'] = $userPosition ?? null;
 
         JsonResponse::read($top10, $info);
+    }
+
+    public static function totalBalance()
+    {
+        $info['balance'] = Querys::table('view_total_balance')
+            ->select('balance')
+            ->get(function () {
+                new \Modules\Exceptions\ResourceException;
+            });
+
+        JsonResponse::read($info);
+    }
+
+    public static function commissions()
+    {
+        $arrayCommissions = Querys::table('commissions')
+            ->select('*')
+            ->getAll(function () {
+                new \Modules\Exceptions\ResourceException;
+            });
+
+        JsonResponse::read($arrayCommissions);
     }
 }
