@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-    @include('component.style')
+    @include('component.fontStyle')
 
 </head>
 <body>
@@ -38,7 +38,7 @@
                 <p id="networks">
                     <a href="https://edixonalberto.github.io/doc-dicabeg" title="Visita Nuestra Web" target="_blank">Página Web</a> |
                     <a href="https://twitter.com/Dicapp1" title="Síguenos en Twitter" target="_blank">Twitter</a> |
-                    <a href="https://www.instagram.com/dicabeg" title="Síguenos en Instagram" target="_blank">Instagram</a>
+                    <a href="https://instagram.com/dicabeg" title="Síguenos en Instagram" target="_blank">Instagram</a>
                     {{-- <a href="" title="Síguenos en Facebook" target="_blank">Facebook</a> --}}
                 </p>
             </td>

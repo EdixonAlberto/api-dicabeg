@@ -21,8 +21,7 @@
 
         <tr>
             <td id="td-portada" colspan="2">
-                <img class="portada" id="port-l" src="https://{{ $_SERVER['SERVER_NAME'] }}/img/portada_l.jpg" alt="portada_r" />
-                <img class="portada" id="port-r" src="https://{{ $_SERVER['SERVER_NAME'] }}/img/portada_r.jpg" alt="portada_l" />
+                <img class="portada" src="https://{{ $_SERVER['SERVER_NAME'] }}/img/dicabeg_portada.png" alt="Portada de Dicabeg" />
                 <h2><strong class="color">¡Bienvenid@ a Dicabeg!</strong></h2>
             </td>
         </tr>

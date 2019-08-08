@@ -77,14 +77,9 @@ img {
   padding: 0px;
 }
 .portada {
-  width: 50%;
-  float: left;
-}
-#port-r {
-  border-radius: 0 24px 24px 0;
-}
-#port-l {
-  border-radius: 24px 0 0 24px;
+  width: 100%;
+  margin: auto;
+  border-radius: 24px;
 }
 #logo-dicabeg {
   float: left;
@@ -201,8 +196,5 @@ h2 {
   #logo-dicabeg {
     width: 60px;
     height: 60px;
-  }
-  #portada {
-    width: 50%;
   }
 }
