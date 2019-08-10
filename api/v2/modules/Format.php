@@ -6,6 +6,8 @@ use Exception;
 
 class Format
 {
+    private const DECIMALS = 5;
+
     public static function email(string $email): string
     {
         if ($email) {
@@ -36,7 +38,7 @@ class Format
         if (is_numeric($number)) {
             $isFloatString = preg_match('/^\-?\d+\.\d+$/', $number);
             $number = $isFloatString ?
-                (float) number_format($number, 5, '.', '') : (int) $number;
+                (float) number_format($number, self::DECIMALS, '.', '') : (int) $number;
             return $number;
         } else throw new Exception(
             "the number: {$number} is incorrect," .

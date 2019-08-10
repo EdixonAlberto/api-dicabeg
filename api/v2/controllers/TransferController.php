@@ -10,14 +10,14 @@ use Modules\Tools\Code;
 use V2\Database\Querys;
 use V2\Middleware\Auth;
 use V2\Modules\Diffusion;
+use V2\Interfaces\IResource;
 use V2\Modules\JsonResponse;
 use V2\Modules\EmailTemplate;
-use V2\Interfaces\IController;
 
-class TransferController implements IController
+class TransferController implements IResource
 {
     private const COMMISSION = 5 / 100; // 5% de comisión
-    private const MIN_AMOUNT = 0.005;
+    private const MIN_AMOUNT = 0.0001;
     private const MAX_AMOUNT = 1;
     private const RESPONSIBLE_DATA = ['username', 'email', 'avatar'];
 
@@ -65,7 +65,10 @@ class TransferController implements IController
         $body = $req->body;
 
         $amount = Format::number($body->amount);
-        $commission = $amount * self::COMMISSION;
+
+        // TODO: usar una constante para esto
+        $commission = ($amount >= 0.005) ? $amount * self::COMMISSION : 0;
+
         $transferAmount = $amount - $commission;
 
         $userQuery = Querys::table('users');
@@ -220,9 +223,7 @@ class TransferController implements IController
         JsonResponse::OK('report sended', $info);
     }
 
-    public static function update($req): void
-    { }
-
+    // TODO: metodo pendiente
     public static function destroy($req): void
     { }
 }
