@@ -15,6 +15,7 @@ use Modules\Tools\Password;
 use V2\Modules\JsonResponse;
 use V2\Modules\EmailTemplate;
 use V2\Interfaces\IController;
+use V2\Controllers\AdvertController;
 use V2\Controllers\ReferredController;
 
 class UserController implements IController
@@ -136,33 +137,11 @@ class UserController implements IController
     public static function update($req): void
     {
         $body = $req->body;
-        if (!$body) throw new Exception('body empty', 400);
 
-        $userQuery = Querys::table('users');
+        if ($body) {
+            if (isset($body->balance)) AdvertController::payBonus();
 
-        if (isset($body->balance)) {
-            $currentBalance = Format::number($body->balance);
-
-            // Comprobacion para el pago
-            $video = Querys::table('history')->select('video')
-                ->where('user_id', User::$id)->get();
-
-            $viewedVideo = $video == ($body->video ?? '');
-
-            if ($video == false or $viewedVideo == false) {
-                $oldBalance = $userQuery->select('balance')
-                    ->where('user_id', User::$id)->get();
-
-                $newBalance = $currentBalance + $oldBalance;
-
-                $userQuery->update($user = ['balance' => $newBalance])
-                    ->where('user_id', User::$id)
-                    ->execute(function () {
-                        throw new Exception('not updated balance', 500);
-                    });
-            } else JsonResponse::OK('pago no procesado: video visto');
-        } else {
-            $userQuery->update($user = [
+            Querys::table('users')->update($user = [
                 'username' => isset($body->username) ?
                     Username::validate($body->username) : null,
 
@@ -183,7 +162,7 @@ class UserController implements IController
                 ->execute(function () {
                     throw new Exception('not updated user', 500);
                 });
-        }
+        } else throw new Exception('body empty', 400);
 
         JsonResponse::updated($user);
     }

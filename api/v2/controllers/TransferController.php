@@ -10,14 +10,14 @@ use Modules\Tools\Code;
 use V2\Database\Querys;
 use V2\Middleware\Auth;
 use V2\Modules\Diffusion;
+use V2\Interfaces\IResource;
 use V2\Modules\JsonResponse;
 use V2\Modules\EmailTemplate;
-use V2\Interfaces\IController;
 
-class TransferController implements IController
+class TransferController implements IResource
 {
     private const COMMISSION = 5 / 100; // 5% de comisión
-    private const MIN_AMOUNT = 0.005;
+    private const MIN_AMOUNT = 0.0001;
     private const MAX_AMOUNT = 1;
     private const RESPONSIBLE_DATA = ['username', 'email', 'avatar'];
 
@@ -63,11 +63,7 @@ class TransferController implements IController
     public static function store($req): void
     {
         $body = $req->body;
-
         $amount = Format::number($body->amount);
-        $commission = $amount * self::COMMISSION;
-        $transferAmount = $amount - $commission;
-
         $userQuery = Querys::table('users');
 
         $user = $userQuery->select(['username', 'balance', 'player_id'])
@@ -86,6 +82,11 @@ class TransferController implements IController
             'amount must be less than or equal to: ' . self::MAX_AMOUNT,
             400
         );
+
+        // TODO: usar una constante para esto
+        $commission = ($amount >= 0.005) ? $amount * self::COMMISSION : 0;
+
+        $transferAmount = $amount - $commission;
 
         if (isset($body->type_receptor)) {
             $receptorQuery = $userQuery
@@ -138,7 +139,7 @@ class TransferController implements IController
             'transfer_code' => $transfer_code,
             'concept' => $body->concept ?? null,
             'responsible' => Auth::$id,
-            'amount' => +$transferAmount,
+            'amount' => $transferAmount,
             'previous_balance' => $receptor->balance,
             'current_balance' => $receptorBalance,
             'create_date' => $currentTime
@@ -220,9 +221,7 @@ class TransferController implements IController
         JsonResponse::OK('report sended', $info);
     }
 
-    public static function update($req): void
-    { }
-
+    // TODO: metodo pendiente
     public static function destroy($req): void
     { }
 }
