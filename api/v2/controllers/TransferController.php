@@ -18,7 +18,7 @@ class TransferController implements IResource
 {
     private const COMMISSION = 5 / 100; // 5% de comisión
     private const MIN_AMOUNT = 0.0001;
-    private const MAX_AMOUNT = 1;
+    private const MAX_AMOUNT = 10000;
     private const RESPONSIBLE_DATA = ['username', 'email', 'avatar'];
 
     public static function index($req): void
@@ -84,7 +84,7 @@ class TransferController implements IResource
         );
 
         // TODO: usar una constante para esto
-        $commission = ($amount >= 0.005) ? $amount * self::COMMISSION : 0;
+        $commission = ($amount >= 0.005) ? $amount * (self::COMMISSION) : 0;
 
         $transferAmount = $amount - $commission;
 
