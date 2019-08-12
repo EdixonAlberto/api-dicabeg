@@ -48,7 +48,7 @@ class Route extends RouteManager
                 self::NAME_SPACE . $controller,
                 $request
             );
-            else $controller();
+            else $controller($request);
         } else self::$middleware = false;
     }
 }
