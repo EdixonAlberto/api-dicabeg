@@ -3,6 +3,8 @@
         "log:api": "heroku logs --app api-dicabeg --source app --dyno api --force-colors",
         "log:router": "heroku logs --app api-dicabeg --source heroku --dyno router --num 50 --tail --force-colors",
         "log:web": "heroku logs --app api-dicabeg --source app --dyno web --num 50 --tail --force-colors",
+        "server:off": "heroku maintenance:on --app api-dicabeg",
+        "server:on": "heroku maintenance:off --app api-dicabeg",
         "build:styl": "stylus -w ./api/v2/views/stylus/emailStyle.styl -o ./api/v2/public/css"
     }
 }

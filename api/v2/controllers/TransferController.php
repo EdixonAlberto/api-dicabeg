@@ -8,7 +8,6 @@ use V2\Modules\User;
 use V2\Modules\Format;
 use Modules\Tools\Code;
 use V2\Database\Querys;
-use V2\Middleware\Auth;
 use V2\Modules\Diffusion;
 use V2\Interfaces\IResource;
 use V2\Modules\JsonResponse;
@@ -25,7 +24,7 @@ class TransferController implements IResource
     {
         $arrayTransfers = Querys::table('transfers')
             ->select(self::TRANSFERS_COLUMNS)
-            ->where('user_id', Auth::$id)
+            ->where('user_id', User::$id)
             ->group($req->params->nro, $req->params->order)
             ->getAll(function () {
                 throw new Exception('transfers not exist', 404);
@@ -47,8 +46,10 @@ class TransferController implements IResource
     {
         $transfer = Querys::table('transfers')
             ->select(self::TRANSFERS_COLUMNS)
-            ->where('transfer_code', $req->params->code)
-            ->get(function () {
+            ->where([
+                'user_id' => User::$id,
+                'transfer_code' => $req->params->code,
+            ])->get(function () {
                 throw new Exception('transfer not found', 404);
             });
 
@@ -67,7 +68,7 @@ class TransferController implements IResource
         $userQuery = Querys::table('users');
 
         $user = $userQuery->select(['username', 'balance', 'player_id'])
-            ->where('user_id', Auth::$id)
+            ->where('user_id', User::$id)
             ->get();
 
         if ($user->balance < $amount) throw new Exception(
@@ -110,27 +111,27 @@ class TransferController implements IResource
             throw new Exception("account not activated: {$body->receptor}", 400);
 
         $transfer_code = Code::create();
-        $userBalance = $user->balance - $amount;
-        $receptorBalance = $receptor->balance + $transferAmount;
+        $newUserBalance = $user->balance - $amount;
+        $newReceptorBalance = $receptor->balance + $transferAmount;
         $currentTime = Time::current()->utc;
         $info = null;
 
-        $userQuery->update(['balance' => $userBalance])
-            ->where('user_id', Auth::$id)
+        $userQuery->update(['balance' => $newUserBalance])
+            ->where('user_id', User::$id)
             ->execute();
 
-        $userQuery->update(['balance' => $receptorBalance])
+        $userQuery->update(['balance' => $newReceptorBalance])
             ->where('user_id', $receptor->user_id)
             ->execute();
 
         Querys::table('transfers')->insert($transfer = (object) [
-            'user_id' => Auth::$id,
+            'user_id' => User::$id,
             'transfer_code' => $transfer_code,
             'concept' => $body->concept ?? null,
             'responsible' => $receptor->user_id,
             'amount' => -$amount,
             'previous_balance' => $user->balance,
-            'current_balance' => $userBalance,
+            'current_balance' => $newUserBalance,
             'create_date' => $currentTime
         ])->execute();
 
@@ -138,21 +139,21 @@ class TransferController implements IResource
             'user_id' => $receptor->user_id,
             'transfer_code' => $transfer_code,
             'concept' => $body->concept ?? null,
-            'responsible' => Auth::$id,
+            'responsible' => User::$id,
             'amount' => $transferAmount,
             'previous_balance' => $receptor->balance,
-            'current_balance' => $receptorBalance,
+            'current_balance' => $newReceptorBalance,
             'create_date' => $currentTime
         ])->execute();
 
         $userCommission = Querys::table('commissions')
             ->select(['amount', 'commission'])
-            ->where('user_id', Auth::$id)
+            ->where('user_id', User::$id)
             ->get();
 
         if ($userCommission === false) {
             Querys::table('commissions')->insert([
-                "user_id" => Auth::$id,
+                "user_id" => User::$id,
                 "amount" => $amount,
                 "commission" => $commission,
                 "create_date" => $currentTime,
@@ -162,10 +163,10 @@ class TransferController implements IResource
                 "amount" =>  $userCommission->amount + $amount,
                 "commission" => $userCommission->commission + $commission,
                 "create_date" => $currentTime,
-            ])->where('user_id', Auth::$id)->execute();
+            ])->where('user_id', User::$id)->execute();
         }
 
-        // TODO: Apando la funsion de notificaciones. REPARAR esto despues
+        // TODO: Apagando la funsion de notificaciones. REPARAR esto despues
 
         // if (isset($user->player_id) and $user->player_id != '') {
         //     $info['notifications']['user'] =
@@ -220,8 +221,4 @@ class TransferController implements IResource
 
         JsonResponse::OK('report sended', $info);
     }
-
-    // TODO: metodo pendiente
-    public static function destroy($req): void
-    { }
 }

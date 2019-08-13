@@ -4,7 +4,7 @@ CREATE TABLE "users" (
   "activated" BOOLEAN NOT NULL DEFAULT FALSE,
   "username" VARCHAR(20) NOT NULL,
   "email" VARCHAR(40) NOT NULL,
-  "balance" NUMERIC(8, 5) DEFAULT 0,
+  "balance" NUMERIC(10, 5) DEFAULT 0,
   "names" VARCHAR(20) NULL DEFAULT NULL,
   "lastnames" VARCHAR(20) NULL DEFAULT NULL,
   "age" INTEGER NULL DEFAULT NULL,
@@ -37,17 +37,17 @@ CREATE TABLE "transfers" (
   "transfer_code" VARCHAR(6) NOT NULL,
   "concept" VARCHAR(40) NULL DEFAULT NULL,
   "responsible" VARCHAR(36) NOT NULL,
-  "amount" NUMERIC(8, 5) DEFAULT 0,
-  "previous_balance" NUMERIC(8, 5) DEFAULT 0,
-  "current_balance" NUMERIC(8, 5) DEFAULT 0,
+  "amount" NUMERIC(10, 5) DEFAULT 0,
+  "previous_balance" NUMERIC(10, 5) DEFAULT 0,
+  "current_balance" NUMERIC(10, 5) DEFAULT 0,
   "create_date" TIMESTAMP NULL,
   CONSTRAINT "transfers_user_id_FK" FOREIGN KEY("user_id") REFERENCES users("user_id")
 );
 -- COMMISSIONS
 CREATE TABLE "commissions" (
   "user_id" VARCHAR(36) NOT NULL,
-  "amount" NUMERIC(8, 5) DEFAULT 0,
-  "commission" NUMERIC(8, 5) DEFAULT 0,
+  "amount" NUMERIC(10, 5) DEFAULT 0,
+  "commission" NUMERIC(10, 5) DEFAULT 0,
   "create_date" TIMESTAMP NULL,
   CONSTRAINT "commissions_user_id_UQ" UNIQUE ("user_id")
 );
@@ -86,8 +86,8 @@ CREATE TABLE "history" (
 -- OPTIONS
 CREATE TABLE "options" (
   "expiration_time" VARCHAR NOT NULL,
-  "pay_bonus" NUMERIC(8, 5) DEFAULT 0,
-  "pay_enterprise" NUMERIC(8, 5) DEFAULT 0
+  "pay_bonus" NUMERIC(10, 5) DEFAULT 0,
+  "pay_enterprise" NUMERIC(10, 5) DEFAULT 0
 );
 /* Type
     NUMERIC: hasta 131072 dígitos antes del punto decimal;

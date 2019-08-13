@@ -32,7 +32,6 @@ interface IResource
    ];
 
    const TRANSFERS_COLUMNS = [
-      'user_id',
       'transfer_code',
       'concept',
       'responsible',
