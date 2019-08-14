@@ -21,6 +21,11 @@ CREATE TABLE "users" (
   -- CONSTRAINT "users_registration_code_UQ" UNIQUE ("registration_code"), Se debe colocar esta condicion solo si existe un unico codigo por referido
   CONSTRAINT "users_invite_code_UQ" UNIQUE ("invite_code")
 );
+-- ENTERPRISES
+CREATE TABLE "enterprises" (
+  "email" VARCHAR(40) NOT NULL,
+  CONSTRAINT "enterprises_email_FK" FOREIGN KEY("email") REFERENCES users("email")
+);
 -- ACCOUNTS
 CREATE TABLE "accounts" (
   "email" VARCHAR(36) NOT NULL,
@@ -86,8 +91,10 @@ CREATE TABLE "history" (
 -- OPTIONS
 CREATE TABLE "options" (
   "expiration_time" VARCHAR NOT NULL,
-  "pay_bonus" NUMERIC(10, 5) DEFAULT 0,
-  "pay_enterprise" NUMERIC(10, 5) DEFAULT 0
+  "pay_bonus" NUMERIC(6, 5) DEFAULT 0,
+  "pay_enterprise" NUMERIC(6, 5) DEFAULT 0,
+  "commission_amount" NUMERIC(6, 5) DEFAULT 0,
+  "commission_percetage" INTEGER DEFAULT 0
 );
 /* Type
     NUMERIC: hasta 131072 dígitos antes del punto decimal;
