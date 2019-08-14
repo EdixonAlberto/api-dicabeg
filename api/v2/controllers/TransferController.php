@@ -15,10 +15,12 @@ use V2\Modules\EmailTemplate;
 
 class TransferController implements IResource
 {
-    private const COMMISSION = 5 / 100; // 5% de comisión
     private const MIN_AMOUNT = 0.0001;
     private const MAX_AMOUNT = 10000;
     private const RESPONSIBLE_DATA = ['username', 'email', 'avatar'];
+    private const RECEPTOR_DATA = [
+        'user_id', 'activated', 'email', 'balance', 'player_id'
+    ];
 
     public static function index($req): void
     {
@@ -67,11 +69,8 @@ class TransferController implements IResource
         $amount = Format::number($body->amount);
         $userQuery = Querys::table('users');
 
-        $user = $userQuery->select(['username', 'balance', 'player_id'])
-            ->where('user_id', User::$id)
-            ->get();
-
-        if ($user->balance < $amount) throw new Exception(
+        // Condiciones para efectuar la transferencia
+        if (User::$balance < $amount) throw new Exception(
             'insufficient balance',
             400
         );
@@ -84,18 +83,16 @@ class TransferController implements IResource
             400
         );
 
-        // TODO: usar una constante para esto
-        $commission = ($amount >= 0.005) ? $amount * (self::COMMISSION) : 0;
-
-        $transferAmount = $amount - $commission;
-
         if (isset($body->type_receptor)) {
-            $receptorQuery = $userQuery
-                ->select(['user_id', 'activated', 'balance', 'player_id']);
+            $receptorQuery = $userQuery->select(self::RECEPTOR_DATA);
 
             if ($body->type_receptor == 'username') {
+                if ($body->receptor == User::$username)
+                    throw new Exception('receptor incorrect', 400);
                 $receptorQuery->where('username', $body->receptor);
             } elseif ($body->type_receptor == 'email') {
+                if ($body->receptor == User::$email)
+                    throw new Exception('receptor incorrect', 400);
                 $receptorQuery->where('email', $body->receptor);
             } else throw new Exception(
                 "type_receptor field should be: 'username' or 'email'",
@@ -110,8 +107,11 @@ class TransferController implements IResource
         if ($receptor->activated == false)
             throw new Exception("account not activated: {$body->receptor}", 400);
 
+        // Ejecutar la transferencia
+        $commission = self::processCommission($amount, $receptor->email);
+        $transferAmount = $amount - $commission;
         $transfer_code = Code::create();
-        $newUserBalance = $user->balance - $amount;
+        $newUserBalance = User::$balance - $amount;
         $newReceptorBalance = $receptor->balance + $transferAmount;
         $currentTime = Time::current()->utc;
         $info = null;
@@ -130,7 +130,7 @@ class TransferController implements IResource
             'concept' => $body->concept ?? null,
             'responsible' => $receptor->user_id,
             'amount' => -$amount,
-            'previous_balance' => $user->balance,
+            'previous_balance' => User::$balance,
             'current_balance' => $newUserBalance,
             'create_date' => $currentTime
         ])->execute();
@@ -220,5 +220,28 @@ class TransferController implements IResource
         );
 
         JsonResponse::OK('report sended', $info);
+    }
+
+    private static function processCommission(float $amount, string $email): float
+    {
+        $options = Querys::table('options')
+            ->select(['commission_amount', 'commission_percentage'])
+            ->get();
+
+        if ($amount >= $options->commission_amount) {
+            $arrayEnterprises = Querys::table('enterprises')
+                ->select('email')
+                ->getAll();
+
+            // Se verifica que el email del receptor no sea de una empresa
+            if ($arrayEnterprises) {
+                foreach ($arrayEnterprises as $enterprise) {
+                    if ($email == $enterprise->email) return 0;
+                }
+            }
+
+            // Se aplica la comision segun el monto
+            return $amount * ($options->commission_percentage / 100);
+        } else return 0;
     }
 }
