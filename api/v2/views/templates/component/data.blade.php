@@ -23,7 +23,7 @@
     <tr>
         <td colspan="2">
             <p>
-                Si algun dato no concuerda o te parece sospechoso, <a href="mailto:{{ $support }}" target="_blank">informenos</a> para proteger tu cuenta.
+                Si algun dato no concuerda o te parece sospechoso, <a href="mailto:{{ SUPPORT_EMAIL }}" target="_blank">informenos</a> para proteger tu cuenta.
             </p>
         </td>
     </tr>

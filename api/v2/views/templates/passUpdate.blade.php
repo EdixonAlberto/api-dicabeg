@@ -22,7 +22,7 @@
         @include('component.code')
 
         <p>
-            Si no solicitó esto, <a href="mailto:{{ $support }}" target="_blank">informenos de inmediato</a>. Es importante que nos informe, ya que nos permitirá asegurarnos de que nadie tenga acceso a tu cuenta.
+            Si no solicitó esto, <a href="mailto:{{ SUPPORT_EMAIL }}" target="_blank">informenos de inmediato</a>. Es importante que nos informe, ya que nos permitirá asegurarnos de que nadie tenga acceso a tu cuenta.
         </p>
     @endslot
 

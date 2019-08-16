@@ -4,7 +4,7 @@
             <p class="p-bold">{{ V2\Modules\EmailTemplate::$subject }}</p>
         </td>
         <td>
-            <img id="title-image" src="https://{{ $_SERVER['SERVER_NAME'] }}/img/{{ $imageName }}" alt="Title Image" />
+        <img id="title-image" src="{{ DATASERVER_URL }}/img/email/{{ $imageName }}" alt="Title Image" />
         </td>
     </tr>
 </table>

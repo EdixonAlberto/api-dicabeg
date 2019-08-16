@@ -11,7 +11,7 @@
     ])
     @slot('content_first')
         <p>
-            {{ $data->message }} <strong>satisfactoriamente.</strong>
+            Has actualizado tu {{ $data->updatedData }} <strong>satisfactoriamente.</strong>
         </p>
 
         <strong class="color">¡Gracias por usar Dicabeg!</strong>

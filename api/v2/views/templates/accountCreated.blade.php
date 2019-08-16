@@ -30,7 +30,7 @@
         <tr>
             <td colspan="2">
                 <p>
-                    Si tienes alguna duda o consulta, recuerda que puedes escribirnos a <a href="mailto:{{ $support }}">{{ $support }}</a> con gusto te atenderemos.
+                    Si tienes alguna duda o consulta, recuerda que puedes escribirnos a <a href="mailto:{{ SUPPORT_EMAIL }}">{{ SUPPORT_EMAIL }}</a> con gusto te atenderemos.
                 </p>
             </td>
         </tr>

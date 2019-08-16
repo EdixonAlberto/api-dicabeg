@@ -18,7 +18,7 @@
         <tr>
             <td id="td-logo">
                 <img id="logo-dicabeg"
-                    src="https://{{ $_SERVER['SERVER_NAME'] }}/img/dicabeg.png"
+                    src="{{ DATASERVER_URL }}/img/email/dicabeg.png"
                     alt="Logo Dicabeg" />
             </td>
             <td>
@@ -33,7 +33,7 @@
                 <p class="p-bold">{{ V2\Modules\EmailTemplate::$subject }}</p>
             </td>
             <td>
-                <img id="title-image" src="https://{{ $_SERVER['SERVER_NAME'] }}/img/register.png" alt="Title Image" />
+                <img id="title-image" src="{{ DATASERVER_URL }}/img/email/register.png" alt="Title Image" />
             </td>
         </tr>
         <tr>
