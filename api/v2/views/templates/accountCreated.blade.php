@@ -21,7 +21,7 @@
 
         <tr>
             <td id="td-portada" colspan="2">
-                <img class="portada" src="https://{{ $_SERVER['SERVER_NAME'] }}/img/dicabeg_portada.png" alt="Portada de Dicabeg" />
+                <img class="portada" src="{{ DATASERVER_URL }}/img/email/dicabeg_portada.png" alt="Portada de Dicabeg" />
                 <h2><strong class="color">¡Bienvenid@ a Dicabeg!</strong></h2>
             </td>
         </tr>
@@ -29,7 +29,7 @@
         <tr>
             <td colspan="2">
                 <p>
-                    Si tienes alguna duda o consulta, recuerda que puedes escribirnos a <a href="mailto:{{ $support }}">{{ $support }}</a> con gusto te atenderemos.
+                    Si tienes alguna duda o consulta, recuerda que puedes escribirnos a <a href="mailto:{{ SUPPORT_EMAIL }}">{{ SUPPORT_EMAIL }}</a> con gusto te atenderemos.
                 </p>
             </td>
         </tr>

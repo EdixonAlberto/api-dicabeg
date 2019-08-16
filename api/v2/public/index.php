@@ -2,11 +2,11 @@
 
 require __DIR__ . '../../../../vendor/autoload.php';
 
-use V2\Libraries\PhpDotEnv;
 use V2\Modules\JsonResponse;
 use V2\Modules\RouteManager;
 
-new PhpDotEnv;
+new \Libraries\PhpDotEnv;
+
 $routeManager = new RouteManager;
 $path = $routeManager->getResource();
 

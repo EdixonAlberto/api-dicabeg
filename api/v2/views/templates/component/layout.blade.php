@@ -14,7 +14,7 @@
         <tr>
             <td id="td-logo">
                 <img id="logo-dicabeg"
-                    src="https://{{ $_SERVER['SERVER_NAME'] }}/img/dicabeg.png"
+                    src="{{ DATASERVER_URL }}/img/email/dicabeg.png"
                     alt="Logo Dicabeg" />
             </td>
             <td>
@@ -29,7 +29,7 @@
         <tr>
             <td>
                 <p id="about">
-                    Copyright &copy; 2019 Dicabeg. Todos los derechos reservados. Dicabeg y el logotipo de Dicabeg son productos desarrollados por <strong>Dicapp</strong>. Consulte nuestra <a href="https://edixonalberto.github.io/doc-dicabeg/menu/policy.html" target="_blank">política de privacidad</a> o escribanos a <a href="mailto:{{ $support }}" target="_blank", title="Envianos un Email">{{ $support }}</a> para poder brindarle soporte.
+                    Copyright &copy; 2019 Dicabeg. Todos los derechos reservados. Dicabeg y el logotipo de Dicabeg son productos desarrollados por <strong>Dicapp</strong>. Consulte nuestra <a href="https://edixonalberto.github.io/doc-dicabeg/menu/policy.html" target="_blank">política de privacidad</a> o escribanos a <a href="mailto:{{ SUPPORT_EMAIL }}" target="_blank", title="Envianos un Email">{{ SUPPORT_EMAIL }}</a> para poder brindarle soporte.
                 </p>
             </td>
         </tr>

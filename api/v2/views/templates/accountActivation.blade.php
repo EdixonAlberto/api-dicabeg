@@ -12,7 +12,7 @@
     ])
     @slot('content_first')
         <p>
-            Gracias por crear una cuenta Dicabeg. Solo falta que activemos tu cuenta, por favor ingresa el siguiente código en la aplicación para proceder con la activación:
+            Gracias por crear una cuenta Dicabeg. Solo falta que activemos tu cuenta, por favor ingresa el siguiente código en la aplicación para continuar:
         </p>
 
         @include('component.code')

@@ -18,7 +18,7 @@
         @include('component.code')
 
         <p>
-            Así de facil es recuperar tu cuenta Dicabeg, si tienes algun problema al respecto no dudes en <a href="mailto:{{ $support }}">escribirnos</a>.
+            Así de facil es recuperar tu cuenta Dicabeg, si tienes algun problema al respecto no dudes en <a href="mailto:{{ SUPPORT_EMAIL }}">escribirnos</a>.
         </p>
     @endslot
 
