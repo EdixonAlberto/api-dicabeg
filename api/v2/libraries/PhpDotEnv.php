@@ -1,23 +1,22 @@
 <?php
 
-namespace V2\Libraries;
+namespace Libraries;
 
 use Dotenv\Dotenv;
-// use V2\Modules\Time;
 
 class PhpDotEnv
 {
    public function __construct()
    {
-      if (getenv('DATABASE_URL') == false) {
-         $environment = Dotenv::create(__DIR__ . '../../../../');
-         $environment->load();
+      if (empty($_ENV)) {
+         $environmentDeveloper = Dotenv::create(__DIR__ . '../../../../');
+         $environmentDeveloper->load();
       }
 
+      define('APP_ENV', getenv('APP_ENV'));
       define('DATABASE_URL', getenv('DATABASE_URL'));
       define('ACCESS_KEY', getenv('ACCESS_KEY'));
       define('REFRESH_KEY', getenv('REFRESH_KEY'));
-      //ADD: define('USER_TIME_ZONE',Time::getTimeZone());
 
       define('SENDGRID_API_KEY', getenv('SENDGRID_API_KEY'));
 
