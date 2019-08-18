@@ -36,6 +36,7 @@ class RequestManager implements IRequest
     protected static function getBody()
     {
         parse_str(file_get_contents('php://input'), $body);
+        // TODO: crear middleware para filtrar atributos de entrada
         return empty($body) ? false : (object) $body;
     }
 }

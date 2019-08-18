@@ -2,48 +2,49 @@
 
 namespace V2\Modules;
 
-use Exception;
+use Modules\Exceptions;
 
 class Format
 {
     private const DECIMALS = 5;
+    private const REGEX = [
+        'email' => '/^[a-z0-9._-]+\@[a-z]+\.(com|email)$/',
+        'phone' => '/^[0-9]{3}\-[0-9]{3}\.[0-9]{2}\.[0-9]{2}$/',
+        'float' => '/^\-?\d+\.\d+$/'
+    ];
 
-    public static function email(string $email): string
+    public static function email(string $_email): string
     {
-        if ($email) {
-            $email = strtolower($email);
-            $email = filter_var($email, FILTER_SANITIZE_STRING);
+        if ($_email) {
+            $email = filter_var($_email, FILTER_SANITIZE_STRING);
             $email = trim($email);
             $email = filter_var($email, FILTER_SANITIZE_EMAIL);
             $email = filter_var($email, FILTER_VALIDATE_EMAIL);
-            $emailFormat = '/^[a-z0-9._-]+\@[a-z]+\.(com|email)$/';
 
-            if (preg_match($emailFormat, $email)) return $email;
-            else throw new Exception('format the email incorrect', 400);
-        } else throw new Exception('email is not set', 400);
+            if ($email) {
+                $email = strtolower($email);
+                if (preg_match(self::REGEX['email'], $email)) return $email;
+            }
+        } else new Exceptions\SetError('email');
+        new Exceptions\ValidationError($_email, self::REGEX['email']);
     }
 
-    public static function phone(string $phone): string
+    public static function phone(string $_phone): string
     {
-        $phone = filter_var($phone, FILTER_SANITIZE_STRING);
+        $phone = filter_var($_phone, FILTER_SANITIZE_STRING);
         $phone = trim($phone);
-        $phoneFormat = '/^[0-9]{3}\-[0-9]{3}\.[0-9]{2}\.[0-9]{2}$/';
-
-        if (preg_match($phoneFormat, $phone)) return $phone;
-        else throw new Exception('format the phone incorrect', 400);
+        if ($phone) {
+            if (preg_match(self::REGEX['phone'], $phone)) return $phone;
+        }
+        new Exceptions\ValidationError($_phone, self::REGEX['phone']);
     }
 
     public static function number(string $number)
     {
         if (is_numeric($number)) {
-            $isFloatString = preg_match('/^\-?\d+\.\d+$/', $number);
-            $number = $isFloatString ?
+            $formatFloat = preg_match(self::REGEX['float'], $number);
+            return $formatFloat ?
                 (float) number_format($number, self::DECIMALS, '.', '') : (int) $number;
-            return $number;
-        } else throw new Exception(
-            "the number: {$number} is incorrect," .
-                'must have this format: 0.00000',
-            400
-        );
+        } else new Exceptions\ValidationError($number, self::REGEX['float']);
     }
 }
