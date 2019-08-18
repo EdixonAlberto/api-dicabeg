@@ -5,7 +5,7 @@ namespace V2\Libraries;
 use Exception;
 use V2\Modules\Time;
 use Firebase\JWT\JWT as JwtToken;
-use Modules\Exceptions\ExpiredException;
+use Modules\Exceptions\TokenError;
 
 class Jwt
 {
@@ -39,7 +39,7 @@ class Jwt
         } catch (Exception $err) {
             $message = $err->getMessage();
 
-            if ($message == 'Expired token') new ExpiredException;
+            if ($message == 'Expired token') new TokenError;
             else throw new Exception($message, $err->getCode());
         }
     }
