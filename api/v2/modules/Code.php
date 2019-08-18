@@ -3,7 +3,8 @@
 namespace Modules\Tools;
 
 use Libraries\Gui;
-use Modules\Exceptions\CodeException;
+use Modules\Exceptions;
+use V2\Database\Querys;
 
 class Code
 {
@@ -17,11 +18,23 @@ class Code
         return substr($code, 0, self::CODE_LENGTH);
     }
 
-    public static function validate(string $input, string $saved): bool
+    public static function validate(string $inputCode, string $email): bool
     {
-        if ($saved == 'expire') throw new CodeException('expired');
-        elseif ($saved == 'used') throw new CodeException('used');
-        elseif ($saved !== $input) throw new CodeException('incorrect');
+        $account = Querys::table('accounts')
+            ->select(['temporal_code', 'code_create_date'])
+            ->where('email', $email)
+            ->get(function () {
+                new Exceptions\NotFound('email');
+            });
+
+        $savedCode = $account->temporal_code;
+
+        if ($savedCode  == 'expire')
+            new Exceptions\CodeError($savedCode, $account->code_create_date);
+        elseif ($savedCode  == 'used')
+            new Exceptions\CodeError($savedCode, $account->code_create_date);
+        elseif ($savedCode !== $inputCode)
+            new Exceptions\CodeError('incorrect', $inputCode);
         else return true;
     }
 }

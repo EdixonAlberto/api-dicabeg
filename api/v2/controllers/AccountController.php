@@ -7,6 +7,7 @@ use V2\Modules\Time;
 use V2\Modules\User;
 use V2\Modules\Access;
 use V2\Modules\Format;
+use Modules\Exceptions;
 use Modules\Tools\Code;
 use V2\Database\Querys;
 use V2\Modules\Diffusion;
@@ -14,7 +15,6 @@ use Modules\Tools\Password;
 use V2\Interfaces\IResource;
 use V2\Modules\JsonResponse;
 use V2\Modules\EmailTemplate;
-use Modules\Exceptions\CodeException;
 
 class AccountController implements IResource
 {
@@ -24,14 +24,7 @@ class AccountController implements IResource
         $email = Format::email($body->email ?? '');
 
         if (isset($body->temporal_code)) {
-            $saved_temporal_code = Querys::table('accounts')
-                ->select('temporal_code')
-                ->where('email', $email)
-                ->get(function () {
-                    throw new Exception('email not found', 404);
-                });
-
-            if (Code::validate($body->temporal_code, $saved_temporal_code)) {
+            if (Code::validate($body->temporal_code, $email)) {
                 Querys::table('accounts')->update(['temporal_code' => 'used'])
                     ->where('email', $email)
                     ->execute();
@@ -180,8 +173,10 @@ class AccountController implements IResource
         $email = Format::email($body->email ?? '');
 
         $account = Querys::table('accounts')
-            ->select(['temporal_code', 'last_email_sended', 'time_zone'])
-            ->where('email', $email)
+            ->select([
+                'temporal_code', 'last_email_sended',
+                'time_zone', 'code_create_date'
+            ])->where('email', $email)
             ->get(function () {
                 throw new Exception('email not found', 404);
             });
@@ -195,7 +190,7 @@ class AccountController implements IResource
                 'temporal_code' => $code,
                 'code_create_date' => Time::current($timeZone)->utc
             ])->where('email', $email)->execute();
-        } else throw new CodeException('used');
+        } else new Exceptions\CodeError('used', $account->code_create_date);
 
         $info['email_' . $emailType] = Diffusion::sendEmail(
             $body->send_email,
