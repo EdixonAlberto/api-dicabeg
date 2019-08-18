@@ -137,7 +137,7 @@ class AccountController implements IResource
                 $body->send_email,
                 $email,
                 (new EmailTemplate)->successfull([
-                    'message' => 'Has recuperado tu cuenta Dicabeg'
+                    'updatedData' => 'cuenta Dicabeg'
                 ])
             );
 

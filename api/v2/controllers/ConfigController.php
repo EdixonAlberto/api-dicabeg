@@ -45,7 +45,7 @@ class ConfigController implements IResource
                 $body->send_email,
                 $newEmail,
                 (new EmailTemplate)->successfull([
-                    'message' => 'Has actualizado tu correo electrónico'
+                    'updatedData' => 'correo electrónico'
                 ])
             );
             $info['new_email'] = $newEmail;
@@ -120,7 +120,7 @@ class ConfigController implements IResource
                 $body->send_email,
                 User::$email,
                 (new EmailTemplate)->successfull([
-                    'message' => 'Has actualizado tu contraseña'
+                    'updatedData' => 'contraseña'
                 ])
             );
 
