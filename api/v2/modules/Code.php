@@ -24,7 +24,7 @@ class Code
             ->select(['temporal_code', 'code_create_date'])
             ->where('email', $email)
             ->get(function () {
-                new Exceptions\NotFound('email');
+                new Exceptions\ResourceError('email');
             });
 
         $savedCode = $account->temporal_code;
