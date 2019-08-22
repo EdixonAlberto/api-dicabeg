@@ -19,7 +19,8 @@ interface IResource
       'invite_code',
       'password',
       'create_date',
-      'update_date'
+      'update_date',
+      'rol_id'
    ];
 
    const ACCOUNTS_COLUMNS = [

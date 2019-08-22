@@ -15,16 +15,19 @@ CREATE TABLE "users" (
   "password" VARCHAR(255) NOT NULL,
   "create_date" TIMESTAMP NULL,
   "update_date" TIMESTAMP NULL,
+  "rol_id" INTEGER NOT NULL,
   CONSTRAINT "users_user_id_PK" PRIMARY KEY ("user_id"),
   CONSTRAINT "users_username_UQ" UNIQUE ("username"),
   CONSTRAINT "users_email_UQ" UNIQUE ("email"),
   -- CONSTRAINT "users_registration_code_UQ" UNIQUE ("registration_code"), Se debe colocar esta condicion solo si existe un unico codigo por referido
-  CONSTRAINT "users_invite_code_UQ" UNIQUE ("invite_code")
+  CONSTRAINT "users_invite_code_UQ" UNIQUE ("invite_code"),
+  CONSTRAINT "users_rol_id_FK" FOREIGN KEY ("rol_id") REFERENCES roles("rol_id")
 );
--- ENTERPRISES
-CREATE TABLE "enterprises" (
-  "email" VARCHAR(40) NOT NULL,
-  CONSTRAINT "enterprises_email_FK" FOREIGN KEY("email") REFERENCES users("email")
+-- ROLES
+CREATE TABLE "roles" (
+  "rol_id" SMALLSERIAL NOT NULL,
+  "name" VARCHAR(20) NOT NULL,
+  CONSTRAINT "roles_rol_id_PK" PRIMARY KEY ("rol_id")
 );
 -- ACCOUNTS
 CREATE TABLE "accounts" (
