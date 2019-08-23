@@ -10,6 +10,21 @@ class AppController
 {
     private const USER_DATA = ['username', 'email', 'balance'];
 
+    public static function getRoles(): void
+    {
+        $arrayRoles = Querys::table('roles')
+            ->select(['rol_id', 'name'])
+            ->getAll(function () {
+                throw new Exception('resource not found', 404);
+            });
+
+        foreach ($arrayRoles as $rol) {
+            $_arrayRoles[$rol->rol_id] = $rol->name;
+        }
+
+        JsonResponse::read($_arrayRoles);
+    }
+
     public static function getRanking(): void
     {
         $arrayRanking = Querys::table('view_ranking')

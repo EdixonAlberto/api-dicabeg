@@ -229,7 +229,7 @@ class TransferController implements IResource
             ->get();
 
         if ($amount >= $options->commission_amount) {
-            $arrayEnterprises = Querys::table('enterprises')
+            $arrayEnterprises = Querys::table('view_enterprises')
                 ->select('email')
                 ->getAll();
 
