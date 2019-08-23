@@ -1,7 +1,6 @@
-# app-dicabeg
+# api-dicabeg
 
 [![Author linkedin:edixonalberto](https://img.shields.io/badge/author-EdixonAlberto-purple.svg)](https://www.linkedin.com/in/edixonalberto)
-[![Email edixonalbertto@gmail.com](https://img.shields.io/badge/email-author-yellow.svg)](mailto:http://edixonalbertto@gmail.com)
 [![GPL license](https://img.shields.io/badge/license-GPL-green.svg)](./LICENSE.md)
 
 ![Twitter](https://img.shields.io/twitter/follow/EdixonAlbertto.svg?style=social)
@@ -17,15 +16,29 @@ Backend para la aplicación movil **[Dicabeg](https://edixonalberto.github.io/do
 - Patrón de diseño **MVC**.
 - Envío de **email transactional** por medio de `SendGrid`.
 - Envío de **push notification** usando `OneSignal`.
-- Administración de sesiones utilizando **JWT** y **OAuth**.
+- Administración de sesiones utilizando `JWT` y `OAuth`.
 - Login con **Facebook**.
 - Constructor de consultas personalizado hecho en PHP plano usando **PDO**.
 - Lenguaje de **DataBase**: `PostgreSQL` **10.7**
 - **PaaS** para el alojamiento del código: `Heroku`.
-- Generación automática de **email templates**.
-- **Minificación** de código **HTML** para la aceleración en la carga de las vistas y la generación de los email templates. Gracias a la librería [tiny-html-minifier](https://github.com/jenstornell/tiny-html-minifier.git) realizada por [Jens Törnell](mailto:webblayout@gmail.com).
+- Generación automática de `Email Templates` usando Blade.
+- **Minificación** de código HTML para la aceleración en la carga de las vistas y la generación de los email templates. Gracias a la librería [tiny-html-minifier](https://github.com/jenstornell/tiny-html-minifier.git) realizada por [Jens Törnell](mailto:webblayout@gmail.com).
 
-### End Points
+---
+
+## Email Template (Cuenta Activada)
+
+![Cuenta Activada](./doc/email-template.png)
+
+---
+
+## Diagrama Entidad Relación
+
+![Diagrama ERD](./doc/ERD-dicabeg.png)
+
+---
+
+## End Points
 
 >USERS
 
@@ -40,6 +53,7 @@ Backend para la aplicación movil **[Dicabeg](https://edixonalberto.github.io/do
 
     POST   | api/accounts/login
     POST   | api/accounts/login/refresh
+    POST   | api/accounts/login/oauth2   [NO DISPONIBLE]
     POST   | api/accounts/activation
     POST   | api/accounts/recovery
     POST   | api/accounts/resend_email
@@ -79,6 +93,8 @@ Backend para la aplicación movil **[Dicabeg](https://edixonalberto.github.io/do
 
 >ADVERTS
 
+    PUT    | api/adverts/bonus/pay  [NO DISPONIBLE]
+    PUT    | api/adverts/enterprise/pay [NO DISPONIBLE]
     GET    | api/adverts/grant/user-id/{userId}/rewards/{rewards}/event-id/{eventId}
 ---
 
