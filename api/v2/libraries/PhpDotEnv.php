@@ -13,6 +13,7 @@ class PhpDotEnv
          $environmentDeveloper->load();
       }
 
+      // Almacenando variables de entorno
       define('APP_ENV', getenv('APP_ENV'));
       define('DATABASE_URL', getenv('DATABASE_URL'));
       define('ACCESS_KEY', getenv('ACCESS_KEY'));
@@ -23,5 +24,10 @@ class PhpDotEnv
       define('ONESIGNAL_USER_AUTH_KEY', getenv('ONESIGNAL_USER_AUTH_KEY'));
       define('ONESIGNAL_APP_ID', getenv('ONESIGNAL_APP_ID'));
       define('ONESIGNAL_REST_API_KEY', getenv('ONESIGNAL_REST_API_KEY'));
+
+      // Almacenando constantes para la app
+      define('CLIENT', 1);
+      define('ENTERPRISE', 2);
+      define('ADMIN', 3);
    }
 }

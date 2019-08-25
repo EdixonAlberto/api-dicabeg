@@ -29,7 +29,7 @@ class UserController implements IController
                 throw new Exception('not found users', 404);
             });
 
-        JsonResponse::read($arrayUser);
+        JsonResponse::OK('list of users', $arrayUser);
     }
 
     public static function show($req): void

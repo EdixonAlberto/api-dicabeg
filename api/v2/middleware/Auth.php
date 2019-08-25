@@ -10,23 +10,34 @@ class Auth
 {
     public static $id;
     public static $name;
+    private const ROLES = [
+        1 => 'client',
+        2 => 'enterprise',
+        3 => 'admin'
+    ];
 
-    public static function execute(object $headers): string
+    public static function execute(object $headers, $rol = null): string
     {
         if (isset($headers->ACCESS_TOKEN)) {
             $token = $headers->ACCESS_TOKEN;
             $key = ACCESS_KEY;
-            unset($headers->ACCESS_TOKEN);
         } elseif (isset($headers->REFRESH_TOKEN)) {
             $token = $headers->REFRESH_TOKEN;
             $key = REFRESH_KEY;
             Jwt::extraTime(2);
-            unset($headers->REFRESH_TOKEN);
         } else throw new Exception('unauthorized access: token require', 401);
 
-        $payload = Jwt::verific($token, $key);
+        $payload = Jwt::verific($token, $key)->sub;
 
-        new User($payload->sub);
+        if ($rol) {
+            if ($rol != $payload->rol)
+                throw new Exception(
+                    'unauthorized access: require rol = ' . self::ROLES[$rol],
+                    401
+                );
+        }
+
+        new User($payload->id);
 
         self::$id = User::$id;
         self::$name = 'Estimado usuario'; // TODO: colocar el nombre y apellido del usuario

@@ -22,6 +22,7 @@ class User implements IResource
     public static $password;
     public static $create_date;
     public static $update_date;
+    public static $rol;
 
     public function __construct(string $identity)
     {
@@ -44,5 +45,6 @@ class User implements IResource
         self::$password = $user->password;
         self::$create_date = $user->create_date;
         self::$update_date = $user->update_date;
+        self::$rol = $user->rol_id;
     }
 }

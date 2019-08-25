@@ -2,12 +2,10 @@
 
 use V2\Modules\Route;
 
-Route::midd('Auth')->get('/history/page/{nro}/date-order/{order}', 'HistoryController::index');
-
-Route::midd('Auth')->get('/history/{id}', 'HistoryController::show');
-
-Route::midd('Auth')->post('/history/{id}', 'HistoryController::store');
-
-Route::midd('Auth')->delete('/history/{id}', 'HistoryController::destroy');
-
-Route::midd('Auth')->delete('/history', 'HistoryController::destroy');
+Route::group('Auth', function (Route $route) {
+    $route->get('/history/page/{nro}/date-order/{order}', 'HistoryController::index');
+    $route->get('/history/{id}', 'HistoryController::show');
+    $route->post('/history/{id}', 'HistoryController::store');
+    $route->delete('/history/{id}', 'HistoryController::destroy');
+    $route->delete('/history', 'HistoryController::destroy');
+});

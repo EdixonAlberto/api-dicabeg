@@ -2,12 +2,10 @@
 
 use V2\Modules\Route;
 
-Route::midd('Auth')->patch('/users', 'UserController::update');
+Route::group('Auth', function (Route $route) {
+    $route->patch('/users', 'UserController::update');
+    $route->get('/users', 'UserController::show');
+    $route->delete('/users', 'UserController::destroy');
+});
 
 Route::post('/users', 'UserController::store');
-
-Route::midd('Auth')->get('/users', 'UserController::show');
-
-Route::midd('Auth')->delete('/users', 'UserController::destroy');
-
-Route::midd('Auth')->get('/users/page/{nro}/date-order/{order}', 'UserController::index');

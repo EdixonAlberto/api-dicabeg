@@ -7,13 +7,12 @@ use V2\Interfaces\IRequest;
 class RouteManager implements IRequest
 {
     private static $uri;
-    protected $parameters;
     protected static $resource;
+    protected static $queryParams;
 
     public function __construct()
     {
         self::$uri = preg_replace('/^\/api/', '', $_SERVER['REQUEST_URI']);
-        $this->parameters = (object) [];
         // \var_dump(self::$uri); // DEBUG:
     }
 
@@ -34,17 +33,28 @@ class RouteManager implements IRequest
     {
         $method = $_SERVER['REQUEST_METHOD'];
         if (in_array($method, self::METHODS)) return $method;
-
         else return '';
+    }
+
+    protected static function getHeader(): object
+    {
+        $headers = (object) [];
+
+        foreach (self::HEADERS as $key) {
+            $value = $_SERVER['HTTP_' . $key] ?? false;
+            if ($value) $headers->$key = $value;
+        }
+        return $headers;
     }
 
     protected function routeValidate(string $route): bool
     {
+        $queryParams = (object) [];
+
         preg_replace_callback(
             '/\{([a-zA-Z0-9]+)\}/', // Patron de busqueda para parametros get
-            function ($arrayGet) use (&$route) {
-                $validation = true;
-                $get = $this->parameters->keys[] = $arrayGet[1];
+            function ($arrayGet) use (&$route, &$queryParams) {
+                $get = $queryParams->keys[] = $arrayGet[1];
                 $route = preg_replace("/\{$get\}/", '([a-zA-Z0-9-]+)', $route);
             },
             $route
@@ -53,9 +63,13 @@ class RouteManager implements IRequest
         $validation = preg_match(
             '|^' . $route . '$|',
             self::$uri,
-            $this->parameters->value
+            $queryParams->value
         );
-        // var_dump(self::$uri, $route,  $this->parameters); // DEBUG:
+        // var_dump(self::$uri, $route, $validation); // DEBUG:
+        // var_dump($queryParams); // DEBUG:
+
+        self::$queryParams = $queryParams;
+
         return $validation;
     }
 }
