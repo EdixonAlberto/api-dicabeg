@@ -10,9 +10,9 @@ class Requests extends RequestManager
     public $headers;
     public $body;
 
-    public function __construct(object $params)
+    public function __construct()
     {
-        $this->params = self::getParams($params);
+        $this->params = self::getParams();
         $this->headers = self::getHeader();
         $this->body = self::getBody();
     }

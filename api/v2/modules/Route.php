@@ -7,14 +7,33 @@ use V2\Modules\RouteManager;
 
 class Route extends RouteManager
 {
-    private const NAME_SPACE = 'V2\\Controllers\\';
-    private const NAME_SPACE_MIDD = 'V2\\Middleware\\';
-    private static $middleware;
+    private const NAME_SPACE = '\V2\\Controllers\\';
+    private const NAME_SPACE_MIDD = '\V2\\Middleware\\';
+    private $middleware;
 
-    public static function midd(string $middleware): self
+    public function __construct($midd = null)
     {
-        self::$middleware = $middleware;
-        return (new Route);
+        if (is_array($midd)) {
+            foreach ($midd as $class => $params) {
+                $this->middleware = (object) [
+                    'class' => $class,
+                    'params' => $params
+                ];
+            }
+        } elseif (is_string($midd))
+            $this->middleware = (object) ['class' => $midd];
+        else $this->middleware = null;
+    }
+
+    public static function midd($middleware): self
+    {
+        return (new Route($middleware));
+    }
+
+    public static function group($middleware, callable $routes): void
+    {
+        $route = new Route($middleware);
+        $routes($route);
     }
 
     public static function __callStatic(string $verb, array $arguments): void
@@ -37,11 +56,12 @@ class Route extends RouteManager
         $routeCorrect = $this->routeValidate($route);
 
         if ($methodCorrect and $routeCorrect) {
-            $request = new Requests($this->parameters);
+            $request = new Requests;
 
-            if (self::$middleware) call_user_func(
-                self::NAME_SPACE_MIDD . self::$middleware . '::execute',
-                $request->headers
+            if ($this->middleware) call_user_func(
+                self::NAME_SPACE_MIDD . $this->middleware->class . '::execute',
+                $request->headers,
+                $this->middleware->params ?? null
             );
 
             if (is_string($controller)) call_user_func(
@@ -49,6 +69,6 @@ class Route extends RouteManager
                 $request
             );
             else $controller();
-        } else self::$middleware = false;
+        }
     }
 }

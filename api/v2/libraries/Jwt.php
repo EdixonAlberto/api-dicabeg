@@ -13,16 +13,17 @@ class Jwt
     public $expiration_date;
     private const ALG = array('HS256');
 
-    public function __construct(string $id, string $key)
+    public function __construct(object $sub, string $key)
     {
         /* token:
             sub: (sujeto) datos del usuario
             TODO: admin: , cliente: , establecimiento, etc
             iss: (emisor) autor o creador del token
             iat: (tiempo de creacion) en UNIX
-            exp: (tiempo de expiracion) en UNIX */
+            exp: (tiempo de expiracion) en UNIX
+        */
         $token = array(
-            'sub' => $id,
+            'sub' => $sub,
             'iss' => 'api-dicabeg',
             'iat' => Time::current()->unix,
             'exp' => Time::expiration()->unix,

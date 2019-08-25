@@ -12,9 +12,14 @@ class Access
 
     public function __construct($id)
     {
-        $access = new Jwt($id, ACCESS_KEY);
+        $sub = (object) [
+            'id' => $id,
+            'rol' => User::$rol ?? $this->getUserRol($id)
+        ];
 
-        $refresh = new Jwt($id, REFRESH_KEY);
+        $access = new Jwt($sub, ACCESS_KEY);
+
+        $refresh = new Jwt($sub, REFRESH_KEY);
 
         $this->data = (object) [
             'access_token' => $access->token,
@@ -32,9 +37,18 @@ class Access
         $time = Querys::table('options')
             ->select('expiration_time')
             ->get();
-
         $expiration_time = preg_replace('/( min)$/', '', $time);
 
         return $expiration_time;
+    }
+
+    private function getUserRol($id): int
+    {
+        $rol = Querys::table('users')
+            ->select('rol_id')
+            ->where('user_id', $id)
+            ->get();
+
+        return $rol;
     }
 }

@@ -2,10 +2,10 @@
 
 namespace V2\Modules;
 
-use Exception;
 use V2\Interfaces\IRequest;
+use V2\Modules\RouteManager;
 
-class RequestManager implements IRequest
+class RequestManager extends RouteManager implements IRequest
 {
     protected static function getHeader(): object
     {
@@ -18,12 +18,12 @@ class RequestManager implements IRequest
         return $headers;
     }
 
-    protected static function getParams(object $params): object
+    protected static function getParams(): object
     {
-        if (isset($params->keys)) {
+        if (isset(self::$queryParams->keys)) {
             $i = 0;
-            $arrayKeys = $params->keys;
-            $arrayValues = $params->value;
+            $arrayKeys = self::$queryParams->keys;
+            $arrayValues = self::$queryParams->value;
             array_shift($arrayValues);
 
             foreach ($arrayValues as $value) {
