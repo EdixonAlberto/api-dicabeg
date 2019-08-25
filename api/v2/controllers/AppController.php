@@ -22,7 +22,7 @@ class AppController
             $_arrayRoles[$rol->rol_id] = $rol->name;
         }
 
-        JsonResponse::read($_arrayRoles);
+        JsonResponse::OK('list of roles', $_arrayRoles);
     }
 
     public static function getRanking(): void
@@ -61,7 +61,7 @@ class AppController
                 new \Modules\Exceptions\ResourceException;
             });
 
-        JsonResponse::read($info);
+        JsonResponse::OK('total balances generated', $info);
     }
 
     public static function commissions()
@@ -72,6 +72,6 @@ class AppController
                 new \Modules\Exceptions\ResourceException;
             });
 
-        JsonResponse::read($arrayCommissions);
+        JsonResponse::OK('commissions', $arrayCommissions);
     }
 }
