@@ -2,6 +2,7 @@
 
 use V2\Modules\Route;
 
-Route::midd('Auth')->get('/videos/page/{nro}/date-order/{order}', 'VideoController::index');
-
-Route::midd('Auth')->get('/videos/{id}', 'VideoController::show');
+Route::group('Auth', function (Route $route) {
+    $route->get('/videos/page/{nro}/date-order/{order}', 'VideoController::index');
+    $route->get('/videos/{id}', 'VideoController::show');
+});
