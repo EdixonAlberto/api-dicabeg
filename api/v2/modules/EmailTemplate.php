@@ -52,8 +52,9 @@ class EmailTemplate
 
     private function contentDefaultLoader(): void
     {
-        define('SUPPORT_EMAIL', self::SUPPORT_EMAIL);
-        define('DATASERVER_URL', (APP_ENV == 'dev') ?
-            self::DATASERVER_URL['dev'] : self::DATASERVER_URL['prod']);
+        if (defined('SUPPORT_EMAIL') == false) {
+            define('SUPPORT_EMAIL', self::SUPPORT_EMAIL);
+            define('DATASERVER_URL', self::DATASERVER_URL[APP_ENV]);
+        }
     }
 }
