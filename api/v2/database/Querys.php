@@ -4,6 +4,8 @@ namespace V2\Database;
 
 class Querys extends Execute
 {
+    private const REGISTERS_NRO = 10;
+
     public static function table(string $table): Querys
     {
         $query = new Querys;
@@ -26,10 +28,11 @@ class Querys extends Execute
         return $this;
     }
 
-    public function group(int $number, string $order): Querys
+    public function group(int $number, string $order = null): Querys
     {
-        $start = 10 * ($number - 1);
-        $this->sql .= " ORDER BY create_date {$order} OFFSET {$start} LIMIT 10";
+        $start = self::REGISTERS_NRO * ($number - 1);
+        $_order = $order ?? 'desc';
+        $this->sql .= " ORDER BY create_date {$_order} OFFSET {$start} LIMIT " . self::REGISTERS_NRO;
         return $this;
     }
 
