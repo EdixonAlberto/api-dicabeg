@@ -75,4 +75,17 @@ interface IResource
       'create_date',
       'update_date'
    ];
+
+   const PRODUCTS_COLUMNS = [
+      'product_id',
+      'user_id',
+      'category_id',
+      'name',
+      'price',
+      'description',
+      'quantity',
+      'photo',
+      'create_date',
+      'update_date'
+   ];
 }
