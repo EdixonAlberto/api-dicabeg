@@ -19,7 +19,6 @@ CREATE TABLE "users" (
   CONSTRAINT "users_user_id_PK" PRIMARY KEY ("user_id"),
   CONSTRAINT "users_username_UQ" UNIQUE ("username"),
   CONSTRAINT "users_email_UQ" UNIQUE ("email"),
-  -- CONSTRAINT "users_registration_code_UQ" UNIQUE ("registration_code"), Se debe colocar esta condicion solo si existe un unico codigo por referido
   CONSTRAINT "users_invite_code_UQ" UNIQUE ("invite_code"),
   CONSTRAINT "users_rol_id_FK" FOREIGN KEY ("rol_id") REFERENCES roles("rol_id")
 );
@@ -36,7 +35,6 @@ CREATE TABLE "accounts" (
   "email" VARCHAR(36) NOT NULL,
   "temporal_code" VARCHAR(6) NULL DEFAULT NULL,
   "last_email_sended" VARCHAR(20) NULL DEFAULT NULL,
-  "referred_id" VARCHAR(36) NULL DEFAULT NULL,
   "time_zone" VARCHAR NOT NULL,
   "code_create_date" TIMESTAMP NULL,
   CONSTRAINT "accounts_email_PK" PRIMARY KEY ("email")

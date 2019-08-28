@@ -58,7 +58,8 @@ class UserController implements IController
 
         if (isset($body->email)) {
             $emailFound = $userQuery->select('email')
-                ->WHERE('email', $body->email)->get();
+                ->WHERE('email', $body->email)
+                ->get();
 
             if ($emailFound) throw new Exception(
                 "email exist: {$emailFound}",
@@ -66,21 +67,13 @@ class UserController implements IController
             );
         } else throw new Exception('email is not set', 400);
 
-        // Agragando user como referido
-        if (isset($body->invite_code)) {
-            $user_id = Querys::table('users')
-                ->select('user_id')
-                ->where('invite_code', $body->invite_code)
-                ->get(function () {
-                    throw new Exception('invite code incorrect', 400);
-                });
-
-            $user = $userQuery->select([
-                'user_id',
-                'player_id',
-                'username'
-            ])->where('user_id', $user_id)->get();
-        }
+        // Guardando los datos del referido
+        $referred = isset($body->invite_code) ? $userQuery
+            ->select(['user_id',  'player_id', 'username'])
+            ->where('invite_code', $body->invite_code)
+            ->get(function () {
+                throw new Exception('invite code incorrect', 400);
+            }) : null;
 
         $pass = Password::create($body->password ?? '');
         $username = Username::validate($body->username);
@@ -101,20 +94,24 @@ class UserController implements IController
             'email' => $email,
             'temporal_code' => $code,
             'last_email_sended' => 'accountActivation',
-            'referred_id' => $user->user_id ?? null,
+            'referred_id' => $referred->user_id ?? null,
             'time_zone' => $body->time_zone,
             'code_create_date' => Time::current()->utc
         ])->execute();
 
+        // Creando referido
+        // Nota: es necesario intercambiar los id
         if (isset($body->invite_code)) {
             ReferredController::store((object) [
-                'user_id' => $user->user_id,
+                'user_id' => $referred->user_id,
                 'referred_id' => $id
             ]);
-            $info['as_referred'] = true;
+
+            $info['referred'] = $referred->user_id;
 
             // ADD: crear modelos de contenido para las notificaciones
             // ademas de tener el contenido en varios idiomas
+
             // TODO: Apagando notificaciones. Reparar despues
             // if (isset($user->player_id) and $user->player_id != '') {
             //     $info['notification'] = Diffusion::sendNotification(
@@ -130,7 +127,7 @@ class UserController implements IController
             (new EmailTemplate)->accountActivation(['code' => $code])
         );
 
-        $path = "https://{$_SERVER['SERVER_NAME']}/api/accounts/activation";
+        $path = SERVER_URL . '/accounts/activation';
         JsonResponse::created($newUser, $path, $info);
     }
 
@@ -140,28 +137,29 @@ class UserController implements IController
 
         if ($body) {
             if (isset($body->balance)) AdvertController::payBonus();
+            else {
+                Querys::table('users')->update($user = [
+                    'username' => isset($body->username) ?
+                        Username::validate($body->username) : null,
 
-            Querys::table('users')->update($user = [
-                'username' => isset($body->username) ?
-                    Username::validate($body->username) : null,
+                    'names' => $body->names ?? null,
+                    'lastnames' => $body->lastnames ?? null,
 
-                'names' => $body->names ?? null,
-                'lastnames' => $body->lastnames ?? null,
+                    'age' => isset($body->age) ?
+                        Format::number($body->age) : null,
 
-                'age' => isset($body->age) ?
-                    Format::number($body->age) : null,
+                    'avatar' => $body->avatar ?? null,
 
-                'avatar' => $body->avatar ?? null,
+                    'phone' => isset($body->phone) ?
+                        Format::phone($body->phone) : null,
 
-                'phone' => isset($body->phone) ?
-                    Format::phone($body->phone) : null,
+                    'update_date' => Time::current()->utc
 
-                'update_date' => Time::current()->utc
-
-            ])->where('user_id', User::$id)
-                ->execute(function () {
-                    throw new Exception('not updated user', 500);
-                });
+                ])->where('user_id', User::$id)
+                    ->execute(function () {
+                        throw new Exception('not updated user', 500);
+                    });
+            }
         } else throw new Exception('body empty', 400);
 
         JsonResponse::updated($user);
@@ -181,6 +179,10 @@ class UserController implements IController
 
         Querys::table('referreds')->delete()
             ->where('user_id', User::$id)
+            ->execute();
+
+        Querys::table('referreds')->delete()
+            ->where('referred_id', User::$id)
             ->execute();
 
         Querys::table('transfers')->delete()

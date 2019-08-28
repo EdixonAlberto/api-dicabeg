@@ -12,7 +12,7 @@ use V2\Interfaces\IController;
 class ReferredController implements IController
 {
     private const REFERRED_DATA = [
-        'user_id, username', 'email', 'avatar', 'phone'
+        'user_id', 'username', 'email', 'avatar', 'phone'
     ];
 
     public static function index($req): void
@@ -27,8 +27,9 @@ class ReferredController implements IController
 
         foreach ($arrayReferred as $referred) {
             $_arrayReferrals[] = Querys::table('users')
-                ->select(self::REFERRED_DATA)
-                ->where('user_id', $referred->referred_id)->get();
+                ->select(['user_id', 'username'])
+                ->where('user_id', $referred->referred_id)
+                ->get();
         }
 
         JsonResponse::read($_arrayReferrals);
@@ -47,7 +48,8 @@ class ReferredController implements IController
 
         $referred = Querys::table('users')
             ->select(self::REFERRED_DATA)
-            ->where('user_id', $req->params->id)->get();
+            ->where('user_id', $req->params->id)
+            ->get();
 
         JsonResponse::read($referred);
     }
@@ -67,15 +69,12 @@ class ReferredController implements IController
     public static function destroy($req): void
     {
         Querys::table('referreds')->delete()
-            ->where(['referred_id' => $req->params->id])
-            ->execute(function () {
+            ->where([
+                'user_id' => User::$id,
+                'referred_id' => $req->params->id
+            ])->execute(function () {
                 throw new Exception('referred not found', 404);
             });
-
-        // TODO: se debe pasar por query-param el email del referred
-        // Querys::table('accounts')->update(['referred_id' => ''])
-        //     ->where('email', $req->params->email)
-        //     ->execute();
 
         JsonResponse::removed();
     }
