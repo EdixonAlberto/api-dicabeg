@@ -8,8 +8,6 @@ use V2\Libraries\Jwt;
 
 class Auth
 {
-    public static $id;
-    public static $name;
     private const ROLES = [
         1 => 'client',
         2 => 'enterprise',
@@ -38,9 +36,6 @@ class Auth
         }
 
         new User($payload->id);
-
-        self::$id = User::$id;
-        self::$name = 'Estimado usuario'; // TODO: colocar el nombre y apellido del usuario
 
         if (User::$activated) return User::$id;
         else throw new Exception('account not activated', 403);

@@ -8,7 +8,7 @@
 
 @component('component.content', [
         'imageName' => 'key.png',
-        'user' => V2\Middleware\Auth::$name
+        'user' => V2\Modules\User::$names ?? V2\Modules\User::$username
     ])
     @slot('content_first')
         <p>

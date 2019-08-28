@@ -12,9 +12,7 @@
 <table class="content first" align="center" cellpadding="0" cellspacing="0">
     <tr>
         <td colspan="2">
-            @if (isset($user))
-                <p>{{ $user }}.</p>
-            @endif
+            <p>Hola {{ $user }}.</p>
             {{ $content_first }}
         </td>
     </tr>
