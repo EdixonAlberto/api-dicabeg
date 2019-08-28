@@ -37,9 +37,7 @@ class UserController implements IController
         $user = Querys::table('users')
             ->select(self::USERS_COLUMNS)
             ->where('user_id', User::$id)
-            ->get(function () {
-                throw new Exception('user not found', 404);
-            });
+            ->get();
 
         JsonResponse::read($user);
     }
@@ -167,11 +165,11 @@ class UserController implements IController
 
     public static function destroy($req): void
     {
-        Querys::table('users')->select('user_id')
-            ->where('user_id', User::$id)
-            ->get(function () {
-                throw new Exception('user not found', 404);
-            });
+        if (User::$rol == ENTERPRISE) {
+            Querys::table('products')->delete()
+                ->where('user_id', User::$id)
+                ->execute();
+        }
 
         Querys::table('history')->delete()
             ->where('user_id', User::$id)

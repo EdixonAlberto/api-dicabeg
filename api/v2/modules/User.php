@@ -28,7 +28,9 @@ class User implements IResource
     {
         $user = Querys::table('users')->select(self::USERS_COLUMNS)
             ->where('user_id', $identity)
-            ->get();
+            ->get(function () {
+                new \Modules\Exceptions\ResourceError('user');
+            });
 
         self::$id = $user->user_id;
         self::$activated = $user->activated;
