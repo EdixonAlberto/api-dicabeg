@@ -187,7 +187,7 @@ class TransferController implements IResource
         //     );
         // }
 
-        $path = "https://{$_SERVER['SERVER_NAME']}/api/transfers/{$transfer->transfer_code}";
+        $path = SERVER_URL . "/transfers/{$transfer->transfer_code}";
 
         JsonResponse::created($transfer, $path, $info);
     }

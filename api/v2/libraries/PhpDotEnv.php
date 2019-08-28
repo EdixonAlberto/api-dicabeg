@@ -26,6 +26,7 @@ class PhpDotEnv
       define('ONESIGNAL_REST_API_KEY', getenv('ONESIGNAL_REST_API_KEY'));
 
       // Almacenando constantes para la app
+      define('SERVER_URL', "https://{$_SERVER['SERVER_NAME']}/api");
       define('CLIENT', 1);
       define('ENTERPRISE', 2);
       define('ADMIN', 3);

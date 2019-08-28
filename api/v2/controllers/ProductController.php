@@ -25,6 +25,7 @@ class ProductController implements IController
 
         JsonResponse::read($arrayProducts);
     }
+
     public static function show($req): void
     {
         $arrayProducts = Querys::table('products')
@@ -38,6 +39,7 @@ class ProductController implements IController
 
         JsonResponse::read($arrayProducts);
     }
+
     public static function store($req): void
     {
         $body = $req->body;
@@ -56,8 +58,11 @@ class ProductController implements IController
             throw new Exception('product not created', 500);
         });
 
-        JsonResponse::read($product);
+        $path = SERVER_URL . "/products/{$product->product_id}";
+
+        JsonResponse::created($product, $path);
     }
+
     public static function update($req): void
     {
         $body = $req->body;
