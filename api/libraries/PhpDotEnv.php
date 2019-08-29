@@ -9,7 +9,7 @@ class PhpDotEnv
    public function __construct()
    {
       if (empty($_ENV)) {
-         $environmentDeveloper = Dotenv::create(__DIR__ . '../../../../');
+         $environmentDeveloper = Dotenv::create(__DIR__ . '../../../');
          $environmentDeveloper->load();
       }
 

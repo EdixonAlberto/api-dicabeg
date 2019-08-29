@@ -25,11 +25,11 @@
     },
     "autoload": {
         "classmap": [
-            "api/v2/libraries",
-            "api/v2/modules"
+            "api/libraries",
+            "api/modules"
         ],
         "psr-4": {
-            "V2\\": "api/v2/"
+            "V2\\": "api/"
         }
     },
     "config": {

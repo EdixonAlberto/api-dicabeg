@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '../../../../vendor/autoload.php';
+require __DIR__ . '../../../vendor/autoload.php';
 
 use V2\Modules\JsonResponse;
 use V2\Modules\RouteManager;
