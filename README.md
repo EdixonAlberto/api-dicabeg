@@ -6,7 +6,7 @@
 ![Twitter](https://img.shields.io/twitter/follow/EdixonAlbertto.svg?style=social)
 ![GitHub](https://img.shields.io/github/followers/EdixonAlberto.svg?label=Follow&style=social)
 
-Backend para la aplicación movil **[Dicabeg](https://edixonalberto.github.io/doc-dicabeg/)**
+API para aplicación movil **[Dicabeg](https://www.instagram.com/dicabeg/)**
 
 ### Tecnologías empleadas
 
@@ -20,7 +20,7 @@ Backend para la aplicación movil **[Dicabeg](https://edixonalberto.github.io/do
 - Login con **Facebook**.
 - Constructor de consultas personalizado hecho en PHP plano usando **PDO**.
 - Lenguaje de **DataBase**: `PostgreSQL` **10.7**
-- **PaaS** para el alojamiento del código: `Heroku`.
+- **PaaS** para el despliegue de la api: `Heroku`.
 - Generación automática de `Email Templates` usando Blade.
 - **Minificación** de código HTML para la aceleración en la carga de las vistas y la generación de los email templates. Gracias a la librería [tiny-html-minifier](https://github.com/jenstornell/tiny-html-minifier.git) realizada por [Jens Törnell](mailto:webblayout@gmail.com).
 
