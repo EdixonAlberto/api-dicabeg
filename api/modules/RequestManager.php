@@ -2,7 +2,6 @@
 
 namespace V2\Modules;
 
-use Exception;
 use V2\Interfaces\IRequest;
 use V2\Modules\RouteManager;
 
@@ -10,15 +9,14 @@ class RequestManager extends RouteManager implements IRequest
 {
     protected static function getHeader(): object
     {
-        $headers = [];
+        $headers = (object) [];
 
         foreach (self::HEADERS as $key) {
             $value = $_SERVER['HTTP_' . $key] ?? false;
-            if ($value) $headers[$key] = $value;
-        }
 
-        if (empty($headers)) throw new Exception('header required', 400);
-        else return (object) $headers;
+            if ($value) $headers->$key = $value;
+        }
+        return $headers;
     }
 
     protected static function getParams(): object
