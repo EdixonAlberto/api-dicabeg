@@ -2,6 +2,7 @@
 
 namespace V2\Modules;
 
+use Exception;
 use V2\Interfaces\IRequest;
 
 class RouteManager implements IRequest
@@ -9,42 +10,67 @@ class RouteManager implements IRequest
     private static $uri;
     protected static $resource;
     protected static $queryParams;
+    public $router;
 
     public function __construct()
     {
-        self::$uri = preg_replace('/^\/api/', '', $_SERVER['REQUEST_URI']);
-        // \var_dump(self::$uri); // DEBUG:
+        $uri = $_SERVER['REQUEST_URI'];
+
+        $resourcesDir = '../routes/' . $this->getService($uri);
+        $resourceFile = $this->getResource($resourcesDir);
+
+        $this->router = "{$resourcesDir}/{$resourceFile}";
     }
 
-    public static function getResource(): string
+    public static function getService($uri): string
     {
-        $resourceFound = preg_match('/^\/([a-z]+)\/?/', self::$uri, $arrayResource);
-        // \var_dump($arrayResource); // DEBUG:
-        if ($resourceFound) {
-            if (in_array($arrayResource[1], self::RESOURCES)) {
-                self::$resource = trim($arrayResource[1], 's');
-                return self::$resource;
+        $service = '';
+
+        self::$uri = '/' . preg_replace_callback(
+            '/^\/(api|web)\//',
+            function ($arrayServices) use (&$service) {
+                [, $service] = $arrayServices;
+            },
+            $uri
+        );
+
+        if ($service) return $service;
+        else throw new Exception('service incorrect', 400);
+    }
+
+    public static function getResource($resourcesDir): string
+    {
+        $resourceCorrect = preg_match('/^\/([a-z]+)\/?/', self::$uri, $arrayResources);
+        // var_dump($arrayResources); // DEBUG:
+
+        if ($resourceCorrect) {
+            [, $resource] = $arrayResources;
+            $resource = trim($resource, 's');
+
+            $resourceFile = "{$resource}Route.php";
+
+            if (in_array($resourceFile, scandir($resourcesDir))) {
+                self::$resource = $resource;
+                return $resourceFile;
             }
         }
-        return '';
+        throw new Exception('resource not exist', 400);
     }
 
     protected static function getMethod(): string
     {
         $method = $_SERVER['REQUEST_METHOD'];
         if (in_array($method, self::METHODS)) return $method;
-        else return '';
+        else throw new Exception('method not support', 405);
     }
 
-    protected static function getHeader(): object
+    protected function controllerValidate(string $controller): bool
     {
-        $headers = (object) [];
+        $controllerName = substr($controller, 0, strpos($controller, ':'));
+        $controllerFile =  $controllerName . '.php';
+        $controllersDir = '../controllers';
 
-        foreach (self::HEADERS as $key) {
-            $value = $_SERVER['HTTP_' . $key] ?? false;
-            if ($value) $headers->$key = $value;
-        }
-        return $headers;
+        return in_array($controllerFile, scandir($controllersDir));
     }
 
     protected function routeValidate(string $route): bool
@@ -65,8 +91,7 @@ class RouteManager implements IRequest
             self::$uri,
             $queryParams->value
         );
-        // var_dump(self::$uri, $route, $validation); // DEBUG:
-        // var_dump($queryParams); // DEBUG:
+        // var_dump(self::$uri, $route, $validation, $queryParams); // DEBUG:
 
         self::$queryParams = $queryParams;
 

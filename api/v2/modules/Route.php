@@ -49,8 +49,8 @@ class Route extends RouteManager
     private function processRoute(string $verb, array $arrayArguments): void
     {
         $requestMethod = strtoupper($verb);
-        [$route, $controller] = $arrayArguments;
         $method = self::getMethod();
+        [$route, $controller] = $arrayArguments;
 
         $methodCorrect = ($method == $requestMethod);
         $routeCorrect = $this->routeValidate($route);
@@ -58,17 +58,27 @@ class Route extends RouteManager
         if ($methodCorrect and $routeCorrect) {
             $request = new Requests;
 
+            /*
+                Se ejecuta el middleware
+            */
             if ($this->middleware) call_user_func(
                 self::NAME_SPACE_MIDD . $this->middleware->class . '::execute',
                 $request->headers,
                 $this->middleware->params ?? null
             );
 
-            if (is_string($controller)) call_user_func(
-                self::NAME_SPACE . $controller,
-                $request
-            );
-            else $controller();
+            /*
+                Se ejecuta el controlador o el callback
+            */
+            if (is_string($controller)) {
+                $controllerCorrect = $this->controllerValidate($controller);
+
+                if ($controllerCorrect) call_user_func(
+                    self::NAME_SPACE . $controller,
+                    $request
+                );
+            } elseif (is_callable($controller)) $controller();
+            else throw new Exception('error in routing', 500);
         }
     }
 }
