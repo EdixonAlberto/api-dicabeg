@@ -83,7 +83,7 @@ class AccountController implements IResource
             User::$email = $user->email;
         } else throw new Exception('account not activated', 403);
 
-        JsonResponse::OK('granted access',  [
+        JsonResponse::OK('granted access', [
             'access_data' => (new Access($user->user_id))->data,
             'user' => $user
         ]);

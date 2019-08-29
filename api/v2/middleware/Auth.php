@@ -14,7 +14,7 @@ class Auth
         3 => 'admin'
     ];
 
-    public static function execute(object $headers, $rol = null): string
+    public static function execute(object $headers, $rol = null): void
     {
         if (isset($headers->ACCESS_TOKEN)) {
             $token = $headers->ACCESS_TOKEN;
@@ -37,7 +37,7 @@ class Auth
 
         new User($payload->id);
 
-        if (User::$activated) return User::$id;
-        else throw new Exception('account not activated', 403);
+        if (User::$activated == false)
+            throw new Exception('account not activated', 403);
     }
 }
