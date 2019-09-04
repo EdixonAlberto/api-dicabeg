@@ -1,12 +1,12 @@
 # api-dicabeg
 
-[![Author linkedin:edixonalberto](https://img.shields.io/badge/author-EdixonAlberto-purple.svg)](https://www.linkedin.com/in/edixonalberto)
+[![Linkedin: https://linkedin.com/in/edixonalberto](https://img.shields.io/badge/author-EdixonAlberto-purple.svg)](https://linkedin.com/in/edixonalberto)
 [![GPL license](https://img.shields.io/badge/license-GPL-green.svg)](./LICENSE.md)
 
 ![Twitter](https://img.shields.io/twitter/follow/EdixonAlbertto.svg?style=social)
 ![GitHub](https://img.shields.io/github/followers/EdixonAlberto.svg?label=Follow&style=social)
 
-API para aplicación movil **[Dicabeg](https://www.instagram.com/dicabeg/)**
+API para la aplicación movil **[Dicabeg](https://instagram.com/dicabeg/)**
 
 ### Tecnologías empleadas
 
@@ -23,18 +23,6 @@ API para aplicación movil **[Dicabeg](https://www.instagram.com/dicabeg/)**
 - **PaaS** para el despliegue de la api: `Heroku`.
 - Generación automática de `Email Templates` usando Blade.
 - **Minificación** de código HTML para la aceleración en la carga de las vistas y la generación de los email templates. Gracias a la librería [tiny-html-minifier](https://github.com/jenstornell/tiny-html-minifier.git) realizada por [Jens Törnell](mailto:webblayout@gmail.com).
-
----
-
-## Email Template (Cuenta Activada)
-
-![Cuenta Activada](./doc/email-template.png)
-
----
-
-## Diagrama Entidad Relación
-
-![Diagrama ERD](./doc/ERD-dicabeg.png)
 
 ---
 
@@ -105,3 +93,15 @@ API para aplicación movil **[Dicabeg](https://www.instagram.com/dicabeg/)**
     GET    | api/app/balances
     GET    | api/app/commissions
 ---
+
+## Diagrama Entidad Relación
+
+**NOTA** diagrama no actualizado...
+
+![Diagrama ERD](./images/erd.png)
+
+---
+
+## Plantilla de Email
+
+![Cuenta Activada](./images/email-template.png)

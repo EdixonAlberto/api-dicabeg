@@ -1,16 +1,16 @@
 {
-    "name": "edixon-alberto/api-dicapp",
-    "description": "API for app movile",
+    "name": "edixon-alberto/api-dicabeg",
+    "description": "api para la aplicacion movil dicabeg",
     "license": "GPL-3.0-only",
     "type": "project",
     "authors": [
         {
             "name": "Edixon Alberto",
             "email": "edixonalbertto@gmail.com",
-            "homepage": "https://www.linkedin.com/in/edixonalberto"
+            "homepage": "https://linkedin.com/in/edixonalberto"
         }
     ],
-    "minimum-stability": "alpha",
+    "minimum-stability": "beta",
     "prefer-stable": true,
     "require": {
         "php": "~7.3",
