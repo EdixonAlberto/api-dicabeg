@@ -2,13 +2,11 @@
 
 [![Linkedin: https://linkedin.com/in/edixonalberto](https://img.shields.io/badge/author-EdixonAlberto-purple.svg)](https://linkedin.com/in/edixonalberto)
 [![GPL license](https://img.shields.io/badge/license-GPL-green.svg)](./LICENSE.md)
-
-![Twitter](https://img.shields.io/twitter/follow/EdixonAlbertto.svg?style=social)
 ![GitHub](https://img.shields.io/github/followers/EdixonAlberto.svg?label=Follow&style=social)
 
-API para la aplicación movil **[Dicabeg](https://instagram.com/dicabeg/)**
+API REST para la aplicación movil **[Dicabeg](https://instagram.com/dicabeg/)**
 
-### Tecnologías empleadas
+### Tecnologías Utilizadas
 
 - Lenguaje de programación: `PHP` **7.3.4**
 - Motor de plantillas `Laravel/Blade`.
@@ -22,7 +20,7 @@ API para la aplicación movil **[Dicabeg](https://instagram.com/dicabeg/)**
 - Lenguaje de **DataBase**: `PostgreSQL` **10.7**
 - **PaaS** para el despliegue de la api: `Heroku`.
 - Generación automática de `Email Templates` usando Blade.
-- **Minificación** de código HTML para la aceleración en la carga de las vistas y la generación de los email templates. Gracias a la librería [tiny-html-minifier](https://github.com/jenstornell/tiny-html-minifier.git) realizada por [Jens Törnell](mailto:webblayout@gmail.com).
+- **Minificación** manual de código HTML para la aceleración en la carga de las vistas y la generación de los email templates. Gracias a la librería [tiny-html-minifier](https://github.com/jenstornell/tiny-html-minifier.git) realizada por [Jens Törnell](mailto:webblayout@gmail.com).
 
 ---
 
