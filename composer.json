@@ -1,38 +1,48 @@
 {
-    "name": "edixon-alberto/api-dicabeg",
-    "description": "api para la aplicacion movil dicabeg",
-    "license": "GPL-3.0-only",
-    "type": "project",
-    "authors": [
-        {
-            "name": "Edixon Alberto",
-            "email": "edixonalbertto@gmail.com",
-            "homepage": "https://linkedin.com/in/edixonalberto"
-        }
-    ],
-    "minimum-stability": "beta",
-    "prefer-stable": true,
-    "require": {
-        "php": "~7.3",
-        "sendgrid/sendgrid": "~7",
-        "firebase/php-jwt": "^5.0",
-        "namnv609/php-onesignal-sdk": "^1.0",
-        "facebook/graph-sdk": "^5.7",
-        "jenssegers/blade": "^1.2"
-    },
-    "require-dev": {
-        "vlucas/phpdotenv": "^3.4"
-    },
-    "autoload": {
-        "classmap": [
-            "api/libraries",
-            "api/modules"
-        ],
-        "psr-4": {
-            "V2\\": "api/"
-        }
-    },
-    "config": {
-        "optimize-autoloader": true
+  "name": "edixon-alberto/api-dicabeg",
+  "description": "Api RESTful to the application mobile Dicabeg",
+  "keywords": [
+    "framework-php",
+    "mvc-architecture",
+    "blade-template-engine",
+    "postgresql-database",
+    "pdo",
+    "api-restful",
+    "sendgrid",
+    "onesignal"
+  ],
+  "license": "GPL-3.0-only",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Edixon Piña",
+      "email": "edixonalbertto@gmail.com",
+      "homepage": "https://www.edixonalberto.com"
     }
+  ],
+  "minimum-stability": "beta",
+  "prefer-stable": true,
+  "require": {
+    "php": "~7.3",
+    "sendgrid/sendgrid": "~7",
+    "firebase/php-jwt": "^5.0",
+    "namnv609/php-onesignal-sdk": "^1.0",
+    "facebook/graph-sdk": "^5.7",
+    "jenssegers/blade": "^1.2"
+  },
+  "require-dev": {
+    "vlucas/phpdotenv": "^3.4"
+  },
+  "autoload": {
+    "classmap": [
+      "api/libraries",
+      "api/modules"
+    ],
+    "psr-4": {
+      "V2\\": "api/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true
+  }
 }

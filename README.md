@@ -4,23 +4,25 @@
 [![GPL license](https://img.shields.io/badge/license-GPL-green.svg)](./LICENSE.md)
 ![GitHub](https://img.shields.io/github/followers/EdixonAlberto.svg?label=Follow&style=social)
 
-API REST para la aplicación movil **[Dicabeg](https://instagram.com/dicabeg/)**
+![image preview](./.github/image-preview.jpg)
 
-### Tecnologías Utilizadas
+Api RESTful to the application mobile **[Dicabeg](https://instagram.com/dicabeg/)**
 
-- Lenguaje de programación: `PHP` **7.3.4**
-- Motor de plantillas `Laravel/Blade`.
-- Lenguaje de estilos `Stylus` **0.54.5**
-- Patrón de diseño **MVC**.
-- Envío de **email transactional** por medio de `SendGrid`.
-- Envío de **push notification** usando `OneSignal`.
-- Administración de sesiones utilizando `JWT` y `OAuth`.
-- Login con **Facebook**.
-- Constructor de consultas personalizado hecho en PHP plano usando **PDO**.
-- Lenguaje de **DataBase**: `PostgreSQL` **10.7**
-- **PaaS** para el despliegue de la api: `Heroku`.
-- Generación automática de `Email Templates` usando Blade.
-- **Minificación** manual de código HTML para la aceleración en la carga de las vistas y la generación de los email templates. Gracias a la librería [tiny-html-minifier](https://github.com/jenstornell/tiny-html-minifier.git) realizada por [Jens Törnell](mailto:webblayout@gmail.com).
+### Technologies Used
+
+- Programming language `PHP` **7.3.4**
+- Templates engine `Laravel/Blade`.
+- Styles language `Stylus` **0.54.5**
+- Design pattern **MVC**.
+- Sending **email transactional** through `SendGrid`.
+- Sending **push notification** through `OneSignal`.
+- Administrarion of sessions using `JWT` and `OAuth`.
+- Login with **Facebook**.
+- Custom query constructor made in flat **PDO**.
+- **DataBase** language `PostgreSQL` **10.7**
+- **PaaS** to deploy the api `Heroku`.
+- Automatic generation of `Email Templates` using `Laravel/Blade`.
+- **Minificación** HTML code manual for acceleration of view loading and generation of email templates. Thanks to the bookstore [tiny-html-minifier](https://github.com/jenstornell/tiny-html-minifier.git) realized by [Jens Törnell](mailto:webblayout@gmail.com).
 
 ---
 
@@ -92,14 +94,14 @@ API REST para la aplicación movil **[Dicabeg](https://instagram.com/dicabeg/)**
     GET    | api/app/commissions
 ---
 
-## Diagrama Entidad Relación
+## Entity Relation Diagram
 
-**NOTA** diagrama no actualizado...
+**NOTA** diagram not updated...
 
-![Diagrama ERD](./images/erd.png)
+![Diagrama ERD](./.github/ERD.png)
 
 ---
 
-## Plantilla de Email
+## Email Template
 
-![Cuenta Activada](./images/email-template.png)
+![Cuenta Activada](./.github/email-template.png)
