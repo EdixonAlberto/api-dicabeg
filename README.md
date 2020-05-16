@@ -96,12 +96,14 @@ Api RESTful to the application mobile **[Dicabeg](https://instagram.com/dicabeg/
 
 ## Entity Relation Diagram
 
-**NOTA** diagram not updated...
+![Diagrama ERD](./.github/img/ERD.png)
 
-![Diagrama ERD](./.github/ERD.png)
+### **[ERD Lucidchart](https://app.lucidchart.com/documents/view/5f826222-d799-4334-8196-18680ddd0ca7) &#x279c;**
 
 ---
 
-## Email Template
 
-![Cuenta Activada](./.github/email-template.png)
+
+## Email Templates
+
+To view all the email templates, **[go to this route](./.github/img/email-templates) &#x279c;**

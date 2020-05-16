@@ -1,0 +1,1685 @@
+{
+	"info": {
+		"_postman_id": "7d36f1f9-0662-4b52-a171-10bf49ed3380",
+		"name": "/api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/users",
+			"item": [
+				{
+					"name": "show",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5291bce7-c3e2-4849-ac2f-1e699c837e7f",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/users",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0a0dbad8-79cc-46ce-910a-7a87fa38a2f7",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    pm.globals.set(\"username\", data.resource.user.username);\r",
+									"    pm.globals.set(\"email\", data.resource.user.email);\r",
+									"    pm.globals.set(\"invite_code\", data.resource.user.invite_code);\r",
+									"    pm.globals.set(\"temporal_code\", data.information.email_accountActivation.temporal_code);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_zone",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "invite_code",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "send_email",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL_API}}/api/users",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2174df68-ad32-46e7-a19b-d262a51dd2e1",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "video",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "names",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "lastnames",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "age",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "balance",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL_API}}/api/users",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b4dd4e36-f8ca-4011-abf4-35a330d93ee4",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/users",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "72098eb3-887a-4d06-b3fb-d657114a91b1",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "bb0ee4e9-3c88-48b3-9c1c-2124ccfbb293",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "/accounts",
+			"item": [
+				{
+					"name": "/login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5291bce7-c3e2-4849-ac2f-1e699c837e7f",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.environment.set(\"access_token\", data.information.access_data.access_token);\r",
+									"    pm.environment.set(\"refresh_token\", data.information.access_data.refresh_token);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL_API}}/api/accounts/login",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/login/refresh",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "cffcf652-e188-4548-815c-6719fab09db5",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.environment.set(\"access_token\", data.information.access_data.access_token);\r",
+									"    pm.environment.set(\"refresh_token\", data.information.access_data.refresh_token);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "refresh-token",
+								"value": "{{refresh_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/accounts/login/refresh",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"login",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/activation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a5fa9480-4086-4dba-9d1b-459166bffdc7",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							},
+							{
+								"key": "send_email",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "temporal_code",
+									"value": "{{temporal_code}}",
+									"type": "text"
+								},
+								{
+									"key": "send_email",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL_API}}/api/accounts/activation",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"activation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/recovery",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5291bce7-c3e2-4849-ac2f-1e699c837e7f",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.globals.set(\"temporal_code\", data.information.email_accountRecovery.temporal_code);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "temporal_code",
+									"value": "{{temporal_code}}",
+									"type": "text"
+								},
+								{
+									"key": "new_password",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "send_email",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL_API}}/api/accounts/recovery",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"recovery"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/resend_email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b4d488fa-766f-45ec-bed3-2519108f45d7",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.globals.set('temporal_code', data.information.email_accountActivation.temporal_code);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "send_email",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL_API}}/api/accounts/resend_email",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"resend_email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/oauth (NO DISPONIBLE)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5291bce7-c3e2-4849-ac2f-1e699c837e7f",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    pm.globals.set(\"token\", data.resource.api_token.token);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{URL_API}}/api/accounts/oauth",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"oauth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/update/email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8f496661-7b1f-46db-86d0-2fa03d68d066",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.globals.set(\"temporal_code\", data.information.email_emailUpdate.temporal_code);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "new_email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "temporal_code",
+									"value": "{{temporal_code}}",
+									"type": "text"
+								},
+								{
+									"key": "send_email",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL_API}}/api/accounts/update/email",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"update",
+								"email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/update/password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8f496661-7b1f-46db-86d0-2fa03d68d066",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.globals.set(\"temporal_code\", data.information.email_passUpdate.temporal_code);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "temporal_code",
+									"value": "{{temporal_code}}",
+									"type": "text"
+								},
+								{
+									"key": "new_password",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "send_email",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL_API}}/api/accounts/update/password",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"update",
+								"password"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "/referreds",
+			"item": [
+				{
+					"name": "index",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/referreds/page/1/date-order/desc",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"referreds",
+								"page",
+								"1",
+								"date-order",
+								"desc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "show",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/referreds/eb30f828-608e-4100-89c4-951a4f9e6387",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"referreds",
+								"eb30f828-608e-4100-89c4-951a4f9e6387"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/referreds/59d6e8f2-d6ae-4eba-b366-4f0304c592f4",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"referreds",
+								"59d6e8f2-d6ae-4eba-b366-4f0304c592f4"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8869dc86-65d4-4a28-a446-91aaa0a32730",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "c4abf3d2-7a61-4745-b423-cb99115500e6",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "/transfers",
+			"item": [
+				{
+					"name": "index",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/transfers/page/1/date-order/desc",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"transfers",
+								"page",
+								"1",
+								"date-order",
+								"desc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "show",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5291bce7-c3e2-4849-ac2f-1e699c837e7f",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							},
+							{
+								"key": "type1",
+								"type": "text",
+								"value": ""
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/transfers/CBFD03",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"transfers",
+								"CBFD03"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "concept",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "receptor",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type_receptor",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "amount",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL_API}}/api/transfers",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"transfers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/send_report",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bed21386-8c59-4f7b-a4e5-d19c1f90554f",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "send_email",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL_API}}/api/transfers/send_report",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"transfers",
+								"send_report"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "/history",
+			"item": [
+				{
+					"name": "index",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1740ed1f-a6b3-4602-89de-5e6ce9df776a",
+								"exec": [
+									"var data = pm.response.json();\r",
+									"\r",
+									"pm.test(data.description, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/history/page/1/date-order/desc",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"history",
+								"page",
+								"1",
+								"date-order",
+								"desc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "show",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/history/2adbae63-c5a1-4572-8839-a06f985b03da",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"history",
+								"2adbae63-c5a1-4572-8839-a06f985b03da"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/history/2adbae63-c5a1-4572-8839-a06f985b03da",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"history",
+								"2adbae63-c5a1-4572-8839-a06f985b03da"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/history/2adbae63-c5a1-4572-8839-a06f985b03da",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"history",
+								"2adbae63-c5a1-4572-8839-a06f985b03da"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "/videos",
+			"item": [
+				{
+					"name": "index",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/videos/page/1/date-order/desc",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"videos",
+								"page",
+								"1",
+								"date-order",
+								"desc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "show",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/videos/d415fdbe-b1bb-4d09-a8e7-154468abfc63",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"videos",
+								"d415fdbe-b1bb-4d09-a8e7-154468abfc63"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "/app",
+			"item": [
+				{
+					"name": "/roles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/app/roles",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"app",
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/ranking",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/app/ranking",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"app",
+								"ranking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/balances",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/app/balances",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"app",
+								"balances"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/commissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/app/commissions",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"app",
+								"commissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/users/page/1/date-order/desc",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"page",
+								"1",
+								"date-order",
+								"desc"
+							]
+						},
+						"description": "Paginacion de usuarios"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "/products",
+			"item": [
+				{
+					"name": "index",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/products/page/1",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"products",
+								"page",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "show",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/products/e1a02313-213e-43cb-b73e-3a2e5534bb4f",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"products",
+								"e1a02313-213e-43cb-b73e-3a2e5534bb4f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "category",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "photo",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL_API}}/products",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "category",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "photo",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL_API}}/products/35235b4e-0140-48ab-9736-76f821b3f4b7",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"products",
+								"35235b4e-0140-48ab-9736-76f821b3f4b7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "access-token",
+								"type": "text",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/products/1",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "/adverts",
+			"item": [
+				{
+					"name": "/bonus",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/adverts/bonus/pay",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"adverts",
+								"bonus",
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/enterprise",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "access-token",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL_API}}/api/adverts/enterprise/pay",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"adverts",
+								"enterprise",
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/grant",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL_API}}/api/adverts/grant/user-id/137785c6-ee92-498d-82f7-bc67a2db11aa/rewards/2/event-id/c66f6ca7-io9a-4d53-bd9f-6ecdba74572e",
+							"host": [
+								"{{URL_API}}"
+							],
+							"path": [
+								"api",
+								"adverts",
+								"grant",
+								"user-id",
+								"137785c6-ee92-498d-82f7-bc67a2db11aa",
+								"rewards",
+								"2",
+								"event-id",
+								"c66f6ca7-io9a-4d53-bd9f-6ecdba74572e"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
