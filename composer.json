@@ -25,7 +25,7 @@
   "require": {
     "php": "~7.3",
     "sendgrid/sendgrid": "~7",
-    "firebase/php-jwt": "^5.0",
+    "firebase/php-jwt": "^6.0",
     "namnv609/php-onesignal-sdk": "^1.0",
     "facebook/graph-sdk": "^5.7",
     "jenssegers/blade": "^1.2"
